@@ -1,1 +1,3 @@
-# Content-Gallery
+# content gallery
+
+readme on progress.
