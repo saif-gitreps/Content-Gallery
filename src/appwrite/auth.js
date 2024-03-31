@@ -33,7 +33,8 @@ export class AuthService {
             return null;
          }
       } catch (error) {
-         throw error;
+         console.log("error related to create account", error);
+         return null;
       }
    }
 
@@ -41,7 +42,8 @@ export class AuthService {
       try {
          return await this.account.createEmailPasswordSession(email, password);
       } catch (error) {
-         throw error;
+         console.log("error related to login", error);
+         return null;
       }
    }
 
@@ -49,7 +51,8 @@ export class AuthService {
       try {
          return await this.account.get();
       } catch (error) {
-         throw error;
+         console.log("error related to get account", error);
+         return null;
       }
    }
 
@@ -58,7 +61,8 @@ export class AuthService {
          // we can also give a deleteSession("current") but good practise is to delete all sessions.
          return await this.account.deleteSessions();
       } catch (error) {
-         throw error;
+         console.log("error related to log out", error);
+         return null;
       }
    }
 }
