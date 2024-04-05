@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 function Login() {
    const navigate = useNavigate();
    const dispatch = useDispatch();
-   const [register, handleSubmit] = useForm();
+   const { register, handleSubmit } = useForm();
    const [error, setError] = useState("");
 
    const login = async (data) => {
@@ -21,6 +21,7 @@ function Login() {
             const userData = authService.getCurrentUser();
             if (userData) {
                dispatch(authLogin(userData));
+               navigate("/");
             }
          }
       } catch (error) {
@@ -61,7 +62,7 @@ function Login() {
                         required: true,
                         validate: {
                            matchPattern: (value) =>
-                              /^([\w\.\-_]+)?\w+@[\w-_]+(\.\w+){1,}$/.test(value) ||
+                              /^([\w.\-_]+)?\w+@[\w-_]+(\.\w+){1,}$/.test(value) ||
                               "Please enter a valid email",
                         },
                      })}
