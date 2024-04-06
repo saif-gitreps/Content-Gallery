@@ -1,12 +1,20 @@
-import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Controller } from "react-hook-form";
 
-function RTE({ name, control, label, defaultValue = "" }) {
+/* 
+control param is from the react-hook form, it is used to take control of the states of
+this component. (Our goal is to reused the editor component for our post form)
+
+the control prop from component param will be passed into this component's controller , basically it will give control to the parent element that calls it.
+          
+The field is an object that is saying , which ever event is triggered in the the field object, we will re render or render it, here the event is onChange
+
+*/
+
+export default function RTE({ name, control, label, defaultValue = "" }) {
    return (
       <div className="w-full">
          {label ? <label className="inline-block mb-1 pl-1"> {label} </label> : null}
-
          <Controller
             name={name || "content"}
             control={control}
@@ -51,5 +59,3 @@ function RTE({ name, control, label, defaultValue = "" }) {
       </div>
    );
 }
-
-export default RTE;

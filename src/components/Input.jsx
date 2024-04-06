@@ -1,5 +1,10 @@
 import { useId, forwardRef } from "react";
 
+/*
+The parent component's useRef is used for creating a reference that will be passed to the child component.
+The child component's useRef is used for internal DOM manipulation or access to a DOM element within the child component itself.
+*/
+
 const Input = forwardRef(function Input(
    { label, type = "text", className = "", ...props },
    ref
