@@ -3,6 +3,7 @@ import Footer from "./Footer/Footer";
 import Container from "./Container/Container";
 import LogoutButton from "./Header/LogoutButton";
 import PostForm from "./PostForm/PostForm";
+import AuthLayout from "./AuthLayout";
 import Logo from "./logo";
 import Select from "./Select";
 import Button from "./Button";
@@ -16,6 +17,7 @@ export {
    Footer,
    Container,
    PostForm,
+   AuthLayout,
    Logo,
    LogoutButton,
    Select,
