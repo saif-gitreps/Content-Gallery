@@ -52,8 +52,15 @@ function PostForm({ post }) {
    };
 
    // with this ,we can crate a slug using title, replace any spaces inbetwreern with _
+   // and the above replace will ignore chars from a-z or A-Z and \d is for digits.
    const slugTransform = useCallback((value) => {
-      return value.trim().toLowerCase().replace(/\s/g, "-");
+      if (value && typeof value === "string")
+         return value
+            .trim()
+            .toLowerCase()
+            .replace(/^[a-zA-Z\d]/, "_")
+            .replace(/\s/g, "-");
+      return "";
    }, []);
 
    useEffect(() => {
