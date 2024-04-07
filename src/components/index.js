@@ -11,6 +11,7 @@ import RTE from "./RTE";
 import Login from "./Login";
 import Input from "./Input";
 import Signup from "./Signup";
+import PostCard from "./PostCard";
 
 export {
    Header,
@@ -26,4 +27,5 @@ export {
    Login,
    Input,
    Signup,
+   PostCard,
 };
