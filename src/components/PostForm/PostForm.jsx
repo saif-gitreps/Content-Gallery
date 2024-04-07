@@ -64,11 +64,19 @@ function PostForm({ post }) {
    }, []);
 
    useEffect(() => {
+      /* watch method is like useEffect for react-hook-form, it watches for any changes in the fields */
+
       const subscription = watch((value, { name }) => {
          if (name == "title") {
             setValue("slug", slugTransform(value.title, { shouldValidate: true }));
          }
       });
+
+      /*
+      return () => { ... }: This is the cleanup function of the useEffect hook. It runs when the component is unmounted or before the effect runs again. In this case, it unsubscribes from the watch subscription to prevent memory leaks or unwanted side effects.
+
+       This is important to prevent memory leaks and ensure that resources are properly released when the component unmounts or when the effect is no longer needed.
+      */
       return () => {
          subscription.unsubscribe();
       };
