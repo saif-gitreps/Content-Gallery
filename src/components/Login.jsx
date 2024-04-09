@@ -25,9 +25,12 @@ function Login() {
             }
          }
       } catch (error) {
+         console.log("Error message from error component" + error);
          setError(error.message);
       }
    };
+
+   /* To clear confusion, register is a function that returns an object, so we are basically taking all the objects this register function returns */
 
    return (
       <div className="flex items-center justify-center w-full">
@@ -51,7 +54,7 @@ function Login() {
                   Sign Up
                </Link>
             </p>
-            <p>{error ? <p className="text-red-600 mt-8">{error}</p> : null}</p>
+            {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
             <form onSubmit={handleSubmit(login)} className="mt-8">
                <div className="space-y-5">
                   <Input
@@ -61,23 +64,22 @@ function Login() {
                      {...register("email", {
                         required: true,
                         validate: {
-                           matchPattern: (value) =>
-                              /^([\w.\-_]+)?\w+@[\w-_]+(\.\w+){1,}$/.test(value) ||
-                              "Please enter a valid email",
+                           matchPatern: (value) =>
+                              /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                              "Email address must be a valid address",
                         },
                      })}
                   />
-                  {/* To clear confusion, register is a function that returns an object, so we are basically taking all the objects this register function returns */}
                   <Input
                      label="Password: "
-                     placeholder="Enter your password"
                      type="password"
+                     placeholder="Enter your password"
                      {...register("password", {
                         required: true,
                      })}
                   />
                   <Button type="submit" className="w-full">
-                     Sign up
+                     Sign in
                   </Button>
                </div>
             </form>

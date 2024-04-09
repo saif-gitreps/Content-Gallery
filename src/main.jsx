@@ -5,9 +5,11 @@ import "./index.css";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { AuthLayout, Login } from "./components/index.js";
+import { AuthLayout } from "./components";
+
 import Home from "./pages/Home";
 import AddPost from "./pages/AddPost";
+import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import EditPost from "./pages/EditPost";
 import Post from "./pages/Post";
