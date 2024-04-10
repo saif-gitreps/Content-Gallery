@@ -90,12 +90,12 @@ export class Service {
 
    async uploadFile(file) {
       try {
-         return await this.buckect.createFile(config.appwriteBucketId, ID.unique(), file);
+         return await this.bucket.createFile(config.appwriteBucketId, ID.unique(), file);
       } catch (error) {
-         throw error;
+         console.log("Appwrite serive :: uploadFile :: error", error);
+         return false;
       }
    }
-
    async deleteFile(fileId) {
       try {
          await this.buckect.deleteFile(config.appwriteBucketId, fileId);

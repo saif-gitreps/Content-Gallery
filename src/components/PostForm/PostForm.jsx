@@ -20,32 +20,35 @@ function PostForm({ post }) {
 
    const submit = async (data) => {
       if (post) {
-         const file = data.image ? data.image[0] : null;
+         const file = data.image[0]
+            ? await appwriteService.uploadFile(data.image[0])
+            : null;
 
          if (file) {
-            await appwriteService.deleteFile(post.featuredImage);
+            appwriteService.deleteFile(post.featuredImage);
          }
 
-         const updatedPost = await appwriteService.updatePost(post.$id, {
+         const dbPost = await appwriteService.updatePost(post.$id, {
             ...data,
             featuredImage: file ? file.$id : undefined,
          });
 
-         if (updatedPost) {
-            navigate(`/post/${updatedPost.$id}`);
+         if (dbPost) {
+            navigate(`/post/${dbPost.$id}`);
          }
       } else {
          const file = await appwriteService.uploadFile(data.image[0]);
 
          if (file) {
-            data.featuredImage = file.$id;
-            const post = await appwriteService.createPost({
+            const fileId = file.$id;
+            data.featuredImage = fileId;
+            const dbPost = await appwriteService.createPost({
                ...data,
                userId: userData.$id,
             });
 
-            if (post) {
-               navigate(`/post1/${post.$id}`);
+            if (dbPost) {
+               navigate(`/post/${dbPost.$id}`);
             }
          }
       }
@@ -55,11 +58,7 @@ function PostForm({ post }) {
    // and the above replace will ignore chars from a-z or A-Z and \d is for digits.
    const slugTransform = useCallback((value) => {
       if (value && typeof value === "string")
-         return value
-            .trim()
-            .toLowerCase()
-            .replace(/^[a-zA-Z\d]/, "_")
-            .replace(/\s/g, "-");
+         return value.trim().toLowerCase().replace(/\s/g, "_");
       return "";
    }, []);
 
@@ -102,11 +101,17 @@ function PostForm({ post }) {
                   });
                }}
             />
-            <RTE
+            {/* <RTE
                label="Content :"
                name="content"
                control={control}
                defaultValue={getValues("content")}
+            /> */}
+            <Input
+               label="Content: "
+               type="text"
+               placeholder="content"
+               {...register("content", { required: true })}
             />
          </div>
          <div className="w-1/3 px-2">
@@ -115,7 +120,7 @@ function PostForm({ post }) {
                type="file"
                className="mb-4"
                accept="image/png, image/jpg, image/jpeg, image/gif"
-               {...register("image", { required: !post })}
+               {...register("image")}
             />
             {post && (
                <div className="w-full mb-4">
