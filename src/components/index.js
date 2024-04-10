@@ -14,13 +14,13 @@ import Logo from "./logo";
 import RTE from "./RTE";
 
 export {
+   LogoutButton,
    Header,
    Footer,
    Container,
    PostForm,
    AuthLayout,
    Logo,
-   LogoutButton,
    Select,
    Button,
    RTE,

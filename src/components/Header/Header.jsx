@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 function Header() {
-   // auth is the name we gave in the slice folder.
    const authStatus = useSelector((state) => state.auth.status);
    const navigate = useNavigate();
 
@@ -37,7 +36,7 @@ function Header() {
    ];
 
    return (
-      <header className="py-3 shadow bg-slate-400">
+      <header className="py-3 shadow bg-gray-500">
          <Container>
             <nav className="flex">
                <div className="mr-4">
@@ -46,8 +45,8 @@ function Header() {
                   </Link>
                </div>
                <ul className="flex ml-auto">
-                  {navItems.map((item) => {
-                     return item.active ? (
+                  {navItems.map((item) =>
+                     item.active ? (
                         <li key={item.name}>
                            <button
                               onClick={() => navigate(item.slug)}
@@ -56,14 +55,13 @@ function Header() {
                               {item.name}
                            </button>
                         </li>
-                     ) : null;
-                  })}
-
-                  {authStatus ? (
+                     ) : null
+                  )}
+                  {authStatus && (
                      <li>
                         <LogoutButton />
                      </li>
-                  ) : null}
+                  )}
                </ul>
             </nav>
          </Container>

@@ -12,7 +12,6 @@ import { Client, Account, ID } from "appwrite";
 
     const account = new Account(client);
 */
-
 export class AuthService {
    client = new Client();
    account;
@@ -24,17 +23,20 @@ export class AuthService {
 
    async createAccount({ email, password, name }) {
       try {
-         const user = await this.account.create(ID.unique(), email, password, name);
-
-         if (user) {
-            this.login({ email, password });
-            return user;
+         const userAccount = await this.account.create(
+            ID.unique(),
+            email,
+            password,
+            name
+         );
+         if (userAccount) {
+            // call another method
+            return await this.login({ email, password });
          } else {
-            return null;
+            return userAccount;
          }
       } catch (error) {
-         console.log("error related to create account", error);
-         return null;
+         throw error;
       }
    }
 
@@ -42,8 +44,7 @@ export class AuthService {
       try {
          return await this.account.createEmailPasswordSession(email, password);
       } catch (error) {
-         console.log("error related to login", error);
-         return null;
+         throw error;
       }
    }
 
@@ -51,23 +52,21 @@ export class AuthService {
       try {
          return await this.account.get();
       } catch (error) {
-         console.log("error related to get account", error);
-         return null;
+         console.log("Appwrite serive :: getCurrentUser :: error", error);
       }
+
+      return null;
    }
 
    async logout() {
       try {
-         // we can also give a deleteSession("current") but good practise is to delete all sessions.
-         return await this.account.deleteSessions();
+         await this.account.deleteSessions();
       } catch (error) {
-         console.log("error related to log out", error);
-         return null;
+         console.log("Appwrite serive :: logout :: error", error);
       }
    }
 }
 
-// when this object is created, the methods will be called just how the docs mentioned.
 const authService = new AuthService();
 
 export default authService;
