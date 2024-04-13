@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import appwriteService from "../appwrite/config-appwrite";
+import React, { useEffect, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Button, Container } from "../components";
+import appwriteService from "../appwrite/config-appwrite";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 
@@ -10,40 +10,50 @@ export default function Post() {
    const [image, setImage] = useState("");
    const { slug } = useParams();
    const navigate = useNavigate();
-
    const userData = useSelector((state) => state.auth.userData);
 
-   const isAuthor = post && userData ? post.userId === userData.$id : false;
-
    useEffect(() => {
-      if (slug) {
-         appwriteService.getPost(slug).then((post) => {
-            if (post) {
-               setPost(post);
-               console.log(post.featuredImage);
-               appwriteService.getFilePrev(post.featuredImage).then((result) => {
-                  setImage(result);
-               });
-            } else navigate("/");
-         });
-      } else navigate("/");
-   }, [slug, navigate, image]);
-
-   const deletePost = () => {
-      appwriteService.deletePost(post.$id).then((status) => {
-         if (status) {
-            appwriteService.deleteFile(post.featuredImage);
+      const fetchData = async () => {
+         try {
+            if (!slug) {
+               navigate("/");
+               return;
+            }
+            const post = await appwriteService.getPost(slug);
+            if (!post) {
+               navigate("/");
+               return;
+            }
+            setPost(post);
+            const result = await appwriteService.getFilePrev(post.featuredImage);
+            setImage(result);
+         } catch (error) {
+            console.error("Error fetching post:", error);
             navigate("/");
          }
-      });
+      };
+      fetchData();
+   }, [slug, navigate]);
+
+   const deletePost = async () => {
+      try {
+         const status = await appwriteService.deletePost(post.$id);
+         if (status) {
+            await appwriteService.deleteFile(post.featuredImage);
+            navigate("/");
+         }
+      } catch (error) {
+         console.error("Error deleting post:", error);
+      }
    };
+
+   const isAuthor = post && userData ? post.userId === userData.$id : false;
 
    return post ? (
       <div className="py-8">
          <Container>
             <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
                <img src={image} alt={post.title} className="rounded-xl" />
-
                {isAuthor && (
                   <div className="absolute right-6 top-6">
                      <Link to={`/edit-post/${post.$id}`}>
