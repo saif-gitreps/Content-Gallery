@@ -20,12 +20,14 @@ function AllPost() {
    return (
       <div className="w-full py-8">
          <Container>
+            <h1 className="text-center">
+               {posts.length === 0 && <p>No posts available.</p>}
+            </h1>
             <div className="flex flex-wrap">
                {posts.map((post) => {
                   return (
                      <div key={post.$id} className="p-2 w-1/4">
                         <PostCard title={post.title} featuredImage={post.featuredImage} />
-                        ;
                      </div>
                   );
                })}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import appwriteService from "../appwrite/config-appwrite";
 import { Button, Container } from "../components";
@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 
 export default function Post() {
    const [post, setPost] = useState(null);
+   const [image, setImage] = useState("");
    const { slug } = useParams();
    const navigate = useNavigate();
 
@@ -17,11 +18,16 @@ export default function Post() {
    useEffect(() => {
       if (slug) {
          appwriteService.getPost(slug).then((post) => {
-            if (post) setPost(post);
-            else navigate("/");
+            if (post) {
+               setPost(post);
+               console.log(post.featuredImage);
+               appwriteService.getFilePrev(post.featuredImage).then((result) => {
+                  setImage(result);
+               });
+            } else navigate("/");
          });
       } else navigate("/");
-   }, [slug, navigate]);
+   }, [slug, navigate, image]);
 
    const deletePost = () => {
       appwriteService.deletePost(post.$id).then((status) => {
@@ -36,11 +42,7 @@ export default function Post() {
       <div className="py-8">
          <Container>
             <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-               <img
-                  src={appwriteService.getFilePreview(post.featuredImage)}
-                  alt={post.title}
-                  className="rounded-xl"
-               />
+               <img src={image} alt={post.title} className="rounded-xl" />
 
                {isAuthor && (
                   <div className="absolute right-6 top-6">

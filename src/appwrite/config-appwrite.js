@@ -76,14 +76,15 @@ export class Service {
       }
    }
 
-   async getPosts(queries = [Query.equal("status", "active")]) {
+   async getPosts() {
       try {
          return await this.databases.listDocuments(
             config.appwriteDatabaseId,
             config.appwriteCollectionId,
-            queries
+            [Query.equal("status", "active")]
          );
       } catch (error) {
+         console.log("post retrieval error: ", error);
          throw error;
       }
    }
@@ -105,12 +106,8 @@ export class Service {
       }
    }
 
-   async getFilePreview(fileId) {
-      try {
-         return await this.buckect.getFilePreview(config.appwriteBucketId, fileId);
-      } catch (error) {
-         throw error;
-      }
+   async getFilePrev(fileId) {
+      return this.bucket.getFilePreview(config.appwriteBucketId, fileId);
    }
 }
 
