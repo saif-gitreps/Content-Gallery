@@ -15,7 +15,7 @@ function AllPost() {
          .catch((error) => {
             console.log(error);
          });
-   });
+   }, []);
 
    return (
       <div className="w-full py-8">
@@ -27,7 +27,11 @@ function AllPost() {
                {posts.map((post) => {
                   return (
                      <div key={post.$id} className="p-2 w-1/4">
-                        <PostCard title={post.title} featuredImage={post.featuredImage} />
+                        <PostCard
+                           $id={post.$id}
+                           title={post.title}
+                           featuredImage={post.featuredImage}
+                        />
                      </div>
                   );
                })}
