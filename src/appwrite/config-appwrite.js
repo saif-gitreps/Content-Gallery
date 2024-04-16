@@ -80,8 +80,8 @@ export class Service {
       try {
          return await this.databases.listDocuments(
             config.appwriteDatabaseId,
-            config.appwriteCollectionId
-            // [Query.equal("status", "active")]
+            config.appwriteCollectionId,
+            [Query.equal("status", "active")]
          );
       } catch (error) {
          console.log("post retrieval error: ", error);
