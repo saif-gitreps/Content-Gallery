@@ -1,12 +1,12 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Input, Select, RTE } from "../index";
+import { Button, Input, Select } from "../index";
 import appwriteService from "../../appwrite/config-appwrite";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function PostForm({ post }) {
-   const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
+   const { register, handleSubmit, watch, setValue } = useForm({
       defaultValues: {
          title: post?.title || "",
          slug: post?.slug || "",
@@ -81,18 +81,35 @@ function PostForm({ post }) {
       };
    }, [slugTransform, setValue, watch]);
 
+   const [imageSrc, setImageSrc] = useState("");
+
+   useEffect(() => {
+      const fetchImageSrc = async () => {
+         try {
+            if (post) {
+               const imageUrl = await appwriteService.getFilePrev(post.featuredImage);
+               setImageSrc(imageUrl);
+            }
+         } catch (error) {
+            console.error("Error fetching image preview:", error);
+         }
+      };
+
+      fetchImageSrc();
+   }, [post?.featuredImage]);
+
    return (
       <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
          <div className="w-2/3 px-2">
             <Input
                label="Title :"
-               placeholder="Title"
+               placeholder={post ? post.title : "title"}
                className="mb-4"
                {...register("title", { required: true })}
             />
             <Input
                label="Slug :"
-               placeholder="Slug"
+               placeholder={"Slug"}
                className="mb-4"
                {...register("slug", { required: true })}
                onInput={(e) => {
@@ -101,16 +118,10 @@ function PostForm({ post }) {
                   });
                }}
             />
-            {/* <RTE
-               label="Content :"
-               name="content"
-               control={control}
-               defaultValue={getValues("content")}
-            /> */}
             <Input
                label="Content: "
                type="text"
-               placeholder="content"
+               placeholder={post ? post.content : "content"}
                {...register("content", { required: true })}
             />
          </div>
@@ -123,11 +134,7 @@ function PostForm({ post }) {
             />
             {post && (
                <div className="w-full mb-4">
-                  <img
-                     src={appwriteService.getFilePreview(post.featuredImage)}
-                     alt={post.title}
-                     className="rounded-lg"
-                  />
+                  <img src={imageSrc} alt={post.title} className="rounded-lg" />
                </div>
             )}
             <Select

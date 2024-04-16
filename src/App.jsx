@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./store/authSlice";
 import authService from "./appwrite/auth";
-import { Header, Footer } from "./components/index";
+import { Header, Loader } from "./components/index";
 import { Outlet } from "react-router-dom";
 
 import "./App.css";
@@ -30,7 +30,7 @@ function App() {
    });
 
    if (loading) {
-      // will ad a loading component
+      <Loader />;
    } else {
       return (
          <div className="min-h-screen flex flex-wrap content-between bg-gray-400">

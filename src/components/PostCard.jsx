@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import appwriteService from "../appwrite/config-appwrite";
 
-function PostCard({ $id, title, featuredImage, getFilePrev }) {
+function PostCard({ $id, title, featuredImage }) {
    const [imageSrc, setImageSrc] = useState("");
 
    useEffect(() => {
@@ -16,7 +16,7 @@ function PostCard({ $id, title, featuredImage, getFilePrev }) {
       };
 
       fetchImageSrc();
-   }, [featuredImage, getFilePrev]);
+   }, [featuredImage]);
 
    return (
       <Link to={`/post/${$id}`}>

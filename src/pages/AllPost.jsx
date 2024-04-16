@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
-import { Container, PostCard } from "../components";
+import { Container, PostCard, Loader } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 
 function AllPost() {
-   const [posts, setPosts] = useState([]);
+   const [posts, setPosts] = useState(null);
+   const [loading, setLoading] = useState(true);
    useEffect(() => {
       appwriteService
          .getPosts()
          .then((posts) => {
             if (posts) {
                setPosts(posts.documents);
+               setLoading(false);
             }
          })
          .catch((error) => {
@@ -17,6 +19,9 @@ function AllPost() {
          });
    }, []);
 
+   if (loading) {
+      return <Loader />;
+   }
    return (
       <div className="w-full py-8">
          <Container>
