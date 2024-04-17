@@ -33,7 +33,7 @@ function App() {
       <Loader />;
    } else {
       return (
-         <div className="min-h-screen flex flex-wrap content-between bg-gray-400">
+         <div className="min-h-screen flex flex-wrap content-between bg-gray-100">
             <div className="w-full block text">
                <Header />
                <main>
