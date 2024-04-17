@@ -20,7 +20,7 @@ function MyPosts() {
          .catch((error) => {
             console.log(error);
          });
-   }, []);
+   }, [userData]);
 
    if (loading) {
       return <Loader />;
