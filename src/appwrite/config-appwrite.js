@@ -89,6 +89,19 @@ export class Service {
       }
    }
 
+   async getUserPosts(userId) {
+      try {
+         return await this.databases.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteCollectionId,
+            [Query.equal("userId", userId)]
+         );
+      } catch (error) {
+         console.log("user posts retrieval error: ", error);
+         throw error;
+      }
+   }
+
    async uploadFile(file) {
       try {
          return await this.bucket.createFile(config.appwriteBucketId, ID.unique(), file);

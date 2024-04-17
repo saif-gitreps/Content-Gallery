@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { Container, PostCard, Loader } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
+import { useSelector } from "react-redux";
 
-function AllPost() {
+function MyPosts() {
    const [posts, setPosts] = useState(null);
    const [loading, setLoading] = useState(true);
+   const userData = useSelector((state) => state.auth.userData);
+
    useEffect(() => {
       appwriteService
-         .getPosts()
+         .getUserPosts(userData.$id)
          .then((posts) => {
             if (posts) {
                setPosts(posts.documents);
@@ -46,4 +49,4 @@ function AllPost() {
    );
 }
 
-export default AllPost;
+export default MyPosts;

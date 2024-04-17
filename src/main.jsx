@@ -13,7 +13,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import EditPost from "./pages/EditPost";
 import Post from "./pages/Post";
-import AllPosts from "./pages/AllPost";
+import MyPosts from "./pages/MyPosts.jsx";
 
 const router = createBrowserRouter([
    {
@@ -41,10 +41,10 @@ const router = createBrowserRouter([
             ),
          },
          {
-            path: "/all-posts",
+            path: "/my-posts",
             element: (
                <AuthLayout authentication>
-                  <AllPosts />
+                  <MyPosts />
                </AuthLayout>
             ),
          },

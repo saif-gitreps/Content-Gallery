@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./store/authSlice";
 import authService from "./appwrite/auth";
-import { Header, Loader } from "./components/index";
+import { Header, Footer, Loader } from "./components/index";
 import { Outlet } from "react-router-dom";
 
 import "./App.css";
@@ -39,7 +39,7 @@ function App() {
                <main>
                   <Outlet />
                </main>
-               {/* <Footer /> */}
+               <Footer />
             </div>
          </div>
       );
