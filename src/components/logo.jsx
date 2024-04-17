@@ -1,6 +1,6 @@
-function Logo({ width = "100px" }) {
+function Logo({ className = "" }) {
    return (
-      <div style={{ width: width }}>
+      <div className={`w-24 ${className}`}>
          <img src="/logo-bw.png" alt="logo" />
       </div>
    );
