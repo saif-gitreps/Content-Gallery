@@ -34,9 +34,9 @@ function App() {
    } else {
       return (
          <div className="min-h-screen flex flex-wrap content-between bg-gray-100">
-            <div className="w-full block text">
+            <div className="w-full block">
                <Header />
-               <main>
+               <main className="min-h-screen">
                   <Outlet />
                </main>
                <Footer />

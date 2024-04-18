@@ -9,17 +9,19 @@ function MyPosts() {
    const userData = useSelector((state) => state.auth.userData);
 
    useEffect(() => {
-      appwriteService
-         .getUserPosts(userData.$id)
-         .then((posts) => {
-            if (posts) {
-               setPosts(posts.documents);
-               setLoading(false);
-            }
-         })
-         .catch((error) => {
-            console.log(error);
-         });
+      if (userData) {
+         appwriteService
+            .getUserPosts(userData.$id)
+            .then((posts) => {
+               if (posts) {
+                  setPosts(posts.documents);
+                  setLoading(false);
+               }
+            })
+            .catch((error) => {
+               console.log(error);
+            });
+      }
    }, [userData]);
 
    if (loading) {

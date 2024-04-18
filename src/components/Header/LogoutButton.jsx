@@ -20,10 +20,7 @@ function LogoutButton({ className = "" }) {
    };
 
    return (
-      <button
-         onClick={logoutHandler}
-         className={`inline-bock px-4 duration-200 text-black hover:bg-blue-100 rounded-full ${className}`}
-      >
+      <button onClick={logoutHandler} className={`py-4 px-2 rounded-r-lg ${className}`}>
          Logout
       </button>
    );
