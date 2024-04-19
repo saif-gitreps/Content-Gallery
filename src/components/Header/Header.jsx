@@ -1,4 +1,4 @@
-import { Container, Logo, LogoutButton } from "../index";
+import { Container, Logo, LogoutButton, Hamburger } from "../index";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -38,13 +38,17 @@ function Header() {
    return (
       <header className="py-3 shadow bg-white font-medium">
          <Container>
-            <nav className="flex">
+            <nav className="flex ">
                <div className="mx-4">
                   <Link to="/">
                      <Logo className="w-16 p-2 rounded-full duration-300 hover:shadow-lg" />
                   </Link>
                </div>
-               <ul className="flex ml-auto">
+               {/* Use the HamburgerButton component for mobile */}
+               <div className="sm:hidden ml-auto">
+                  <Hamburger navItems={navItems} logutButton={authStatus} />
+               </div>
+               <ul className={`ml-auto hidden sm:flex`}>
                   {navItems.map((item) =>
                      item.active ? (
                         <li key={item.name} className="flex items-center">

@@ -58,14 +58,14 @@ export default function Post() {
       <div className="py-8">
          <Container>
             <div className="w-full flex justify-center mb-6 relative border rounded-xl p-2 bg-white hover:shadow-lg">
-               <img src={image} alt={post.title} className="rounded-xl " />
+               <img src={image} alt={post.title} className="rounded-xl" />
             </div>
             <div className="w-full mb-6">
                <h1 className="text-3xl font-bold">{post.title}</h1>
                <div className="text-xl font-medium">{parse(post.content)}</div>
             </div>
             {isAuthor && (
-               <div className="font-medium">
+               <div className="font-semibold font-mono">
                   <Link to={`/edit-post/${post.$id}`}>
                      <Button className="text-xl inline-bock px-3 py-4 bg-green-400 duration-300 hover:shadow-md hover:bg-green-100 rounded-xl mr-3">
                         Edit

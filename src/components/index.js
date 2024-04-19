@@ -1,6 +1,7 @@
 import LogoutButton from "./Header/LogoutButton";
 import Container from "./Container/Container";
 import PostForm from "./PostForm/PostForm";
+import Hamburger from "./Header/Hamburger";
 import AuthLayout from "./AuthLayout";
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
@@ -16,6 +17,7 @@ import RTE from "./RTE";
 
 export {
    LogoutButton,
+   Hamburger,
    Header,
    Footer,
    Container,
