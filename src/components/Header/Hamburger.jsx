@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import LogoutButton from "../index";
+import LogoutButton from "../Header/LogoutButton";
 
 const Hamburger = ({ navItems, logutButton }) => {
    const navigate = useNavigate();

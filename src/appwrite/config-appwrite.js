@@ -1,6 +1,5 @@
 /* eslint-disable no-useless-catch */
 import config from "../config/config";
-
 import { ID, Client, Databases, Query, Storage } from "appwrite";
 
 export class Service {
@@ -121,6 +120,23 @@ export class Service {
 
    async getFilePrev(fileId) {
       return this.bucket.getFilePreview(config.appwriteBucketId, fileId);
+   }
+
+   async AddProfilePicture(userId, profilePicture) {
+      try {
+         await this.databases.createDocument(
+            config.appwriteDatabaseId,
+            config.appwriteUserCollectionId,
+            ID.unique(),
+            {
+               userId,
+               profilePicture,
+            }
+         );
+      } catch (error) {
+         console.log("Appwrite serive :: uploadProfilePicture :: error", error);
+         return false;
+      }
    }
 }
 
