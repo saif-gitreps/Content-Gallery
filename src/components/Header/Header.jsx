@@ -49,7 +49,7 @@ function Header() {
             <nav className="flex ">
                <div className="mx-4">
                   <Link to="/">
-                     <Logo className="w-16 p-2 rounded-full duration-300 hover:shadow-lg" />
+                     <Logo className="p-2 rounded-full duration-300 hover:shadow-lg" />
                   </Link>
                </div>
                {/* Use the HamburgerButton component for mobile */}
@@ -76,7 +76,7 @@ function Header() {
                   )}
                   {authStatus && (
                      <li className="flex items-center">
-                        <DpDropdownMenuButton src={dp} />
+                        <DpDropdownMenuButton src={dp} navItems={navItems} />
                      </li>
                   )}
                </ul>
