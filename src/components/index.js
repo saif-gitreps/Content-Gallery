@@ -1,3 +1,4 @@
+import DpDropdownMenuButton from "./Header/DpDropdownMenuButton";
 import LogoutButton from "./Header/LogoutButton";
 import Container from "./Container/Container";
 import PostForm from "./PostForm/PostForm";
@@ -16,6 +17,7 @@ import Logo from "./logo";
 import RTE from "./RTE";
 
 export {
+   DpDropdownMenuButton,
    LogoutButton,
    Hamburger,
    Header,

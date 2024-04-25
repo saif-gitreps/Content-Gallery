@@ -1,4 +1,4 @@
-import { Container, Logo, LogoutButton, Hamburger } from "../index";
+import { Container, Logo, LogoutButton, Hamburger, DpDropdownMenuButton } from "../index";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -76,13 +76,7 @@ function Header() {
                   )}
                   {authStatus && (
                      <li className="flex items-center">
-                        <Link to="/profile">
-                           <img
-                              src={dp}
-                              alt="profile"
-                              className="w-12 h-12 rounded-full duration-300 hover:shadow-md"
-                           />
-                        </Link>
+                        <DpDropdownMenuButton src={dp} />
                      </li>
                   )}
                </ul>
