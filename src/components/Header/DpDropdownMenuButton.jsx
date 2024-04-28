@@ -52,7 +52,8 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
             >
                {navItems.map(
                   (item) =>
-                     item.active && (
+                     item.active &&
+                     item.forDropDownMenu && (
                         <button
                            key={item.name}
                            onClick={() => navigate(item.slug)}

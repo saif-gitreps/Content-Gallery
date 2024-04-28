@@ -3,45 +3,20 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import getNavItems from "./navItems";
 
 function Header() {
    const authStatus = useSelector((state) => state.auth.status);
-   const profilePicture = useSelector((state) => state.auth.userData?.profilePicture);
+   const userData = useSelector((state) => state.auth.userData);
    const navigate = useNavigate();
    const [dp, setDp] = useState("/blank-dp.png");
    useEffect(() => {
-      if (authStatus && profilePicture) {
-         setDp(profilePicture);
+      if (authStatus && userData.profilePicture) {
+         setDp(userData.profilePicture);
       }
-   }, [authStatus, profilePicture]);
+   }, [authStatus, userData.profilePicture]);
 
-   const navItems = [
-      {
-         name: "Home",
-         slug: "/",
-         active: true,
-      },
-      {
-         name: "Login",
-         slug: "/login",
-         active: !authStatus,
-      },
-      {
-         name: "Signup",
-         slug: "/signup",
-         active: !authStatus,
-      },
-      {
-         name: "My Posts",
-         slug: "/my-posts",
-         active: authStatus,
-      },
-      {
-         name: "Add Post",
-         slug: "/add-post",
-         active: authStatus,
-      },
-   ];
+   const navItems = getNavItems(authStatus, userData);
 
    return (
       <header className="py-3 shadow bg-white font-medium">
@@ -58,7 +33,7 @@ function Header() {
                </div>
                <ul className={`ml-auto hidden sm:flex`}>
                   {navItems.map((item) =>
-                     item.active ? (
+                     item.active && !item.forDropDownMenu ? (
                         <li key={item.name} className="flex items-center">
                            <button
                               onClick={() => navigate(item.slug)}
