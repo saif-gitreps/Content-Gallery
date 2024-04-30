@@ -28,7 +28,7 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
       return () => {
          document.removeEventListener("mousedown", handleClickOutside);
       };
-   }, []);
+   }, [open]);
 
    return (
       <>
@@ -50,24 +50,26 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
                className="absolute top-20 right-32 w-48 bg-white shadow-lg rounded-xl"
                ref={dropdownRef}
             >
-               {navItems.map(
-                  (item) =>
-                     item.active &&
-                     item.forDropDownMenu && (
-                        <button
-                           key={item.name}
-                           onClick={() => navigate(item.slug)}
-                           className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-                        >
-                           {item.name}
-                        </button>
-                     )
-               )}
-               {authStatus && (
-                  <li className="flex items-center">
-                     <LogoutButton className="block w-full px-4 py-2 text-left hover:bg-gray-100" />
-                  </li>
-               )}
+               <ul>
+                  {navItems.map(
+                     (item) =>
+                        item.active &&
+                        item.forDropDownMenu && (
+                           <button
+                              key={item.name}
+                              onClick={() => navigate(item.slug)}
+                              className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                           >
+                              {item.name}
+                           </button>
+                        )
+                  )}
+                  {authStatus && (
+                     <li className="flex items-center">
+                        <LogoutButton className="block w-full px-4 py-2 text-left hover:bg-gray-100" />
+                     </li>
+                  )}
+               </ul>
             </div>
          )}
       </>

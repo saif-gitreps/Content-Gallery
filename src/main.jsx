@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { AuthLayout } from "./components";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import { Home, AddPost, Login, Signup, EditPost, Post, MyPosts } from "./pages";
+import { Home, AddPost, Login, Signup, EditPost, Post, MyPosts, Profile } from "./pages";
 
 const router = createBrowserRouter([
    {
@@ -39,6 +39,14 @@ const router = createBrowserRouter([
             element: (
                <AuthLayout authentication>
                   <MyPosts />
+               </AuthLayout>
+            ),
+         },
+         {
+            path: "/profile",
+            element: (
+               <AuthLayout authentication>
+                  <Profile />
                </AuthLayout>
             ),
          },
