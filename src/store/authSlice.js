@@ -25,6 +25,6 @@ const authSlice = createSlice({
 
 // if you want to export the reducers then u can access it in the authSlice.actions.
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, update } = authSlice.actions;
 
 export default authSlice.reducer;
