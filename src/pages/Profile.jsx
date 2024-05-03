@@ -1,18 +1,13 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../store/authSlice";
 import { Container, Input, Button } from "../components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import appwriteService from "../appwrite/config-appwrite";
 import { useForm } from "react-hook-form";
 
 function Profile() {
    const [profilePicture, setProfilePicture] = useState("/blank-dp.png");
    const userData = useSelector((state) => state.auth.userData);
-   const [editProfilePic, setEditProfilePic] = useState(false);
-   const [editName, setEditName] = useState(false);
-   const [editEmail, setEditEmail] = useState(false);
-   const [editPassword, setEditPassword] = useState(false);
-   const [editPhone, setEditPhone] = useState(false);
    const dispatch = useDispatch();
 
    const formatDate = (dateString) => {
@@ -63,24 +58,72 @@ function Profile() {
       };
    }, [userData.profilePicture]);
 
+   const onProfilePicUpload = async (data) => {
+      const file = data.profilePicture[0];
+      const fileData = new FormData();
+      fileData.append("file", file);
+
+      try {
+         const fileRes = await appwriteService.uploadFile(fileData);
+         const updatedUser = await appwriteService.updateProfile({
+            profilePicture: fileRes.$id,
+         });
+         dispatch(update({ userData: updatedUser }));
+      } catch (error) {
+         console.log("Profile Picture Upload Error", error);
+      }
+   };
+
+   const profilePictureInputRef = useRef(null);
+
+   /// i am taking the ref of the hidden input field
+   // and putting an event listener as to when there exist a file
+   // that was uploaded. the preview will be shown in the profile picture.
+   const handleProfilePicPreview = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+         const reader = new FileReader();
+         reader.onload = () => {
+            setProfilePicture(reader.result);
+         };
+         reader.readAsDataURL(file);
+      }
+   };
+
    return (
       <div className="py-8">
          <Container>
             <div className="flex flex-col items-center bg-white max-w-xl m-auto rounded-lg">
                <h1 className="text-3xl font-semibold mt-8">Profile</h1>
-               <div>
+               <form onSubmit={handleSubmitProfilePicture(onProfilePicUpload)}>
                   <img
                      src={profilePicture}
                      alt="Profile"
                      className="w-32 h-32 rounded-full"
                   />
+                  <Input
+                     className="hidden"
+                     type="file"
+                     {...registerProfilePicture("profilePicture")}
+                     onChange={handleProfilePicPreview}
+                     ref={profilePictureInputRef}
+                  />
                   <img
                      src="edit-icon.png"
                      alt="Profile"
                      className="w-4 h-4 relative bottom-4 left-28 hover:cursor-pointer hover:opacity-50"
+                     onClick={() => profilePictureInputRef.current.click()}
                   />
-                  <Input className="hidden" />
-               </div>
+                  <Button type="submit">Save</Button>
+                  <Button
+                     type="button"
+                     onClick={() => {
+                        setProfilePicture(userData?.profilePicture || "/blank-dp.png");
+                     }}
+                  >
+                     Cancel
+                  </Button>
+               </form>
 
                <div className="flex flex-col items-center my-6">
                   <div className="my-6">
