@@ -3,16 +3,25 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import appwriteService from "../../appwrite/config-appwrite";
 import getNavItems from "./navItems";
 
 function Header() {
    const authStatus = useSelector((state) => state.auth.status);
-   const userData = useSelector((state) => state.auth.userData);
+   let userData = useSelector((state) => state.auth.userData);
    const navigate = useNavigate();
    const [dp, setDp] = useState("/blank-dp.png");
    useEffect(() => {
-      if (authStatus && userData.profilePicture) {
-         setDp(userData.profilePicture);
+      console.log(userData);
+      if (authStatus) {
+         setDp(
+            appwriteService.getFilePrev(userData.profilePicture).then((profilePicURL) =>
+               setDp(profilePicURL).catch((error) => {
+                  setDp("/blank-dp.png");
+                  console.log("Error in getting profile picture", error);
+               })
+            )
+         );
       }
    }, [authStatus, userData.profilePicture]);
 
@@ -27,7 +36,6 @@ function Header() {
                      <Logo className="p-2 rounded-full duration-300 hover:shadow-lg" />
                   </Link>
                </div>
-               {/* Use the HamburgerButton component for mobile */}
                <div className="sm:hidden ml-auto">
                   <Hamburger navItems={navItems} logutButton={authStatus} />
                </div>

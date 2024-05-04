@@ -73,16 +73,18 @@ function Profile() {
    });
 
    const onProfilePicUpload = async (data) => {
-      const file = data.profilePicture[0];
-      const fileData = new FormData();
-      fileData.append("file", file);
-
       try {
-         const fileRes = await appwriteService.uploadFile(fileData);
-         const updatedUser = await appwriteService.updateProfile({
-            profilePicture: fileRes.$id,
-         });
-         dispatch(update({ userData: updatedUser }));
+         const file = await appwriteService.uploadFile(data.profilePicture[0]);
+         if (file) {
+            const updatedUserData = { ...userData };
+            updatedUserData.profilePicture = file.$id;
+            dispatch(update(updatedUserData));
+            const filePreviw = await appwriteService.getFilePrev(file.$id);
+            if (filePreviw) {
+               setProfilePicture(filePreviw);
+            }
+            setEditProfilePic(false);
+         }
       } catch (error) {
          console.log("Profile Picture Upload Error", error);
       }
@@ -110,6 +112,7 @@ function Profile() {
             <div className="flex flex-col items-center bg-white max-w-xl m-auto rounded-xl shadow-md">
                <h1 className="text-3xl font-semibold mt-8">Profile</h1>
                <form
+                  key={1}
                   onSubmit={handleSubmitProfilePicture(onProfilePicUpload)}
                   className="h-44"
                >
@@ -119,11 +122,11 @@ function Profile() {
                      className="w-32 h-32 rounded-full"
                   />
                   <Input
-                     className="hidden"
+                     className=""
                      type="file"
                      {...registerProfilePicture("profilePicture")}
                      onChange={handleProfilePicPreview}
-                     ref={profilePictureInputRef}
+                     // ref={profilePictureInputRef}
                   />
                   {!editProfilePic && (
                      <img
@@ -136,14 +139,36 @@ function Profile() {
                      />
                   )}
                   {editProfilePic && (
-                     <ProfilePicUpdateIcons
-                        profilePictureInputRef={profilePictureInputRef}
-                        setProfilePicture={setProfilePicture}
-                        userData={userData}
-                        setEditProfilePic={setEditProfilePic}
-                     />
+                     <div className="flex items-center justify-evenly p-2">
+                        <img
+                           src="upload-icon.png"
+                           alt="upload"
+                           className="w-6 h-6 hover:cursor-pointer hover:opacity-50"
+                           onClick={() => profilePictureInputRef.current.click()}
+                        />
+                        <button
+                           type="submit"
+                           className="hover:cursor-pointer hover:opacity-50"
+                        >
+                           <img src="check.png" alt="save" className="w-6 h-6" />
+                           submit
+                        </button>
+                        <img
+                           src="delete-button.png"
+                           alt="cancel"
+                           className="w-6 h-6 hover:cursor-pointer hover:opacity-50"
+                           onClick={() => {
+                              setProfilePicture(
+                                 userData?.profilePicture || "/blank-dp.png"
+                              );
+                              setEditProfilePic(false);
+                           }}
+                        />
+                     </div>
                   )}
                </form>
+
+               {/*
 
                <div className="flex flex-col items-center mb-6">
                   <div className="my-6">
@@ -197,6 +222,7 @@ function Profile() {
                      </form>
                   </div>
                </div>
+               */}
             </div>
          </Container>
       </div>
