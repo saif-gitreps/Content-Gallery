@@ -1,22 +1,49 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../store/authSlice";
-import { Container, Input, Button } from "../components";
-import { useEffect, useState, useRef } from "react";
+import { Container, Input } from "../components";
+import { useState, useRef } from "react";
 import appwriteService from "../appwrite/config-appwrite";
 import { useForm } from "react-hook-form";
 
+function ProfilePicUpdateIcons({
+   profilePictureInputRef,
+   setProfilePicture,
+   userData,
+   setEditProfilePic,
+}) {
+   return (
+      <div className="flex items-center justify-evenly p-2">
+         <img
+            src="upload-icon.png"
+            alt="save"
+            className="w-6 h-6 hover:cursor-pointer hover:opacity-50"
+            onClick={() => profilePictureInputRef.current.click()}
+         />
+         <button type="submit" className="hover:cursor-pointer hover:opacity-50">
+            <img src="check.png" alt="save" className="w-6 h-6" />
+         </button>
+         <img
+            src="delete-button.png"
+            alt="cancel"
+            className="w-6 h-6 hover:cursor-pointer hover:opacity-50"
+            onClick={() => {
+               setProfilePicture(userData?.profilePicture || "/blank-dp.png");
+               setEditProfilePic(false);
+            }}
+         />
+      </div>
+   );
+}
+
 function Profile() {
    const [profilePicture, setProfilePicture] = useState("/blank-dp.png");
+   const [editProfilePic, setEditProfilePic] = useState(false);
+   const [editName, setEditName] = useState(false);
+   const [editEmail, setEditEmail] = useState(false);
+   const [editPassword, setEditPassword] = useState(false);
+   const [editPhone, setEditPhone] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
    const dispatch = useDispatch();
-
-   const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      const day = date.getDate().toString().padStart(2, "0");
-      const month = (date.getMonth() + 1).toString().padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-   };
 
    const { register: registerProfilePicture, handleSubmit: handleSubmitProfilePicture } =
       useForm();
@@ -44,19 +71,6 @@ function Profile() {
          phone: userData?.phone || "",
       },
    });
-
-   useEffect(() => {
-      async () => {
-         if (userData.profilePicture) {
-            setProfilePicture(
-               await appwriteService
-                  .getFilePrev(userData.profilePicture)
-                  .then((res) => res)
-                  .catch(() => "/blank-dp.png")
-            );
-         }
-      };
-   }, [userData.profilePicture]);
 
    const onProfilePicUpload = async (data) => {
       const file = data.profilePicture[0];
@@ -93,9 +107,12 @@ function Profile() {
    return (
       <div className="py-8">
          <Container>
-            <div className="flex flex-col items-center bg-white max-w-xl m-auto rounded-lg">
+            <div className="flex flex-col items-center bg-white max-w-xl m-auto rounded-xl shadow-md">
                <h1 className="text-3xl font-semibold mt-8">Profile</h1>
-               <form onSubmit={handleSubmitProfilePicture(onProfilePicUpload)}>
+               <form
+                  onSubmit={handleSubmitProfilePicture(onProfilePicUpload)}
+                  className="h-44"
+               >
                   <img
                      src={profilePicture}
                      alt="Profile"
@@ -108,53 +125,76 @@ function Profile() {
                      onChange={handleProfilePicPreview}
                      ref={profilePictureInputRef}
                   />
-                  <img
-                     src="edit-icon.png"
-                     alt="Profile"
-                     className="w-4 h-4 relative bottom-4 left-28 hover:cursor-pointer hover:opacity-50"
-                     onClick={() => profilePictureInputRef.current.click()}
-                  />
-                  <Button type="submit">Save</Button>
-                  <Button
-                     type="button"
-                     onClick={() => {
-                        setProfilePicture(userData?.profilePicture || "/blank-dp.png");
-                     }}
-                  >
-                     Cancel
-                  </Button>
+                  {!editProfilePic && (
+                     <img
+                        src="edit-icon.png"
+                        alt="Profile"
+                        className="w-4 h-4 relative bottom-4 left-28 hover:cursor-pointer hover:opacity-50"
+                        onClick={() => {
+                           setEditProfilePic(true);
+                        }}
+                     />
+                  )}
+                  {editProfilePic && (
+                     <ProfilePicUpdateIcons
+                        profilePictureInputRef={profilePictureInputRef}
+                        setProfilePicture={setProfilePicture}
+                        userData={userData}
+                        setEditProfilePic={setEditProfilePic}
+                     />
+                  )}
                </form>
 
-               <div className="flex flex-col items-center my-6">
+               <div className="flex flex-col items-center mb-6">
                   <div className="my-6">
-                     <h2 className="text-xl font-semibold mt-4">
-                        <span className="text-blue-900">Name: </span>
-                        {userData.name}
-                     </h2>
-                     <p className="text-xl font-semibold mt-42">
-                        <span className="text-blue-900">Email: </span>{" "}
-                        {userData.email +
-                           `${
+                     <form action="">
+                        <h2 className="text-lg font-semibold ml-2">Name:</h2>
+                        <Input
+                           className="text-xl font-normal"
+                           readOnly={!editName}
+                           {...registerName("name", { required: true })}
+                        />
+                     </form>
+                     <form action="">
+                        <h2 className="text-lg font-semibold ml-2">
+                           Email{" "}
+                           {`${
                               userData.emailVerification
                                  ? " (Verified)"
                                  : " (Not Verified)"
-                           }`}
-                     </p>
-                     <p className="text-xl font-semibold mt-42">
-                        <span className="text-blue-900">Password: </span> Last updated on{" "}
-                        {formatDate(userData.passwordUpdate)}
-                     </p>
-                     <p className="text-xl font-semibold mt-42">
-                        <span className="text-blue-900">Phone: </span>
-                        {userData.phone
-                           ? userData.phone +
-                             `${
-                                userData.phoneVerification
-                                   ? " (Verified)"
-                                   : " (Not verified)"
-                             }`
-                           : "Not provided"}
-                     </p>
+                           }`}{" "}
+                           :
+                        </h2>
+                        <Input
+                           className="text-xl font-normal"
+                           readOnly={!editEmail}
+                           {...registerEmail("email", { required: true })}
+                        />
+                     </form>
+                     <form action="">
+                        <h2 className="text-lg font-semibold ml-2">
+                           Phone{" "}
+                           {`${
+                              userData.phoneVerification
+                                 ? " (Verified)"
+                                 : " (Not Verified)"
+                           }`}{" "}
+                           :
+                        </h2>
+                        <Input
+                           className="text-xl font-normal"
+                           readOnly={!editPhone}
+                           {...registerPhone("phone")}
+                        />
+                     </form>
+                     <form action="">
+                        <h2 className="text-lg font-semibold ml-2">Password:</h2>
+                        <Input
+                           className="text-xl font-normal"
+                           readOnly={!editPassword}
+                           {...registerPassword("password", { required: true })}
+                        />
+                     </form>
                   </div>
                </div>
             </div>
