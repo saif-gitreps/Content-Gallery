@@ -18,7 +18,7 @@ const authSlice = createSlice({
          state.userData = null;
       },
       update: (state, action) => {
-         state.userData = action.payload;
+         state.userData = action.payload.updatedUserData;
       },
    },
 });

@@ -2,8 +2,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { update } from "../store/authSlice";
 import { Container, Input } from "../components";
 import { useState, useRef } from "react";
+import authService from "../appwrite/auth";
 import appwriteService from "../appwrite/config-appwrite";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 
 function ProfilePicUpdateIcons({
    profilePictureInputRef,
@@ -36,13 +37,15 @@ function ProfilePicUpdateIcons({
 }
 
 function Profile() {
-   const [profilePicture, setProfilePicture] = useState("/blank-dp.png");
    const [editProfilePic, setEditProfilePic] = useState(false);
    const [editName, setEditName] = useState(false);
    const [editEmail, setEditEmail] = useState(false);
    const [editPassword, setEditPassword] = useState(false);
    const [editPhone, setEditPhone] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
+   const [profilePicture, setProfilePicture] = useState(
+      userData.prefs.profilePicture || "/blank-dp.png"
+   );
    const dispatch = useDispatch();
 
    const { register: registerProfilePicture, handleSubmit: handleSubmitProfilePicture } =
@@ -75,11 +78,18 @@ function Profile() {
    const onProfilePicUpload = async (data) => {
       try {
          const file = await appwriteService.uploadFile(data.profilePicture[0]);
+         console.log(file);
          if (file) {
             const filePreviw = await appwriteService.getFilePrev(file.$id);
-            await appwriteService.updateProfilePicture(userData.$id, filePreviw);
-            const updatedUserData = { ...userData, profilePicture: filePreviw };
-            dispatch(update(updatedUserData));
+
+            const updatedUserData = { ...userData };
+            updatedUserData.prefs = { ...userData.prefs };
+            updatedUserData.prefs.profilePicture = filePreviw.href;
+
+            await authService.updateProfilePicture(filePreviw.href);
+
+            dispatch(update({ updatedUserData }));
+
             if (filePreviw) {
                setProfilePicture(filePreviw);
             }

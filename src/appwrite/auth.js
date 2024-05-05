@@ -61,11 +61,21 @@ export class AuthService {
       }
    }
 
-   async updateProfile({ name, email, password, phone }) {
+   async updateProfilePicture(profilePicture) {
       try {
-         return await this.account.updateEmail(name, email, password, phone);
+         console.log(profilePicture);
+         return await this.account.updatePrefs({ profilePicture: profilePicture });
       } catch (error) {
          console.log("Appwrite serive :: update :: error", error);
+         return null;
+      }
+   }
+
+   async getProfilePicture() {
+      try {
+         return await this.account.getPrefs();
+      } catch (error) {
+         console.log("Appwrite serive :: getProfilePicture :: error", error);
          return null;
       }
    }

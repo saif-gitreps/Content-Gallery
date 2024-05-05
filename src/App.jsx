@@ -27,7 +27,7 @@ function App() {
          .finally(() => {
             setLoading(false);
          });
-   }, []);
+   }, [dispatch]);
 
    if (loading) {
       <Loader />;

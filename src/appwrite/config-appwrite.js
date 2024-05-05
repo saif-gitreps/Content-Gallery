@@ -127,9 +127,8 @@ export class Service {
          return await this.databases.createDocument(
             config.appwriteDatabaseId,
             config.appwriteUserCollectionId,
-            ID.unique(),
+            userId,
             {
-               userId,
                profilePicture,
             }
          );
@@ -142,7 +141,7 @@ export class Service {
    async updateProfilePicture(userId, profilePicture) {
       try {
          // keep in mind i am storing the URL not the id from bucket.
-         await this.databases.updateDocument(
+         const updatedProfilePic = await this.databases.updateDocument(
             config.appwriteDatabaseId,
             config.appwriteUserCollectionId,
             userId,
@@ -150,6 +149,9 @@ export class Service {
                profilePicture,
             }
          );
+         if (!updatedProfilePic) {
+            return await this.createUserProfile(userId, profilePicture);
+         }
       } catch (error) {
          console.log("Appwrite serive :: updateProfilePicture :: error", error);
          return false;
