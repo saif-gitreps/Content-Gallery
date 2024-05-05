@@ -76,10 +76,10 @@ function Profile() {
       try {
          const file = await appwriteService.uploadFile(data.profilePicture[0]);
          if (file) {
-            const updatedUserData = { ...userData };
-            updatedUserData.profilePicture = file.$id;
-            dispatch(update(updatedUserData));
             const filePreviw = await appwriteService.getFilePrev(file.$id);
+            await appwriteService.updateProfilePicture(userData.$id, filePreviw);
+            const updatedUserData = { ...userData, profilePicture: filePreviw };
+            dispatch(update(updatedUserData));
             if (filePreviw) {
                setProfilePicture(filePreviw);
             }

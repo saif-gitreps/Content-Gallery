@@ -1,29 +1,37 @@
 import { Container, Logo, Hamburger, DpDropdownMenuButton } from "../index";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import appwriteService from "../../appwrite/config-appwrite";
+import { update } from "../../store/authSlice";
 import getNavItems from "./navItems";
 
 function Header() {
    const authStatus = useSelector((state) => state.auth.status);
    let userData = useSelector((state) => state.auth.userData);
    const navigate = useNavigate();
+   const dispatch = useDispatch();
    const [dp, setDp] = useState("/blank-dp.png");
    useEffect(() => {
       console.log(userData);
       if (authStatus) {
-         setDp(
-            appwriteService.getFilePrev(userData.profilePicture).then((profilePicURL) =>
-               setDp(profilePicURL).catch((error) => {
-                  setDp("/blank-dp.png");
-                  console.log("Error in getting profile picture", error);
-               })
-            )
-         );
+         if (userData.profilePicture === undefined || !userData.profilePicture) {
+            appwriteService
+               .createUserProfile(userData.$id, "/blank-dp.png")
+               .then((res) => {
+                  if (res) {
+                     const updatedUserData = {
+                        ...userData,
+                        profilePicture: "/blank-dp.png",
+                     };
+                     dispatch(update(updatedUserData));
+                  }
+               });
+         }
+         setDp(userData?.profilePicture || "/blank-dp.png");
       }
-   }, [authStatus, userData.profilePicture]);
+   }, [authStatus, userData]);
 
    const navItems = getNavItems(authStatus, userData);
 

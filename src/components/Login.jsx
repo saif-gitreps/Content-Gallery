@@ -17,16 +17,11 @@ function Login() {
       try {
          const session = await authService.login(data);
          if (session) {
-            authService
-               .getCurrentUser()
-               .then((userData) => {
-                  dispatch(authLogin(userData));
-                  navigate("/");
-               })
-               .catch((error) => {
-                  console.log("Error message from error component" + error);
-                  setError(error.message);
-               });
+            const userData = await authService.getCurrentUser();
+            if (userData) {
+               dispatch(authLogin(userData));
+               navigate("/");
+            }
          }
       } catch (error) {
          console.log("Error message from error component" + error);

@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 import config from "../config/config";
+import appwriteService from "./config-appwrite";
 
 import { Client, Account, ID } from "appwrite";
 
@@ -30,7 +31,8 @@ export class AuthService {
             name
          );
          if (userAccount) {
-            // call another method
+            // creating a user profile in dbs for pfp and other stuffs.
+            await appwriteService.createUserProfile(userAccount.$id);
             return await this.login({ email, password });
          } else {
             return userAccount;
