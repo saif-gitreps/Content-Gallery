@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../store/authSlice";
-import { Container, Input } from "../components";
-import { useState, useRef } from "react";
+import { Container, Input, Button } from "../components";
+import { useState } from "react";
 import authService from "../appwrite/auth";
 import appwriteService from "../appwrite/config-appwrite";
 import { useForm } from "react-hook-form";
@@ -99,8 +99,6 @@ function Profile() {
       }
    };
 
-   const profilePictureInputRef = useRef(null);
-
    /// i am taking the ref of the hidden input field
    // and putting an event listener as to when there exist a file
    // that was uploaded. the preview will be shown in the profile picture.
@@ -134,50 +132,82 @@ function Profile() {
                      <img
                         src="edit-icon.png"
                         alt="Profile"
-                        className="w-4 h-4 relative bottom-4 left-14 hover:cursor-pointer hover:opacity-50"
+                        className="w-4 h-4 relative bottom-32 left-14 hover:cursor-pointer hover:opacity-50"
                         onClick={() => {
                            setEditProfilePic(true);
                         }}
                      />
                   )}
                   {editProfilePic && (
-                     <div className="flex flex-col items-center max-w-64">
+                     <div className="flex flex-col items-center">
                         <Input
                            type="file"
                            {...registerProfilePicture("profilePicture")}
                            onChange={handleProfilePicPreview}
                         />
-                        <div className="flex  relative bottom-9 left-44">
+                        <div className="flex m-2">
                            <button
                               type="submit"
-                              className="hover:cursor-pointer hover:opacity-50 mx-1"
+                              className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
                            >
-                              <img src="check.png" alt="save" className="w-6 h-6" />
+                              Save
                            </button>
-                           <img
-                              src="delete-button.png"
-                              alt="cancel"
-                              className="w-6 h-6 hover:cursor-pointer hover:opacity-50 mx-1"
+                           <button
+                              className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
                               onClick={() => {
                                  setProfilePicture(
                                     userData?.prefs.profilePicture || "/blank-dp.png"
                                  );
                                  setEditProfilePic(false);
                               }}
-                           />
+                           >
+                              close
+                           </button>
                         </div>
                      </div>
                   )}
                </form>
                <div className="flex flex-col items-center mb-6">
                   <div className="my-6">
-                     <form action="">
-                        <h2 className="text-lg font-semibold ml-2">Name:</h2>
+                     <form key={2}>
+                        <div className="flex items-center justify-between">
+                           <h2 className="text-lg font-semibold ml-2">Name:</h2>
+                           {!editName && (
+                              <img
+                                 src="edit-icon.png"
+                                 alt="Profile"
+                                 className="w-4 h-4 hover:cursor-pointer hover:opacity-50"
+                                 onClick={() => {
+                                    setEditName(true);
+                                 }}
+                              />
+                           )}
+                        </div>
                         <Input
                            className="text-xl font-normal"
                            readOnly={!editName}
                            {...registerName("name", { required: true })}
                         />
+                        {editName && (
+                           <div className="flex flex-col items-center m-2">
+                              <div className="flex">
+                                 <button
+                                    type="submit"
+                                    className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 >
+                                    Save
+                                 </button>
+                                 <button
+                                    className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                    onClick={() => {
+                                       setEditName(false);
+                                    }}
+                                 >
+                                    close
+                                 </button>
+                              </div>
+                           </div>
+                        )}
                      </form>
                      <form action="">
                         <h2 className="text-lg font-semibold ml-2">
