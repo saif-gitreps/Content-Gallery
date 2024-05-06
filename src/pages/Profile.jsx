@@ -4,22 +4,11 @@ import { Container, Input } from "../components";
 import { useState, useRef } from "react";
 import authService from "../appwrite/auth";
 import appwriteService from "../appwrite/config-appwrite";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
-function ProfilePicUpdateIcons({
-   profilePictureInputRef,
-   setProfilePicture,
-   userData,
-   setEditProfilePic,
-}) {
+function ProfilePicUpdateIcons({ setProfilePicture, userData, setEditProfilePic }) {
    return (
       <div className="flex items-center justify-evenly p-2">
-         <img
-            src="upload-icon.png"
-            alt="save"
-            className="w-6 h-6 hover:cursor-pointer hover:opacity-50"
-            onClick={() => profilePictureInputRef.current.click()}
-         />
          <button type="submit" className="hover:cursor-pointer hover:opacity-50">
             <img src="check.png" alt="save" className="w-6 h-6" />
          </button>
@@ -44,7 +33,7 @@ function Profile() {
    const [editPhone, setEditPhone] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
    const [profilePicture, setProfilePicture] = useState(
-      userData.prefs.profilePicture || "/blank-dp.png"
+      userData?.prefs?.profilePicture || "/blank-dp.png"
    );
    const dispatch = useDispatch();
 
@@ -78,15 +67,25 @@ function Profile() {
    const onProfilePicUpload = async (data) => {
       try {
          const file = await appwriteService.uploadFile(data.profilePicture[0]);
-         console.log(file);
          if (file) {
+            console.log(userData);
+            if (userData.prefs.profilePictureId) {
+               const check = await appwriteService.deleteFile(
+                  userData.prefs.profilePictureId
+               );
+               console.log(check);
+            }
             const filePreviw = await appwriteService.getFilePrev(file.$id);
 
             const updatedUserData = { ...userData };
-            updatedUserData.prefs = { ...userData.prefs };
-            updatedUserData.prefs.profilePicture = filePreviw.href;
 
-            await authService.updateProfilePicture(filePreviw.href);
+            updatedUserData.prefs = {
+               ...userData.prefs,
+               profilePicture: filePreviw.href,
+               profilePictureId: file.$id,
+            };
+
+            await authService.updateProfilePicture(filePreviw.href, file.$id);
 
             dispatch(update({ updatedUserData }));
 
@@ -124,62 +123,52 @@ function Profile() {
                <form
                   key={1}
                   onSubmit={handleSubmitProfilePicture(onProfilePicUpload)}
-                  className="h-44"
+                  className="flex items-center flex-col"
                >
                   <img
                      src={profilePicture}
                      alt="Profile"
                      className="w-32 h-32 rounded-full"
                   />
-                  <Input
-                     className=""
-                     type="file"
-                     {...registerProfilePicture("profilePicture")}
-                     onChange={handleProfilePicPreview}
-                     // ref={profilePictureInputRef}
-                  />
                   {!editProfilePic && (
                      <img
                         src="edit-icon.png"
                         alt="Profile"
-                        className="w-4 h-4 relative bottom-4 left-28 hover:cursor-pointer hover:opacity-50"
+                        className="w-4 h-4 relative bottom-4 left-14 hover:cursor-pointer hover:opacity-50"
                         onClick={() => {
                            setEditProfilePic(true);
                         }}
                      />
                   )}
                   {editProfilePic && (
-                     <div className="flex items-center justify-evenly p-2">
-                        <img
-                           src="upload-icon.png"
-                           alt="upload"
-                           className="w-6 h-6 hover:cursor-pointer hover:opacity-50"
-                           onClick={() => profilePictureInputRef.current.click()}
+                     <div className="flex flex-col items-center max-w-64">
+                        <Input
+                           type="file"
+                           {...registerProfilePicture("profilePicture")}
+                           onChange={handleProfilePicPreview}
                         />
-                        <button
-                           type="submit"
-                           className="hover:cursor-pointer hover:opacity-50"
-                        >
-                           <img src="check.png" alt="save" className="w-6 h-6" />
-                           submit
-                        </button>
-                        <img
-                           src="delete-button.png"
-                           alt="cancel"
-                           className="w-6 h-6 hover:cursor-pointer hover:opacity-50"
-                           onClick={() => {
-                              setProfilePicture(
-                                 userData?.profilePicture || "/blank-dp.png"
-                              );
-                              setEditProfilePic(false);
-                           }}
-                        />
+                        <div className="flex  relative bottom-9 left-44">
+                           <button
+                              type="submit"
+                              className="hover:cursor-pointer hover:opacity-50 mx-1"
+                           >
+                              <img src="check.png" alt="save" className="w-6 h-6" />
+                           </button>
+                           <img
+                              src="delete-button.png"
+                              alt="cancel"
+                              className="w-6 h-6 hover:cursor-pointer hover:opacity-50 mx-1"
+                              onClick={() => {
+                                 setProfilePicture(
+                                    userData?.prefs.profilePicture || "/blank-dp.png"
+                                 );
+                                 setEditProfilePic(false);
+                              }}
+                           />
+                        </div>
                      </div>
                   )}
                </form>
-
-               {/*
-
                <div className="flex flex-col items-center mb-6">
                   <div className="my-6">
                      <form action="">
@@ -232,7 +221,6 @@ function Profile() {
                      </form>
                   </div>
                </div>
-               */}
             </div>
          </Container>
       </div>

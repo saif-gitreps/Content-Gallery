@@ -61,10 +61,12 @@ export class AuthService {
       }
    }
 
-   async updateProfilePicture(profilePicture) {
+   async updateProfilePicture(profilePicture, profilePictureId) {
       try {
-         console.log(profilePicture);
-         return await this.account.updatePrefs({ profilePicture: profilePicture });
+         return await this.account.updatePrefs({
+            profilePicture: profilePicture,
+            profilePictureId: profilePictureId,
+         });
       } catch (error) {
          console.log("Appwrite serive :: update :: error", error);
          return null;

@@ -19,7 +19,7 @@ function Signup() {
          if (userData) {
             const userData = await authService.getCurrentUser();
             if (userData) {
-               await authService.updateProfilePicture("/blank-dp.png");
+               await authService.updateProfilePicture("/blank-dp.png", "");
                dispatch(login(userData));
             }
             navigate("/");
