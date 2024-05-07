@@ -6,5 +6,16 @@ import MyPosts from "./MyPosts";
 import Post from "./Post";
 import Signup from "./Signup";
 import Profile from "./Profile";
+import EmailConfirmation from "./EmailConfirmation";
 
-export { AddPost, EditPost, Home, Login, MyPosts, Post, Signup, Profile };
+export {
+   AddPost,
+   EditPost,
+   Home,
+   Login,
+   MyPosts,
+   Post,
+   Signup,
+   Profile,
+   EmailConfirmation,
+};

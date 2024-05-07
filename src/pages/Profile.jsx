@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../store/authSlice";
 import { Container, Input } from "../components";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import authService from "../appwrite/auth";
 import appwriteService from "../appwrite/config-appwrite";
 import { useForm } from "react-hook-form";
@@ -161,6 +161,19 @@ function Profile() {
       }
    };
 
+   const emailVerificationMessage = useRef(null);
+
+   const verifyEmail = async () => {
+      try {
+         const result = await authService.createEmailVerification();
+         if (result) {
+            emailVerificationMessage.current.classList.remove("hidden");
+         }
+      } catch (error) {
+         console.log("Email Verification Error", error);
+      }
+   };
+
    return (
       <div className="py-8">
          <Container>
@@ -270,8 +283,11 @@ function Profile() {
                         <div className="flex items-center justify-between">
                            <h2 className="text-lg font-semibold ml-2">
                               Email :{" "}
-                              {!userData.emailVerification && (
-                                 <Link className="text-green-600 hover:underline">
+                              {!userData?.emailVerification && (
+                                 <Link
+                                    onClick={verifyEmail}
+                                    className="text-green-600 hover:underline"
+                                 >
                                     Verify
                                  </Link>
                               )}{" "}
@@ -292,6 +308,12 @@ function Profile() {
                            readOnly={!editEmail}
                            {...registerEmail("email", { required: true })}
                         />
+                        <h2
+                           className="text-base text-red-700 font-medium ml-2 hidden"
+                           ref={emailVerificationMessage}
+                        >
+                           Check your email for email verification
+                        </h2>
                         {editEmail && (
                            <div>
                               <h2 className="text-lg font-semibold ml-2">Password:</h2>
@@ -331,7 +353,7 @@ function Profile() {
                         <div className="flex items-center justify-between">
                            <h2 className="text-lg font-semibold ml-2">
                               Phone :{" "}
-                              {!userData.phoneVerification && (
+                              {!userData?.phoneVerification && (
                                  <Link className="text-green-600 hover:underline">
                                     Verify
                                  </Link>
