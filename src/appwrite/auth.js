@@ -61,6 +61,33 @@ export class AuthService {
       }
    }
 
+   async updateName(name) {
+      try {
+         return await this.account.updateName(name);
+      } catch (error) {
+         console.log("Appwrite serive :: update :: error", error);
+         return null;
+      }
+   }
+
+   async updateEmail(email, password) {
+      try {
+         return await this.account.updateEmail(email, password);
+      } catch (error) {
+         console.log("Appwrite serive :: update :: error", error);
+         return null;
+      }
+   }
+
+   async updatePhone(email, password) {
+      try {
+         return await this.account.updatePhone(email, password);
+      } catch (error) {
+         console.log("Appwrite serive :: update :: error", error);
+         return null;
+      }
+   }
+
    async updateProfilePicture(profilePicture, profilePictureId) {
       try {
          return await this.account.updatePrefs({

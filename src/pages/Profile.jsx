@@ -1,29 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../store/authSlice";
-import { Container, Input, Button } from "../components";
+import { Container, Input } from "../components";
 import { useState } from "react";
 import authService from "../appwrite/auth";
 import appwriteService from "../appwrite/config-appwrite";
 import { useForm } from "react-hook-form";
-
-function ProfilePicUpdateIcons({ setProfilePicture, userData, setEditProfilePic }) {
-   return (
-      <div className="flex items-center justify-evenly p-2">
-         <button type="submit" className="hover:cursor-pointer hover:opacity-50">
-            <img src="check.png" alt="save" className="w-6 h-6" />
-         </button>
-         <img
-            src="delete-button.png"
-            alt="cancel"
-            className="w-6 h-6 hover:cursor-pointer hover:opacity-50"
-            onClick={() => {
-               setProfilePicture(userData?.profilePicture || "/blank-dp.png");
-               setEditProfilePic(false);
-            }}
-         />
-      </div>
-   );
-}
+import { Link } from "react-router-dom";
 
 function Profile() {
    const [editProfilePic, setEditProfilePic] = useState(false);
@@ -46,21 +28,24 @@ function Profile() {
       },
    });
 
-   const { register: registerEmail, handlesubmit: handleSubmitEmail } = useForm({
+   const { register: registerEmail, handleSubmit: handleSubmitEmail } = useForm({
       defaultValues: {
          email: userData?.email || "",
+         password: "",
       },
    });
 
    const { register: registerPassword, handleSubmit: handleSubmitPassword } = useForm({
       defaultValues: {
-         password: "",
+         oldPassword: "",
+         newPassword: "",
       },
    });
 
    const { register: registerPhone, handleSubmit: handleSubmitPhone } = useForm({
       defaultValues: {
          phone: userData?.phone || "",
+         password: "",
       },
    });
 
@@ -110,6 +95,69 @@ function Profile() {
             setProfilePicture(reader.result);
          };
          reader.readAsDataURL(file);
+      }
+   };
+
+   const onNameUpdate = async (data) => {
+      try {
+         const updatedUserData = { ...userData };
+         updatedUserData.name = data.name;
+
+         const result = await authService.updateName(data.name);
+
+         if (result) {
+            dispatch(update({ updatedUserData }));
+            setEditName(false);
+         }
+      } catch (error) {
+         console.log("Name Update Error", error);
+      }
+   };
+
+   const onEmailUpdate = async (data) => {
+      try {
+         const updatedUserData = { ...userData };
+         updatedUserData.email = data.email;
+
+         const result = await authService.updateEmail(data.email, data.password);
+
+         if (result) {
+            dispatch(update({ updatedUserData }));
+            setEditEmail(false);
+         }
+      } catch (error) {
+         console.log("Email Update Error", error);
+      }
+   };
+
+   const onPhoneUpdate = async (data) => {
+      try {
+         const updatedUserData = { ...userData };
+         updatedUserData.phone = data.phone;
+
+         const result = await authService.updatePhone(data.phone, data.password);
+
+         if (result) {
+            dispatch(update({ updatedUserData }));
+            setEditPhone(false);
+         }
+      } catch (error) {
+         console.log("Phone Update Error", error);
+      }
+   };
+
+   const onPasswordUpdate = async (data) => {
+      try {
+         const result = await authService.updatePassword(
+            data.OldPassword,
+            data.newPassword
+         );
+
+         if (result) {
+            setEditPassword(false);
+         }
+      } catch (error) {
+         console.log("Password Update Error", error);
       }
    };
 
@@ -169,7 +217,11 @@ function Profile() {
                </form>
                <div className="flex flex-col items-center mb-6">
                   <div className="my-6">
-                     <form key={2}>
+                     <form
+                        key={2}
+                        onSubmit={handleSubmitName(onNameUpdate)}
+                        className={`p-2 my-1 ${editName && "shadow-lg rounded-lg"}`}
+                     >
                         <div className="flex items-center justify-between">
                            <h2 className="text-lg font-semibold ml-2">Name:</h2>
                            {!editName && (
@@ -199,6 +251,7 @@ function Profile() {
                                  </button>
                                  <button
                                     className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                    type="button"
                                     onClick={() => {
                                        setEditName(false);
                                     }}
@@ -209,45 +262,185 @@ function Profile() {
                            </div>
                         )}
                      </form>
-                     <form action="">
-                        <h2 className="text-lg font-semibold ml-2">
-                           Email{" "}
-                           {`${
-                              userData.emailVerification
-                                 ? " (Verified)"
-                                 : " (Not Verified)"
-                           }`}{" "}
-                           :
-                        </h2>
+                     <form
+                        key={3}
+                        onSubmit={handleSubmitEmail(onEmailUpdate)}
+                        className={`p-2 my-1 ${editEmail && "shadow-lg rounded-lg"}`}
+                     >
+                        <div className="flex items-center justify-between">
+                           <h2 className="text-lg font-semibold ml-2">
+                              Email :{" "}
+                              {!userData.emailVerification && (
+                                 <Link className="text-green-600 hover:underline">
+                                    Verify
+                                 </Link>
+                              )}{" "}
+                           </h2>
+                           {!editEmail && (
+                              <img
+                                 src="edit-icon.png"
+                                 alt="Profile"
+                                 className="w-4 h-4 hover:cursor-pointer hover:opacity-50"
+                                 onClick={() => {
+                                    setEditEmail(true);
+                                 }}
+                              />
+                           )}
+                        </div>
                         <Input
                            className="text-xl font-normal"
                            readOnly={!editEmail}
                            {...registerEmail("email", { required: true })}
                         />
+                        {editEmail && (
+                           <div>
+                              <h2 className="text-lg font-semibold ml-2">Password:</h2>
+                              <Input
+                                 className="text-xl font-normal"
+                                 type="password"
+                                 {...registerEmail("password", { required: true })}
+                              />
+                           </div>
+                        )}
+                        {editEmail && (
+                           <div className="flex flex-col items-center m-2">
+                              <div className="flex">
+                                 <button
+                                    type="submit"
+                                    className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 >
+                                    Save
+                                 </button>
+                                 <button
+                                    className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                    onClick={() => {
+                                       setEditEmail(false);
+                                    }}
+                                 >
+                                    close
+                                 </button>
+                              </div>
+                           </div>
+                        )}
                      </form>
-                     <form action="">
-                        <h2 className="text-lg font-semibold ml-2">
-                           Phone{" "}
-                           {`${
-                              userData.phoneVerification
-                                 ? " (Verified)"
-                                 : " (Not Verified)"
-                           }`}{" "}
-                           :
-                        </h2>
+                     <form
+                        key={4}
+                        onSubmit={handleSubmitPhone(onPhoneUpdate)}
+                        className={`p-2 my-1 ${editPhone && "shadow-lg rounded-lg"}`}
+                     >
+                        <div className="flex items-center justify-between">
+                           <h2 className="text-lg font-semibold ml-2">
+                              Phone :{" "}
+                              {!userData.phoneVerification && (
+                                 <Link className="text-green-600 hover:underline">
+                                    Verify
+                                 </Link>
+                              )}
+                           </h2>
+                           {!editPhone && (
+                              <img
+                                 src="edit-icon.png"
+                                 alt="Profile"
+                                 className="w-4 h-4 hover:cursor-pointer hover:opacity-50"
+                                 onClick={() => {
+                                    setEditPhone(true);
+                                 }}
+                              />
+                           )}
+                        </div>
                         <Input
                            className="text-xl font-normal"
                            readOnly={!editPhone}
-                           {...registerPhone("phone")}
+                           {...registerPhone("phone", { required: true })}
                         />
+                        {editPhone && (
+                           <div>
+                              <h2 className="text-lg font-semibold ml-2">Password:</h2>
+                              <Input
+                                 className="text-xl font-normal"
+                                 type="password"
+                                 {...registerPhone("password", { required: true })}
+                              />
+                           </div>
+                        )}
+                        {editPhone && (
+                           <div className="flex flex-col items-center m-2">
+                              <div className="flex">
+                                 <button
+                                    type="submit"
+                                    className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 >
+                                    Save
+                                 </button>
+                                 <button
+                                    className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                    onClick={() => {
+                                       setEditPhone(false);
+                                    }}
+                                 >
+                                    close
+                                 </button>
+                              </div>
+                           </div>
+                        )}
                      </form>
-                     <form action="">
-                        <h2 className="text-lg font-semibold ml-2">Password:</h2>
+                     <form
+                        key={5}
+                        onSubmit={handleSubmitPassword(onPasswordUpdate)}
+                        className={`p-2 my-1 ${editPhone && "shadow-lg rounded-lg"}`}
+                     >
+                        <div className="flex items-center justify-between">
+                           <h2 className="text-lg font-semibold ml-2">
+                              {editPassword ? "Old Password :" : "Password :"}
+                           </h2>
+                           {!editPassword && (
+                              <img
+                                 src="edit-icon.png"
+                                 alt="Profile"
+                                 className="w-4 h-4 hover:cursor-pointer hover:opacity-50"
+                                 onClick={() => {
+                                    setEditPassword(true);
+                                 }}
+                              />
+                           )}
+                        </div>
                         <Input
                            className="text-xl font-normal"
                            readOnly={!editPassword}
-                           {...registerPassword("password", { required: true })}
+                           value={editPassword ? "" : "********"}
+                           {...registerPassword("OldPassword", { required: true })}
                         />
+                        {editPassword && (
+                           <div>
+                              <h2 className="text-lg font-semibold ml-2">Password:</h2>
+                              <Input
+                                 className="text-xl font-normal"
+                                 type="password"
+                                 value=""
+                                 {...registerPassword("newPassword", { required: true })}
+                              />
+                           </div>
+                        )}
+                        {editPassword && (
+                           <div className="flex flex-col items-center m-2">
+                              <div className="flex">
+                                 <button
+                                    type="submit"
+                                    className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 >
+                                    Save
+                                 </button>
+                                 <button
+                                    className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                    onClick={() => {
+                                       setEditPassword(false);
+                                    }}
+                                 >
+                                    close
+                                 </button>
+                              </div>
+                           </div>
+                        )}
                      </form>
                   </div>
                </div>
