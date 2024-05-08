@@ -1,5 +1,9 @@
 import DpDropdownMenuButton from "./Header/DpDropdownMenuButton";
 import UpdateProfilePic from "./Profile/UpdateProfilePic";
+import UpdateName from "./Profile/UpdateName";
+import UpdateEmail from "./Profile/UpdateEmail";
+import UpdatePhone from "./Profile/UpdatePhone";
+import UpdatePassword from "./Profile/UpdatePassword";
 import SaveAndCancelDiv from "./SaveAndCancelDiv";
 import LogoutButton from "./Header/LogoutButton";
 import Container from "./Container/Container";
@@ -21,6 +25,10 @@ import RTE from "./RTE";
 export {
    DpDropdownMenuButton,
    UpdateProfilePic,
+   UpdateName,
+   UpdateEmail,
+   UpdatePhone,
+   UpdatePassword,
    SaveAndCancelDiv,
    LogoutButton,
    Hamburger,
