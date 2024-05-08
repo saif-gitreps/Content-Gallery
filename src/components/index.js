@@ -1,4 +1,6 @@
 import DpDropdownMenuButton from "./Header/DpDropdownMenuButton";
+import UpdateProfilePic from "./Profile/UpdateProfilePic";
+import SaveAndCancelDiv from "./SaveAndCancelDiv";
 import LogoutButton from "./Header/LogoutButton";
 import Container from "./Container/Container";
 import PostForm from "./PostForm/PostForm";
@@ -18,6 +20,8 @@ import RTE from "./RTE";
 
 export {
    DpDropdownMenuButton,
+   UpdateProfilePic,
+   SaveAndCancelDiv,
    LogoutButton,
    Hamburger,
    Header,

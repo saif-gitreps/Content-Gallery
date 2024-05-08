@@ -1,26 +1,18 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../store/authSlice";
-import { Container, Input } from "../components";
+import { Container, Input, UpdateProfilePic, SaveAndCancelDiv } from "../components";
 import { useState, useRef } from "react";
 import authService from "../appwrite/auth";
-import appwriteService from "../appwrite/config-appwrite";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 function Profile() {
-   const [editProfilePic, setEditProfilePic] = useState(false);
    const [editName, setEditName] = useState(false);
    const [editEmail, setEditEmail] = useState(false);
    const [editPassword, setEditPassword] = useState(false);
    const [editPhone, setEditPhone] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
-   const [profilePicture, setProfilePicture] = useState(
-      userData?.prefs?.profilePicture || "/blank-dp.png"
-   );
    const dispatch = useDispatch();
-
-   const { register: registerProfilePicture, handleSubmit: handleSubmitProfilePicture } =
-      useForm();
 
    const { register: registerName, handleSubmit: handleSubmitName } = useForm({
       defaultValues: {
@@ -48,55 +40,6 @@ function Profile() {
          password: "",
       },
    });
-
-   const onProfilePicUpload = async (data) => {
-      try {
-         const file = await appwriteService.uploadFile(data.profilePicture[0]);
-         if (file) {
-            console.log(userData);
-            if (userData.prefs.profilePictureId) {
-               const check = await appwriteService.deleteFile(
-                  userData.prefs.profilePictureId
-               );
-               console.log(check);
-            }
-            const filePreviw = await appwriteService.getFilePrev(file.$id);
-
-            const updatedUserData = { ...userData };
-
-            updatedUserData.prefs = {
-               ...userData.prefs,
-               profilePicture: filePreviw.href,
-               profilePictureId: file.$id,
-            };
-
-            await authService.updateProfilePicture(filePreviw.href, file.$id);
-
-            dispatch(update({ updatedUserData }));
-
-            if (filePreviw) {
-               setProfilePicture(filePreviw);
-            }
-            setEditProfilePic(false);
-         }
-      } catch (error) {
-         console.log("Profile Picture Upload Error", error);
-      }
-   };
-
-   /// i am taking the ref of the hidden input field
-   // and putting an event listener as to when there exist a file
-   // that was uploaded. the preview will be shown in the profile picture.
-   const handleProfilePicPreview = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-         const reader = new FileReader();
-         reader.onload = () => {
-            setProfilePicture(reader.result);
-         };
-         reader.readAsDataURL(file);
-      }
-   };
 
    const onNameUpdate = async (data) => {
       try {
@@ -201,6 +144,8 @@ function Profile() {
             phoneVerificationDiv.current.classList.add("hidden");
          }
       } catch (error) {
+         phoneVerificationDiv.current.querySelector("h2").textContent =
+            "Phone confirmation failed, Please try again.";
          console.log("Phone Verification Error", error);
       }
    };
@@ -210,55 +155,7 @@ function Profile() {
          <Container>
             <div className="flex flex-col items-center bg-white max-w-xl m-auto rounded-xl shadow-md">
                <h1 className="text-3xl font-semibold mt-8">Profile</h1>
-               <form
-                  key={1}
-                  onSubmit={handleSubmitProfilePicture(onProfilePicUpload)}
-                  className="flex items-center flex-col"
-               >
-                  <img
-                     src={profilePicture}
-                     alt="Profile"
-                     className="w-32 h-32 rounded-full"
-                  />
-                  {!editProfilePic && (
-                     <img
-                        src="edit-icon.png"
-                        alt="Profile"
-                        className="w-4 h-4 relative bottom-32 left-14 hover:cursor-pointer hover:opacity-50"
-                        onClick={() => {
-                           setEditProfilePic(true);
-                        }}
-                     />
-                  )}
-                  {editProfilePic && (
-                     <div className="flex flex-col items-center">
-                        <Input
-                           type="file"
-                           {...registerProfilePicture("profilePicture")}
-                           onChange={handleProfilePicPreview}
-                        />
-                        <div className="flex justify-center items-center m-2">
-                           <button
-                              type="submit"
-                              className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                           >
-                              Save
-                           </button>
-                           <button
-                              className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                              onClick={() => {
-                                 setProfilePicture(
-                                    userData?.prefs.profilePicture || "/blank-dp.png"
-                                 );
-                                 setEditProfilePic(false);
-                              }}
-                           >
-                              close
-                           </button>
-                        </div>
-                     </div>
-                  )}
-               </form>
+               <UpdateProfilePic />
                <div className="flex flex-col items-center mb-6">
                   <div className="my-6">
                      <form
@@ -285,23 +182,12 @@ function Profile() {
                            {...registerName("name", { required: true })}
                         />
                         {editName && (
-                           <div className="flex justify-center items-center m-2">
-                              <button
-                                 type="submit"
-                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                              >
-                                 Save
-                              </button>
-                              <button
-                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                 type="button"
-                                 onClick={() => {
-                                    setEditName(false);
-                                 }}
-                              >
-                                 close
-                              </button>
-                           </div>
+                           <SaveAndCancelDiv
+                              type="submit"
+                              cancel={() => {
+                                 setEditName(false);
+                              }}
+                           />
                         )}
                      </form>
                      <form
@@ -351,24 +237,11 @@ function Profile() {
                                  type="password"
                                  {...registerEmail("password", { required: true })}
                               />
-                           </div>
-                        )}
-                        {editEmail && (
-                           <div className="flex justify-center items-center m-2">
-                              <button
-                                 type="submit"
-                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                              >
-                                 Save
-                              </button>
-                              <button
-                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                 onClick={() => {
+                              <SaveAndCancelDiv
+                                 cancel={() => {
                                     setEditEmail(false);
                                  }}
-                              >
-                                 close
-                              </button>
+                              />
                            </div>
                         )}
                      </form>
@@ -435,31 +308,14 @@ function Profile() {
                                  type="password"
                                  {...registerPhone("password", { required: true })}
                               />
-                           </div>
-                        )}
-                        {editPhone && (
-                           <div className="flex justify-center items-center m-2">
-                              <button
-                                 type="submit"
-                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                              >
-                                 Save
-                              </button>
-                              <button
-                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                 onClick={() => {
-                                    setEditPhone(false);
-                                 }}
-                              >
-                                 close
-                              </button>
+                              <SaveAndCancelDiv cancel={() => setEditPhone(false)} />
                            </div>
                         )}
                      </form>
                      <form
                         key={5}
                         onSubmit={handleSubmitPassword(onPasswordUpdate)}
-                        className={`p-2 my-1 ${editPhone && "shadow-lg rounded-lg"}`}
+                        className={`p-2 my-1 ${editPassword && "shadow-lg rounded-lg"}`}
                      >
                         <div className="flex items-center justify-between">
                            <h2 className="text-lg font-semibold ml-2">
@@ -491,24 +347,11 @@ function Profile() {
                                  value=""
                                  {...registerPassword("newPassword", { required: true })}
                               />
-                           </div>
-                        )}
-                        {editPassword && (
-                           <div className="flex justify-center items-center m-2">
-                              <button
-                                 type="submit"
-                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                              >
-                                 Save
-                              </button>
-                              <button
-                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                 onClick={() => {
+                              <SaveAndCancelDiv
+                                 cancel={() => {
                                     setEditPassword(false);
                                  }}
-                              >
-                                 close
-                              </button>
+                              />
                            </div>
                         )}
                      </form>
