@@ -99,6 +99,24 @@ export class AuthService {
       }
    }
 
+   async createPhoneVerification() {
+      try {
+         return await this.account.createPhoneVerification();
+      } catch (error) {
+         console.log("Appwrite service :: create phone verification :: error", error);
+         return null;
+      }
+   }
+
+   async confirmPhoneVerification(userId, secret) {
+      try {
+         return await this.account.updatePhoneVerification(userId, secret);
+      } catch (error) {
+         console.log("Appwrite service :: confirm phone verification :: error", error);
+         return null;
+      }
+   }
+
    async updatePassword(password, oldPassword) {
       try {
          return await this.account.updatePassword(password, oldPassword);

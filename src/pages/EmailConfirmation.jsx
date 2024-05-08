@@ -1,5 +1,5 @@
-import { Container } from "../components";
 import authService from "../appwrite/auth";
+import { Container } from "../components";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ function EmailConfirmation() {
                   Please Click here to confirm your email.
                </h1>
                <h1
-                  className="text-xl text-center text-green-700 font-semibold hover:underline hover:cursor-pointer"
+                  className="text-xl text-center text-green-700 font-semibold hover:underline hover:cursor-pointer hidden"
                   ref={confirmRef}
                   onClick={() => {
                      navigate("/");

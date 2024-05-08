@@ -162,15 +162,46 @@ function Profile() {
    };
 
    const emailVerificationMessage = useRef(null);
+   const phoneVerificationDiv = useRef(null);
 
    const verifyEmail = async () => {
       try {
-         const result = await authService.createEmailVerification();
-         if (result) {
-            emailVerificationMessage.current.classList.remove("hidden");
+         if (userData.email) {
+            const result = await authService.createEmailVerification();
+            if (result) {
+               emailVerificationMessage.current.classList.remove("hidden");
+            }
          }
       } catch (error) {
          console.log("Email Verification Error", error);
+      }
+   };
+
+   const verifyPhone = async () => {
+      try {
+         if (userData.phone) {
+            const result = await authService.createPhoneVerification();
+            if (result) {
+               phoneVerificationDiv.current.classList.remove("hidden");
+            }
+         }
+      } catch (error) {
+         console.log("Phone Verification Error", error);
+      }
+   };
+
+   const connfirmPhoneVerification = async () => {
+      try {
+         const confirmInput = phoneVerificationDiv.current.querySelector("input").value;
+         const result = await authService.confirmPhoneVerification(
+            userData.$id,
+            confirmInput
+         );
+         if (result) {
+            phoneVerificationDiv.current.classList.add("hidden");
+         }
+      } catch (error) {
+         console.log("Phone Verification Error", error);
       }
    };
 
@@ -206,7 +237,7 @@ function Profile() {
                            {...registerProfilePicture("profilePicture")}
                            onChange={handleProfilePicPreview}
                         />
-                        <div className="flex m-2">
+                        <div className="flex justify-center items-center m-2">
                            <button
                               type="submit"
                               className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
@@ -254,24 +285,22 @@ function Profile() {
                            {...registerName("name", { required: true })}
                         />
                         {editName && (
-                           <div className="flex flex-col items-center m-2">
-                              <div className="flex">
-                                 <button
-                                    type="submit"
-                                    className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                 >
-                                    Save
-                                 </button>
-                                 <button
-                                    className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                    type="button"
-                                    onClick={() => {
-                                       setEditName(false);
-                                    }}
-                                 >
-                                    close
-                                 </button>
-                              </div>
+                           <div className="flex justify-center items-center m-2">
+                              <button
+                                 type="submit"
+                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                              >
+                                 Save
+                              </button>
+                              <button
+                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 type="button"
+                                 onClick={() => {
+                                    setEditName(false);
+                                 }}
+                              >
+                                 close
+                              </button>
                            </div>
                         )}
                      </form>
@@ -325,23 +354,21 @@ function Profile() {
                            </div>
                         )}
                         {editEmail && (
-                           <div className="flex flex-col items-center m-2">
-                              <div className="flex">
-                                 <button
-                                    type="submit"
-                                    className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                 >
-                                    Save
-                                 </button>
-                                 <button
-                                    className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                    onClick={() => {
-                                       setEditEmail(false);
-                                    }}
-                                 >
-                                    close
-                                 </button>
-                              </div>
+                           <div className="flex justify-center items-center m-2">
+                              <button
+                                 type="submit"
+                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                              >
+                                 Save
+                              </button>
+                              <button
+                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 onClick={() => {
+                                    setEditEmail(false);
+                                 }}
+                              >
+                                 close
+                              </button>
                            </div>
                         )}
                      </form>
@@ -354,7 +381,10 @@ function Profile() {
                            <h2 className="text-lg font-semibold ml-2">
                               Phone :{" "}
                               {!userData?.phoneVerification && (
-                                 <Link className="text-green-600 hover:underline">
+                                 <Link
+                                    className="text-green-600 hover:underline"
+                                    onClick={verifyPhone}
+                                 >
                                     Verify
                                  </Link>
                               )}
@@ -375,6 +405,28 @@ function Profile() {
                            readOnly={!editPhone}
                            {...registerPhone("phone", { required: true })}
                         />
+                        <div ref={phoneVerificationDiv} className="hidden">
+                           <h2 className="text-base text-red-700 font-medium ml-2">
+                              Check the verification SMS on your Phone.
+                           </h2>
+                           <Input className="text-xl font-normal" type="Number" />
+                           <div className="flex justify-center items-center m-2">
+                              <button
+                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 onClick={connfirmPhoneVerification}
+                              >
+                                 Confirm
+                              </button>
+                              <button
+                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 onClick={() => {
+                                    phoneVerificationDiv.current.classList.add("hidden");
+                                 }}
+                              >
+                                 close
+                              </button>
+                           </div>
+                        </div>
                         {editPhone && (
                            <div>
                               <h2 className="text-lg font-semibold ml-2">Password:</h2>
@@ -386,23 +438,21 @@ function Profile() {
                            </div>
                         )}
                         {editPhone && (
-                           <div className="flex flex-col items-center m-2">
-                              <div className="flex">
-                                 <button
-                                    type="submit"
-                                    className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                 >
-                                    Save
-                                 </button>
-                                 <button
-                                    className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                    onClick={() => {
-                                       setEditPhone(false);
-                                    }}
-                                 >
-                                    close
-                                 </button>
-                              </div>
+                           <div className="flex justify-center items-center m-2">
+                              <button
+                                 type="submit"
+                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                              >
+                                 Save
+                              </button>
+                              <button
+                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 onClick={() => {
+                                    setEditPhone(false);
+                                 }}
+                              >
+                                 close
+                              </button>
                            </div>
                         )}
                      </form>
@@ -444,23 +494,21 @@ function Profile() {
                            </div>
                         )}
                         {editPassword && (
-                           <div className="flex flex-col items-center m-2">
-                              <div className="flex">
-                                 <button
-                                    type="submit"
-                                    className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                 >
-                                    Save
-                                 </button>
-                                 <button
-                                    className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                                    onClick={() => {
-                                       setEditPassword(false);
-                                    }}
-                                 >
-                                    close
-                                 </button>
-                              </div>
+                           <div className="flex justify-center items-center m-2">
+                              <button
+                                 type="submit"
+                                 className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                              >
+                                 Save
+                              </button>
+                              <button
+                                 className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+                                 onClick={() => {
+                                    setEditPassword(false);
+                                 }}
+                              >
+                                 close
+                              </button>
                            </div>
                         )}
                      </form>
