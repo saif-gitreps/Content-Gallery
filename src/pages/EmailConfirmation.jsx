@@ -15,31 +15,30 @@ function EmailConfirmation() {
             confirmRef.current.classList.remove("hidden");
          }
       } catch (error) {
-         console.log("Email confirmation failed", error);
          confirmRef.current.classList.remove("hidden");
          confirmRef.current.classList.add("text-red-700");
-         confirmRef.current.textContent = "Email confirmation failed";
+         confirmRef.current.textContent = "Email confirmation failed, Please try again.";
       }
    };
    const confirmRef = useRef();
    return (
       <div className="py-8">
          <Container>
-            <div className="flex flex-col items-center bg-white max-w-xl m-auto rounded-xl shadow-md">
+            <div className="flex flex-col items-center justify-center bg-white max-w-xl m-auto rounded-xl shadow-md h-40 ">
                <h1
-                  className="text-2xl text-red-700 font-semibold hover:underline"
+                  className="text-2xl text-red-700 font-semibold hover:underline hover:cursor-pointer"
                   onClick={handleConfirm}
                >
-                  Please Click here to confirm your email
+                  Please Click here to confirm your email.
                </h1>
                <h1
-                  className="text-xl text-green-700 font-semibold hidden"
+                  className="text-xl text-center text-green-700 font-semibold hover:underline hover:cursor-pointer"
                   ref={confirmRef}
                   onClick={() => {
                      navigate("/");
                   }}
                >
-                  Your email has been confirmed. Click here to continue browsing
+                  Your email has been confirmed. Click here to continue browsing.
                </h1>
             </div>
          </Container>
