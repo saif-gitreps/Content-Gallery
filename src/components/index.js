@@ -17,6 +17,7 @@ import Button from "./Button";
 import Signup from "./Signup";
 import Select from "./Select";
 import Loader from "./Loader";
+import Pencil from "./Pencil";
 import Login from "./Login";
 import Input from "./Input";
 import Logo from "./logo";
@@ -37,6 +38,7 @@ export {
    Container,
    PostForm,
    AuthLayout,
+   Pencil,
    Logo,
    Select,
    Button,

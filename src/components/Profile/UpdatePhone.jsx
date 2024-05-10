@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../../store/authSlice";
-import { Input, SaveAndCancelDiv } from "../index";
+import { Input, SaveAndCancelDiv, Pencil } from "../index";
 import { useState, useRef } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
@@ -61,12 +61,10 @@ function UpdatePhone() {
       } catch (error) {
          phoneVerificationDiv.current.querySelector("h2").textContent =
             "Phone confirmation failed, Please try again.";
-         console.log("Phone Verification Error", error);
       }
    };
    return (
       <form
-         key={4}
          onSubmit={handleSubmitPhone(onPhoneUpdate)}
          className={`p-2 my-1 ${editPhone && "shadow-lg rounded-lg"}`}
       >
@@ -80,11 +78,8 @@ function UpdatePhone() {
                )}
             </h2>
             {!editPhone && (
-               <img
-                  src="edit-icon.png"
-                  alt="Profile"
-                  className="w-4 h-4 hover:cursor-pointer hover:opacity-50"
-                  onClick={() => {
+               <Pencil
+                  onClickAction={() => {
                      setEditPhone(true);
                   }}
                />

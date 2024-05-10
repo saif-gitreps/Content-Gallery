@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../../store/authSlice";
-import { Input, SaveAndCancelDiv } from "../index";
+import { Input, Pencil, SaveAndCancelDiv } from "../index";
 import { useState, useRef } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
@@ -50,7 +50,6 @@ function UpdateEmail() {
    };
    return (
       <form
-         key={3}
          onSubmit={handleSubmitEmail(onEmailUpdate)}
          className={`p-2 my-1 ${editEmail && "shadow-lg rounded-lg"}`}
       >
@@ -64,11 +63,8 @@ function UpdateEmail() {
                )}{" "}
             </h2>
             {!editEmail && (
-               <img
-                  src="edit-icon.png"
-                  alt="Profile"
-                  className="w-4 h-4 hover:cursor-pointer hover:opacity-50"
-                  onClick={() => {
+               <Pencil
+                  onClickAction={() => {
                      setEditEmail(true);
                   }}
                />

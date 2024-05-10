@@ -13,7 +13,7 @@ function Header() {
 
    useEffect(() => {
       if (authStatus) {
-         setDp(userData.prefs.profilePicture || "/blank-dp.png");
+         setDp(userData?.prefs?.profilePicture || "/blank-dp.png");
       }
    }, [authStatus, userData]);
 

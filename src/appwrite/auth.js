@@ -48,7 +48,7 @@ export class AuthService {
          return await this.account.createEmailPasswordSession(email, password);
       } catch (error) {
          console.log("Appwrite service :: login :: error", error);
-         return null;
+         throw error;
       }
    }
 
@@ -57,7 +57,7 @@ export class AuthService {
          return await this.account.get();
       } catch (error) {
          console.log("Appwrite service :: getting user :: error", error);
-         return null;
+         throw error;
       }
    }
 
@@ -66,7 +66,7 @@ export class AuthService {
          return await this.account.updateName(name);
       } catch (error) {
          console.log("Appwrite service :: update name :: error", error);
-         return null;
+         throw error;
       }
    }
 
@@ -75,7 +75,7 @@ export class AuthService {
          return await this.account.updateEmail(email, password);
       } catch (error) {
          console.log("Appwrite service :: update email :: error", error);
-         return null;
+         throw error;
       }
    }
 
@@ -86,7 +86,7 @@ export class AuthService {
          );
       } catch (error) {
          console.log("Appwrite service :: update email verification :: error", error);
-         return null;
+         throw error;
       }
    }
 
@@ -95,7 +95,7 @@ export class AuthService {
          return await this.account.updateVerification(userId, secret);
       } catch (error) {
          console.log("Appwrite service :: confirm email verification :: error", error);
-         return null;
+         throw error;
       }
    }
 
@@ -104,7 +104,7 @@ export class AuthService {
          return await this.account.createPhoneVerification();
       } catch (error) {
          console.log("Appwrite service :: create phone verification :: error", error);
-         return null;
+         throw error;
       }
    }
 

@@ -1,4 +1,4 @@
-import { Input, SaveAndCancelDiv } from "../index";
+import { Input, Pencil, SaveAndCancelDiv } from "../index";
 import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
@@ -29,7 +29,6 @@ function UpdatePassword() {
    };
    return (
       <form
-         key={5}
          onSubmit={handleSubmitPassword(onPasswordUpdate)}
          className={`p-2 my-1 ${editPassword && "shadow-lg rounded-lg"}`}
       >
@@ -38,11 +37,8 @@ function UpdatePassword() {
                {editPassword ? "Old Password :" : "Password :"}
             </h2>
             {!editPassword && (
-               <img
-                  src="edit-icon.png"
-                  alt="Profile"
-                  className="w-4 h-4 hover:cursor-pointer hover:opacity-50"
-                  onClick={() => {
+               <Pencil
+                  onClickAction={() => {
                      setEditPassword(true);
                   }}
                />

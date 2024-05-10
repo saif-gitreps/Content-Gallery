@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../../store/authSlice";
-import { Input, SaveAndCancelDiv } from "../index";
+import { Input, Pencil, SaveAndCancelDiv } from "../index";
 import { useState } from "react";
 import authService from "../../appwrite/auth";
 import appwriteService from "../../appwrite/config-appwrite";
@@ -9,17 +9,19 @@ import { useForm } from "react-hook-form";
 function UpdateProfilePic() {
    const [editProfilePic, setEditProfilePic] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
+
    const [profilePicture, setProfilePicture] = useState(
       userData?.prefs?.profilePicture || "/blank-dp.png"
    );
    const dispatch = useDispatch();
+
    const { register: registerProfilePicture, handleSubmit: handleSubmitProfilePicture } =
       useForm();
+
    const onProfilePicUpload = async (data) => {
       try {
          const file = await appwriteService.uploadFile(data.profilePicture[0]);
          if (file) {
-            console.log(userData);
             if (userData.prefs.profilePictureId) {
                const check = await appwriteService.deleteFile(
                   userData.prefs.profilePictureId
@@ -49,7 +51,6 @@ function UpdateProfilePic() {
          console.log("Profile Picture Upload Error", error);
       }
    };
-
    /// i am taking the ref of the hidden input field
    // and putting an event listener as to when there exist a file
    // that was uploaded. the preview will be shown in the profile picture.
@@ -76,13 +77,11 @@ function UpdateProfilePic() {
       >
          <img src={profilePicture} alt="Profile" className="w-32 h-32 rounded-full" />
          {!editProfilePic && (
-            <img
-               src="edit-icon.png"
-               alt="Profile"
-               className="w-4 h-4 relative bottom-32 left-14 hover:cursor-pointer hover:opacity-50"
-               onClick={() => {
+            <Pencil
+               onClickAction={() => {
                   setEditProfilePic(true);
                }}
+               className="relative bottom-32 left-14"
             />
          )}
          {editProfilePic && (

@@ -10,10 +10,10 @@ function Login() {
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const { register, handleSubmit } = useForm();
-   const [error, setError] = useState("");
+   const [errorMessage, setErrorMessage] = useState("");
 
    const login = async (data) => {
-      setError("");
+      setErrorMessage("");
       try {
          const session = await authService.login(data);
          if (session) {
@@ -24,33 +24,37 @@ function Login() {
             }
          }
       } catch (error) {
-         console.log("Error message from error component" + error);
-         setError(error.message);
+         setErrorMessage(error.message);
       }
    };
 
    /* To clear confusion, register is a function that returns an object, so we are basically taking all the objects this register function returns */
    return (
-      <div className="flex items-center justify-center w-full">
+      <div className="p-8">
          <div
-            className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}
+            className={`flex flex-col items-center justify-center bg-white min-h-96 max-w-xl m-auto rounded-xl shadow-md`}
          >
             <h2 className="text-center text-2xl font-bold leading-tight">
                Sign in to your account
             </h2>
-            <p className="mt-2 text-center text-base text-black/60">
+            <p className="text-lg text-center  text-black/60">
                Don&apos;t have any account?&nbsp;
                <Link
                   to="/signup"
-                  className="font-medium text-primary transition-all duration-200 hover:underline"
+                  className="font-medium transition-all duration-200 hover:underline"
                >
                   Sign Up
                </Link>
             </p>
-            {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
-            <form onSubmit={handleSubmit(login)} className="mt-8">
-               <div className="space-y-5">
+            {errorMessage && (
+               <p className="text-red-600 text-lg font-medium text-center">
+                  {errorMessage}
+               </p>
+            )}
+            <form onSubmit={handleSubmit(login)} className="mt-6">
+               <div className="space-y-4">
                   <Input
+                     className="text-xl font-normal"
                      label="Email: "
                      placeholder="Enter your email"
                      type="email"
@@ -64,6 +68,7 @@ function Login() {
                      })}
                   />
                   <Input
+                     className="text-xl font-normal"
                      label="Password: "
                      type="password"
                      placeholder="Enter your password"

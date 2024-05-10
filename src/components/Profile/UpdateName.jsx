@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../../store/authSlice";
-import { Input, SaveAndCancelDiv } from "../index";
+import { Input, Pencil, SaveAndCancelDiv } from "../index";
 import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
@@ -33,18 +33,14 @@ function UpdateName() {
    };
    return (
       <form
-         key={2}
          onSubmit={handleSubmitName(onNameUpdate)}
          className={`p-2 my-1 ${editName && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold ml-2">Name:</h2>
             {!editName && (
-               <img
-                  src="edit-icon.png"
-                  alt="Profile"
-                  className="w-4 h-4 hover:cursor-pointer hover:opacity-50"
-                  onClick={() => {
+               <Pencil
+                  onClickAction={() => {
                      setEditName(true);
                   }}
                />
