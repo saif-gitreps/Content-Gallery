@@ -10,10 +10,10 @@ function Login() {
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const { register, handleSubmit } = useForm();
-   const [errorMessage, setErrorMessage] = useState("");
+   const [errorMessage, setErrorMessage] = useState(false);
 
    const login = async (data) => {
-      setErrorMessage("");
+      setErrorMessage(false);
       try {
          const session = await authService.login(data);
          if (session) {
@@ -22,9 +22,11 @@ function Login() {
                dispatch(authLogin(userData));
                navigate("/");
             }
+         } else {
+            setErrorMessage(true);
          }
       } catch (error) {
-         setErrorMessage(error.message);
+         setErrorMessage(true);
       }
    };
 
@@ -32,7 +34,7 @@ function Login() {
    return (
       <div className="p-8">
          <div
-            className={`flex flex-col items-center justify-center bg-white min-h-96 max-w-xl m-auto rounded-xl shadow-md`}
+            className={`flex flex-col items-center justify-center bg-white p-5 max-w-xl m-auto rounded-xl shadow-md`}
          >
             <h2 className="text-center text-2xl font-bold leading-tight">
                Sign in to your account
@@ -46,11 +48,7 @@ function Login() {
                   Sign Up
                </Link>
             </p>
-            {errorMessage && (
-               <p className="text-red-600 text-lg font-medium text-center">
-                  {errorMessage}
-               </p>
-            )}
+
             <form onSubmit={handleSubmit(login)} className="mt-6">
                <div className="space-y-4">
                   <Input
@@ -81,6 +79,11 @@ function Login() {
                   </Button>
                </div>
             </form>
+            {errorMessage && (
+               <p className="text-red-600 mt-2 text-lg font-medium text-center">
+                  Please check your credentials and try again.
+               </p>
+            )}
          </div>
       </div>
    );

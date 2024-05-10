@@ -6,7 +6,7 @@ import authService from "../../appwrite/auth";
 import appwriteService from "../../appwrite/config-appwrite";
 import { useForm } from "react-hook-form";
 
-function UpdateProfilePic() {
+function UpdateProfilePic({ setErrorMessage }) {
    const [editProfilePic, setEditProfilePic] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
 
@@ -20,13 +20,11 @@ function UpdateProfilePic() {
 
    const onProfilePicUpload = async (data) => {
       try {
+         setErrorMessage(false);
          const file = await appwriteService.uploadFile(data.profilePicture[0]);
          if (file) {
             if (userData.prefs.profilePictureId) {
-               const check = await appwriteService.deleteFile(
-                  userData.prefs.profilePictureId
-               );
-               console.log(check);
+               await appwriteService.deleteFile(userData.prefs.profilePictureId);
             }
             const filePreviw = await appwriteService.getFilePrev(file.$id);
 
@@ -41,11 +39,15 @@ function UpdateProfilePic() {
             await authService.updateProfilePicture(filePreviw.href, file.$id);
 
             dispatch(update({ updatedUserData }));
+            setEditProfilePic(false);
 
             if (filePreviw) {
                setProfilePicture(filePreviw);
+            } else {
+               setErrorMessage(true);
             }
-            setEditProfilePic(false);
+         } else {
+            setErrorMessage(true);
          }
       } catch (error) {
          console.log("Profile Picture Upload Error", error);
@@ -68,6 +70,7 @@ function UpdateProfilePic() {
    const onCancel = () => {
       setProfilePicture(userData?.prefs.profilePicture || "/blank-dp.png");
       setEditProfilePic(false);
+      setErrorMessage(false);
    };
 
    return (

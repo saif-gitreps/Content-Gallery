@@ -6,7 +6,7 @@ import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
-function UpdatePhone() {
+function UpdatePhone({ setErrorMessage }) {
    const [editPhone, setEditPhone] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
    const dispatch = useDispatch();
@@ -19,6 +19,7 @@ function UpdatePhone() {
 
    const onPhoneUpdate = async (data) => {
       try {
+         setErrorMessage(false);
          const updatedUserData = { ...userData };
          updatedUserData.phone = data.phone;
 
@@ -27,6 +28,8 @@ function UpdatePhone() {
          if (result) {
             dispatch(update({ updatedUserData }));
             setEditPhone(false);
+         } else {
+            setErrorMessage(true);
          }
       } catch (error) {
          console.log("Phone Update Error", error);
@@ -38,9 +41,13 @@ function UpdatePhone() {
    const verifyPhone = async () => {
       try {
          if (userData.phone) {
+            setErrorMessage(false);
             const result = await authService.createPhoneVerification();
             if (result) {
                phoneVerificationDiv.current.classList.remove("hidden");
+            } else {
+               phoneVerificationDiv.current.classList.remove("hidden");
+               setErrorMessage(true);
             }
          }
       } catch (error) {
@@ -50,6 +57,7 @@ function UpdatePhone() {
 
    const connfirmPhoneVerification = async () => {
       try {
+         setErrorMessage(false);
          const confirmInput = phoneVerificationDiv.current.querySelector("input").value;
          const result = await authService.confirmPhoneVerification(
             userData.$id,
@@ -57,6 +65,9 @@ function UpdatePhone() {
          );
          if (result) {
             phoneVerificationDiv.current.classList.add("hidden");
+         } else {
+            phoneVerificationDiv.current.classList.add("hidden");
+            setErrorMessage(true);
          }
       } catch (error) {
          phoneVerificationDiv.current.querySelector("h2").textContent =
@@ -120,7 +131,12 @@ function UpdatePhone() {
                   type="password"
                   {...registerPhone("password", { required: true })}
                />
-               <SaveAndCancelDiv cancel={() => setEditPhone(false)} />
+               <SaveAndCancelDiv
+                  cancel={() => {
+                     setEditPhone(false);
+                     setErrorMessage(false);
+                  }}
+               />
             </div>
          )}
       </form>

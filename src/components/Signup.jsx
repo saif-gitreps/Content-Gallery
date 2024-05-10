@@ -8,12 +8,12 @@ import { useForm } from "react-hook-form";
 
 function Signup() {
    const navigate = useNavigate();
-   const [error, setError] = useState("");
+   const [errorMessage, setErrorMessage] = useState(false);
    const dispatch = useDispatch();
    const { register, handleSubmit } = useForm();
 
    const create = async (data) => {
-      setError("");
+      setErrorMessage(false);
       try {
          const userData = await authService.createAccount(data);
          if (userData) {
@@ -23,21 +23,23 @@ function Signup() {
                dispatch(login(userData));
             }
             navigate("/");
+         } else {
+            setErrorMessage(true);
          }
       } catch (error) {
-         setError(error.message);
+         setErrorMessage(true);
       }
    };
 
    return (
-      <div className="flex items-center justify-center">
+      <div className="p-8">
          <div
-            className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}
+            className={`flex flex-col items-center justify-center bg-white p-5 max-w-xl m-auto rounded-xl shadow-md`}
          >
             <h2 className="text-center text-2xl font-bold leading-tight">
                Sign up to create account
             </h2>
-            <p className="mt-2 text-center text-base text-black/60">
+            <p className="text-lg text-center  text-black/60">
                Already have an account?&nbsp;
                <Link
                   to="/login"
@@ -46,11 +48,11 @@ function Signup() {
                   Sign In
                </Link>
             </p>
-            {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
 
-            <form onSubmit={handleSubmit(create)}>
-               <div className="space-y-5">
+            <form onSubmit={handleSubmit(create)} className="mt-6">
+               <div className="space-y-4">
                   <Input
+                     className="text-xl font-normal"
                      label="Full Name: "
                      placeholder="Enter your full name"
                      {...register("name", {
@@ -58,6 +60,7 @@ function Signup() {
                      })}
                   />
                   <Input
+                     className="text-xl font-normal"
                      label="Email: "
                      placeholder="Enter your email"
                      type="email"
@@ -71,6 +74,7 @@ function Signup() {
                      })}
                   />
                   <Input
+                     className="text-xl font-normal"
                      label="Password: "
                      type="password"
                      placeholder="Enter your password"
@@ -83,6 +87,11 @@ function Signup() {
                   </Button>
                </div>
             </form>
+            {errorMessage && (
+               <p className="text-red-600 mt-2 text-lg font-medium text-center">
+                  Error signing up, please try again with different credentials.
+               </p>
+            )}
          </div>
       </div>
    );

@@ -6,7 +6,7 @@ import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
-function UpdateEmail() {
+function UpdateEmail({ setErrorMessage }) {
    const [editEmail, setEditEmail] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
    const dispatch = useDispatch();
@@ -22,6 +22,7 @@ function UpdateEmail() {
 
    const onEmailUpdate = async (data) => {
       try {
+         setErrorMessage(false);
          const updatedUserData = { ...userData };
          updatedUserData.email = data.email;
 
@@ -30,6 +31,8 @@ function UpdateEmail() {
          if (result) {
             dispatch(update({ updatedUserData }));
             setEditEmail(false);
+         } else {
+            setErrorMessage(true);
          }
       } catch (error) {
          console.log("Email Update Error", error);
@@ -38,10 +41,13 @@ function UpdateEmail() {
 
    const verifyEmail = async () => {
       try {
+         setErrorMessage(false);
          if (userData.email) {
             const result = await authService.createEmailVerification();
             if (result) {
                emailVerificationMessage.current.classList.remove("hidden");
+            } else {
+               setErrorMessage(true);
             }
          }
       } catch (error) {
@@ -92,6 +98,7 @@ function UpdateEmail() {
                <SaveAndCancelDiv
                   cancel={() => {
                      setEditEmail(false);
+                     setErrorMessage(false);
                   }}
                />
             </div>

@@ -5,7 +5,7 @@ import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 
-function UpdateName() {
+function UpdateName({ setErrorMessage }) {
    const [editName, setEditName] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
    const dispatch = useDispatch();
@@ -18,6 +18,7 @@ function UpdateName() {
 
    const onNameUpdate = async (data) => {
       try {
+         setErrorMessage(false);
          const updatedUserData = { ...userData };
          updatedUserData.name = data.name;
 
@@ -26,6 +27,8 @@ function UpdateName() {
          if (result) {
             dispatch(update({ updatedUserData }));
             setEditName(false);
+         } else {
+            setErrorMessage(true);
          }
       } catch (error) {
          console.log("Name Update Error", error);
@@ -56,6 +59,7 @@ function UpdateName() {
                type="submit"
                cancel={() => {
                   setEditName(false);
+                  setErrorMessage(false);
                }}
             />
          )}

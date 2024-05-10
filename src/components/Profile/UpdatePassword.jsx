@@ -3,7 +3,7 @@ import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 
-function UpdatePassword() {
+function UpdatePassword({ setErrorMessage }) {
    const [editPassword, setEditPassword] = useState(false);
 
    const { register: registerPassword, handleSubmit: handleSubmitPassword } = useForm({
@@ -15,6 +15,7 @@ function UpdatePassword() {
 
    const onPasswordUpdate = async (data) => {
       try {
+         setErrorMessage(false);
          const result = await authService.updatePassword(
             data.OldPassword,
             data.newPassword
@@ -22,6 +23,8 @@ function UpdatePassword() {
 
          if (result) {
             setEditPassword(false);
+         } else {
+            setErrorMessage(true);
          }
       } catch (error) {
          console.log("Password Update Error", error);
@@ -61,6 +64,7 @@ function UpdatePassword() {
                />
                <SaveAndCancelDiv
                   cancel={() => {
+                     setEditPassword(false);
                      setEditPassword(false);
                   }}
                />
