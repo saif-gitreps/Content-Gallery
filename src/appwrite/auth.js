@@ -159,7 +159,7 @@ export class AuthService {
       try {
          return await this.account.createRecovery(
             email,
-            "http://localhost:5173//password-recovery-step-two"
+            "http://localhost:5173/password-recovery-step-two"
          );
       } catch (error) {
          console.log("Appwrite service :: create password recovery :: error", error);
@@ -167,9 +167,14 @@ export class AuthService {
       }
    }
 
-   async confirmPasswordRecovery(userId, secret, password) {
+   async confirmPasswordRecovery(userId, secret, password, confirmPassword) {
       try {
-         return await this.account.updateRecovery(userId, secret, password);
+         return await this.account.updateRecovery(
+            userId,
+            secret,
+            password,
+            confirmPassword
+         );
       } catch (error) {
          console.log("Appwrite service :: update password recovery :: error", error);
          return null;

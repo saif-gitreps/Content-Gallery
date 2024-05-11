@@ -2,6 +2,7 @@ import { Button, Input } from "../components";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 
 function PasswordRecoveryStepOne() {
    const { register, handleSubmit } = useForm();
@@ -29,26 +30,30 @@ function PasswordRecoveryStepOne() {
                Enter your account email to recover your password:
             </h2>
 
-            <form onSubmit={handleSubmit(createRecovery)} className="mt-6">
-               <div className="space-y-4">
-                  <Input
-                     className="text-xl font-normal"
-                     type="email"
-                     {...register("email", {
-                        required: true,
-                     })}
-                  />
-                  <Button type="submit" className="w-full">
-                     Next
-                  </Button>
-               </div>
-               <h2
-                  className="text-lg text-red-700 font-medium mt-2 hidden"
-                  ref={passwordRecoveryVerificationMessage}
-               >
-                  Please check your email and click the link.
-               </h2>
+            <form onSubmit={handleSubmit(createRecovery)} className="mt-6 space-y-4">
+               <Input
+                  className="text-xl font-normal"
+                  type="email"
+                  {...register("email", {
+                     required: true,
+                  })}
+               />
+               <Button type="submit" className="w-full">
+                  Next
+               </Button>
             </form>
+            <Link
+               to="/login"
+               className="font-semibold mt-2 text-lg hover:underline text-gray-500"
+            >
+               Back
+            </Link>
+            <h2
+               className="text-lg text-red-700 font-medium mt-2 hidden "
+               ref={passwordRecoveryVerificationMessage}
+            >
+               Please check your email and click the link.
+            </h2>
          </div>
       </div>
    );

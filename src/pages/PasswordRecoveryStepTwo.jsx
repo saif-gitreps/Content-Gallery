@@ -36,23 +36,29 @@ function PasswordRecoveryStepTwo() {
             className={`flex flex-col items-center justify-center bg-white p-5 max-w-xl m-auto rounded-xl shadow-md`}
          >
             <h2 className="text-center text-xl font-bold leading-tight">
-               Enter your account email to recover your password:
+               Enter your new password:
             </h2>
 
-            <form onSubmit={handleSubmit(confirmRecovery)} className="mt-6">
-               <div className="space-y-4">
-                  <Input
-                     className="text-xl font-normal"
-                     type="password"
-                     label="New Password: "
-                     {...register("password", {
-                        required: true,
-                     })}
-                  />
-                  <Button type="submit" className="w-full">
-                     Confirm
-                  </Button>
-               </div>
+            <form onSubmit={handleSubmit(confirmRecovery)} className="mt-6 space-y-2">
+               <Input
+                  className="text-xl font-normal"
+                  type="password"
+                  label="Password:"
+                  {...register("password", {
+                     required: true,
+                  })}
+               />
+               <Input
+                  className="text-xl font-normal"
+                  type="password"
+                  label="Confirm password:"
+                  {...register("password", {
+                     required: true,
+                  })}
+               />
+               <Button type="submit" className="w-full">
+                  Confirm
+               </Button>
             </form>
             <Link
                to="/password-recovery-step-one"
@@ -61,11 +67,13 @@ function PasswordRecoveryStepTwo() {
                Back
             </Link>
             <h2
-               className="text-lg text-green-600 font-medium mt-2"
+               className="text-lg text-green-600 font-medium mt-2 hidden"
                ref={passwordRecoveryVerificationMessage}
             >
                Your password has been recoverd.{" "}
-               <Link className="hover:underline text-gray-500">Click to login</Link>
+               <Link className="hover:underline text-gray-500" to="/login">
+                  Click to login
+               </Link>
             </h2>
          </div>
       </div>
