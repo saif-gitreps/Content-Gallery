@@ -155,6 +155,27 @@ export class AuthService {
       }
    }
 
+   async createPasswordRecovery(email) {
+      try {
+         return await this.account.createRecovery(
+            email,
+            "http://localhost:5173//password-recovery-step-two"
+         );
+      } catch (error) {
+         console.log("Appwrite service :: create password recovery :: error", error);
+         return null;
+      }
+   }
+
+   async confirmPasswordRecovery(userId, secret, password) {
+      try {
+         return await this.account.updateRecovery(userId, secret, password);
+      } catch (error) {
+         console.log("Appwrite service :: update password recovery :: error", error);
+         return null;
+      }
+   }
+
    async logout() {
       try {
          await this.account.deleteSessions();

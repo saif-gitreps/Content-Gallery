@@ -7,6 +7,8 @@ import Post from "./Post";
 import Signup from "./Signup";
 import Profile from "./Profile";
 import EmailConfirmation from "./EmailConfirmation";
+import PasswordRecoveryStepOne from "./PasswordRecoveryStepOne";
+import PasswordRecoveryStepTwo from "./PasswordRecoveryStepTwo";
 
 export {
    AddPost,
@@ -18,4 +20,6 @@ export {
    Signup,
    Profile,
    EmailConfirmation,
+   PasswordRecoveryStepOne,
+   PasswordRecoveryStepTwo,
 };

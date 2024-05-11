@@ -55,7 +55,7 @@ function UpdatePassword({ setErrorMessage }) {
          />
          {editPassword && (
             <div>
-               <h2 className="text-lg font-semibold ml-2">Password:</h2>
+               <h2 className="text-lg font-semibold ml-2">New Password:</h2>
                <Input
                   className="text-xl font-normal"
                   type="password"

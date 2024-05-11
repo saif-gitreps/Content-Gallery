@@ -37,13 +37,13 @@ function Login() {
             className={`flex flex-col items-center justify-center bg-white p-5 max-w-xl m-auto rounded-xl shadow-md`}
          >
             <h2 className="text-center text-2xl font-bold leading-tight">
-               Sign in to your account
+               Login to your account
             </h2>
-            <p className="text-lg text-center  text-black/60">
+            <p className="text-lg text-center font-medium ">
                Don&apos;t have any account?&nbsp;
                <Link
                   to="/signup"
-                  className="font-medium transition-all duration-200 hover:underline"
+                  className="font-medium transition-all duration-200 hover:underline text-gray-500"
                >
                   Sign Up
                </Link>
@@ -79,6 +79,15 @@ function Login() {
                   </Button>
                </div>
             </form>
+            <p className="text-lg font-medium text-center">
+               Forgot password?&nbsp;
+               <Link
+                  to="/password-recovery-step-one"
+                  className="font-semibold transition-all duration-200 hover:underline text-gray-500"
+               >
+                  Click here to recover.
+               </Link>
+            </p>
             {errorMessage && (
                <p className="text-red-600 mt-2 text-lg font-medium text-center">
                   Please check your credentials and try again.

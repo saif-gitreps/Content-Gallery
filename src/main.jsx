@@ -16,6 +16,8 @@ import {
    MyPosts,
    Profile,
    EmailConfirmation,
+   PasswordRecoveryStepOne,
+   PasswordRecoveryStepTwo,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -40,6 +42,22 @@ const router = createBrowserRouter([
             element: (
                <AuthLayout authentication={false}>
                   <Signup />
+               </AuthLayout>
+            ),
+         },
+         {
+            path: "/password-recovery-step-one",
+            element: (
+               <AuthLayout authentication={false}>
+                  <PasswordRecoveryStepOne />
+               </AuthLayout>
+            ),
+         },
+         {
+            path: "/password-recovery-step-two",
+            element: (
+               <AuthLayout authentication={false}>
+                  <PasswordRecoveryStepTwo />
                </AuthLayout>
             ),
          },

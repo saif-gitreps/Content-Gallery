@@ -79,10 +79,17 @@ function UpdateEmail({ setErrorMessage }) {
          <Input
             className="text-xl font-normal"
             readOnly={!editEmail}
-            {...registerEmail("email", { required: true })}
+            {...registerEmail("email", {
+               required: true,
+               validate: {
+                  matchPatern: (value) =>
+                     /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                     "Email address must be a valid address",
+               },
+            })}
          />
          <h2
-            className="text-base text-red-700 font-medium ml-2 hidden"
+            className="text-base text-red-700 font-medium hidden"
             ref={emailVerificationMessage}
          >
             Check your email for email verification

@@ -15,7 +15,7 @@ function Profile() {
          <Container>
             <div className="flex flex-col items-center bg-white max-w-xl m-auto rounded-xl shadow-md">
                <h1 className="text-3xl font-semibold mt-8">Profile</h1>
-               <UpdateProfilePic />
+               <UpdateProfilePic setErrorMessage={setErrorMessage} />
                <div className="flex flex-col items-center mb-4">
                   <UpdateName setErrorMessage={setErrorMessage} />
                   <UpdateEmail setErrorMessage={setErrorMessage} />
