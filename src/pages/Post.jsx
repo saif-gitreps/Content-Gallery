@@ -9,18 +9,18 @@ export default function Post() {
    const [post, setPost] = useState(null);
    const [image, setImage] = useState("");
    const [loading, setLoading] = useState(true);
-   const { slug } = useParams();
+   const { id } = useParams();
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
 
    useEffect(() => {
       const fetchData = async () => {
          try {
-            if (!slug) {
+            if (!id) {
                navigate("/");
                return;
             }
-            const post = await appwriteService.getPost(slug);
+            const post = await appwriteService.getPost(id);
             if (!post) {
                navigate("/");
                return;
@@ -35,7 +35,7 @@ export default function Post() {
          }
       };
       fetchData();
-   }, [slug, navigate]);
+   }, [id, navigate]);
 
    const deletePost = async () => {
       try {
