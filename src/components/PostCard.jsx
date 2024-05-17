@@ -26,7 +26,7 @@ function PostCard({ $id, title, featuredImage, className = "" }) {
             <div className="w-full flex justify-center items-centers mb-4">
                {imageSrc && <img src={imageSrc} alt={title} className="rounded-xl" />}
             </div>
-            <h2 className="text-2xl font-bold text-center">{title}</h2>
+            <h2 className="text-sm md:text-xl font-bold text-center">{title}</h2>
          </div>
       </Link>
    );

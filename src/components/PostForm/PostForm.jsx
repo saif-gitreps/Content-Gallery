@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Input, Select, SaveAndCancelDiv } from "../index";
-import appwriteService from "../../appwrite/config-appwrite";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Input, Select, SaveAndCancelDiv } from "../index";
+import appwriteService from "../../appwrite/config-appwrite";
 
 function PostForm({ post, pageTitle = "Create" }) {
+   const [imageSrc, setImageSrc] = useState(null);
+   const navigate = useNavigate();
+   const userData = useSelector((state) => state.auth.userData);
+
    const { register, handleSubmit } = useForm({
       defaultValues: {
          title: post?.title || "",
@@ -13,9 +17,6 @@ function PostForm({ post, pageTitle = "Create" }) {
          status: post?.status || "active",
       },
    });
-
-   const navigate = useNavigate();
-   const userData = useSelector((state) => state.auth.userData);
 
    const submit = async (data) => {
       if (post) {
@@ -53,8 +54,6 @@ function PostForm({ post, pageTitle = "Create" }) {
       }
    };
 
-   const [imageSrc, setImageSrc] = useState("");
-
    useEffect(() => {
       const fetchImageSrc = async () => {
          try {
@@ -89,21 +88,32 @@ function PostForm({ post, pageTitle = "Create" }) {
                type="text"
                {...register("content", { required: true })}
             />
-
             <Input
                label="Featured Image :"
                type="file"
-               className="mb-4"
+               className=""
                {...register("image")}
+               onChange={(event) => {
+                  const file = event.target.files[0];
+                  console.log(event.target);
+                  if (file) {
+                     console.log(file);
+                     const reader = new FileReader();
+                     reader.onload = () => {
+                        setImageSrc(reader.result);
+                     };
+                     reader.readAsDataURL(file);
+                  }
+               }}
             />
-            {post && (
+            {imageSrc && (
                <div className="w-full mb-4">
-                  <img src={imageSrc} alt={post.title} className="rounded-lg" />
+                  <img src={imageSrc} alt={post?.title || ""} className="rounded-lg" />
                </div>
             )}
             <Select
-               options={["active", "inactive"]}
-               label="Status"
+               label="Status: "
+               options={["Active", "Inactive"]}
                className="mb-4"
                {...register("status", { required: true })}
             />
@@ -111,7 +121,13 @@ function PostForm({ post, pageTitle = "Create" }) {
             <SaveAndCancelDiv
                saveText={post ? "Update" : "Create"}
                cancelText="Cancel"
-               cancel={() => navigate(`/post/${post.$id}`)}
+               cancel={() => {
+                  if (post) {
+                     navigate(`/post/${post.$id}`);
+                  } else {
+                     navigate("/");
+                  }
+               }}
             />
          </form>
       </div>

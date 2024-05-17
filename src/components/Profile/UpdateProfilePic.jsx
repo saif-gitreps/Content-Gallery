@@ -53,9 +53,7 @@ function UpdateProfilePic({ setErrorMessage }) {
          console.log("Profile Picture Upload Error", error);
       }
    };
-   /// i am taking the ref of the hidden input field
-   // and putting an event listener as to when there exist a file
-   // that was uploaded. the preview will be shown in the profile picture.
+
    const handleProfilePicPreview = (event) => {
       const file = event.target.files[0];
       if (file) {
