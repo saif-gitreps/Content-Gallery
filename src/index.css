@@ -34,3 +34,14 @@
    break-inside: avoid;
    margin-bottom: 1rem;
 }
+
+.dropdown-menu {
+   z-index: 1000;
+   position: absolute;
+   top: 5.6rem;
+   width: 12rem;
+   background-color: white;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+   border-radius: 8px;
+   overflow: hidden;
+}

@@ -57,8 +57,8 @@ export default function Post() {
    return post ? (
       <div className="py-8">
          <Container>
-            <div className="w-full flex justify-center mb-6 relative border rounded-xl p-2 bg-white hover:shadow-lg">
-               <img src={image} alt={post.title} className="rounded-xl" />
+            <div className="w-full flex justify-center mb-6 relative border rounded-xl p-2 bg-white shadow-lg">
+               <img src={image} alt={post.title} className="rounded-xl " />
             </div>
             <div className="w-full mb-6">
                <h1 className="text-3xl font-bold">{post.title}</h1>

@@ -95,9 +95,7 @@ function PostForm({ post, pageTitle = "Create" }) {
                {...register("image")}
                onChange={(event) => {
                   const file = event.target.files[0];
-                  console.log(event.target);
                   if (file) {
-                     console.log(file);
                      const reader = new FileReader();
                      reader.onload = () => {
                         setImageSrc(reader.result);

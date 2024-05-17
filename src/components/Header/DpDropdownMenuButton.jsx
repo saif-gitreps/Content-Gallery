@@ -9,12 +9,6 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
    const dpRef = useRef(null);
 
    useEffect(() => {
-      /*
-          event.target is the MOUSE CLICK on a dom.
-          
-          The reason i had to use !dpRef.current.contains(event.target) is so that the onClick() method on the dp which toggles "open" variable to work. Previously without it, when we clicked the dp, the onClick and the event listen for click outside the dropDown dom caused a conflict , so now we eliminate that conflict by including the dp element along with dropDown element to not react to a click. 
-          It also prevent the dropdown from immediately closing due to the click listener that listens for clicks outside of the dropdown.
-      */
       const handleClickOutside = (event) => {
          if (
             dropdownRef.current &&
@@ -33,11 +27,11 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
    return (
       <>
          <div
-            className="flex row px-2 py-2 rounded-xl duration-300 hover:shadow-md hover:cursor-pointer"
+            className="flex p-1 rounded-xl duration-300 hover:shadow-md hover:cursor-pointer"
             onClick={() => setOpen(!open)}
             ref={dpRef}
          >
-            <img src={src} alt="profile" className="w-12 h-12 rounded-2xl" />
+            <img src={src} alt="profile" className="w-16 h-16 rounded-2xl" />
             {open ? (
                <p className="ml-2 flex items-center">▲</p>
             ) : (
@@ -46,10 +40,7 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
          </div>
 
          {open && (
-            <div
-               className="absolute top-20 right-32 w-48 bg-white shadow-lg rounded-xl"
-               ref={dropdownRef}
-            >
+            <div className="dropdown-menu" ref={dropdownRef}>
                <ul>
                   {navItems.map(
                      (item) =>

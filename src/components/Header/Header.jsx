@@ -22,12 +22,16 @@ function Header() {
    return (
       <header className="py-3 shadow bg-white font-medium">
          <Container>
-            <nav className="flex ">
-               <div className="mx-4">
-                  <Link to="/">
-                     <Logo className="p-2 rounded-full duration-300 hover:shadow-lg" />
-                  </Link>
-               </div>
+            <nav className="flex">
+               {authStatus && (
+                  <div className="hidden items-center sm:flex mx-4">
+                     <DpDropdownMenuButton
+                        src={dp}
+                        navItems={navItems}
+                        authStatus={authStatus}
+                     />
+                  </div>
+               )}
                <div className="sm:hidden ml-auto">
                   <Hamburger navItems={navItems} logutButton={authStatus} />
                </div>
@@ -44,15 +48,11 @@ function Header() {
                         </li>
                      ) : null
                   )}
-                  {authStatus && (
-                     <li className="flex items-center">
-                        <DpDropdownMenuButton
-                           src={dp}
-                           navItems={navItems}
-                           authStatus={authStatus}
-                        />
-                     </li>
-                  )}
+                  <li className="mx-4">
+                     <Link to="/">
+                        <Logo className="p-2 rounded-full duration-300 hover:shadow-lg" />
+                     </Link>
+                  </li>
                </ul>
             </nav>
          </Container>
