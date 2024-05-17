@@ -24,3 +24,13 @@
 .animation-delay-600 {
    animation-delay: 0.66s;
 }
+
+.masonry-grid {
+   column-count: 3;
+   column-gap: 1rem;
+}
+
+.masonry-item {
+   break-inside: avoid;
+   margin-bottom: 1rem;
+}
