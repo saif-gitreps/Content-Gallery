@@ -6,6 +6,7 @@ import UpdatePhone from "./Profile/UpdatePhone";
 import UpdatePassword from "./Profile/UpdatePassword";
 import SaveAndCancelDiv from "./SaveAndCancelDiv";
 import LogoutButton from "./Header/LogoutButton";
+import CommentForm from "./PostForm/CommentForm";
 import Container from "./Container/Container";
 import PostForm from "./PostForm/PostForm";
 import Hamburger from "./Header/Hamburger";
@@ -14,6 +15,7 @@ import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import PostCard from "./PostCard";
 import Button from "./Button";
+import Comment from "./PostForm/Comment";
 import Signup from "./Signup";
 import Select from "./Select";
 import Loader from "./Loader";
@@ -30,7 +32,9 @@ export {
    UpdateEmail,
    UpdatePhone,
    UpdatePassword,
+   Comment,
    SaveAndCancelDiv,
+   CommentForm,
    LogoutButton,
    Hamburger,
    Header,

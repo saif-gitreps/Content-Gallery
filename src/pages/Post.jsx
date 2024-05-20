@@ -1,11 +1,31 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Container, Loader } from "../components";
+import { Container, Loader, Comment } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import appwriteCommentsService from "../appwrite/config-comments";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
+
+import formatDate from "../utils/formatDate";
+
+function PostActions({ postId, onDelete }) {
+   return (
+      <div className="absolute right-7 top-7">
+         <Link to={`/edit-post/${postId}`}>
+            <button className="text-md py-3 w-16 bg-green-400 duration-300 hover:shadow-md hover:bg-green-100 rounded-lg mr-1">
+               Edit
+            </button>
+         </Link>
+         <button
+            className="text-md py-3 w-16 bg-red-400 duration-300 hover:shadow-md hover:bg-red-100 rounded-lg"
+            onClick={onDelete}
+         >
+            Delete
+         </button>
+      </div>
+   );
+}
 
 export default function Post() {
    const [image, setImage] = useState("");
@@ -17,9 +37,7 @@ export default function Post() {
    const [postComments, setPostComments] = useState([]);
 
    const { register, handleSubmit } = useForm({
-      defaultValues: {
-         content: "",
-      },
+      defaultValues: { content: "" },
    });
 
    useEffect(() => {
@@ -84,14 +102,21 @@ export default function Post() {
             post?.$id,
             userData.name
          );
+         const commentsOnThePost = await appwriteCommentsService.getComments(post?.$id);
+         if (commentsOnThePost) {
+            setPostComments(commentsOnThePost.documents);
+         }
       } catch (error) {
          console.error("Error adding comment:", error);
       }
    };
 
-   const deleteComment = async (id) => {
+   const deleteComment = async (commentId) => {
       try {
-         await appwriteCommentsService.deleteComment(id);
+         await appwriteCommentsService.deleteComment(commentId);
+         setPostComments((prevComments) =>
+            prevComments.filter((comment) => comment.$id !== commentId)
+         );
       } catch (error) {
          console.error("Error deleting comment:", error);
       }
@@ -104,21 +129,7 @@ export default function Post() {
       <div className="py-8">
          <Container className="w-2/3 mx-auto">
             <div className="mb-6 p-6 relative border rounded-2xl bg-white shadow-lg">
-               {isAuthor && (
-                  <div className="absolute right-7 top-7">
-                     <Link to={`/edit-post/${post.$id}`}>
-                        <button className="text-md inline-bock py-3 w-16 bg-green-400 duration-300 hover:shadow-md hover:bg-green-100 rounded-lg mr-1">
-                           Edit
-                        </button>
-                     </Link>
-                     <button
-                        className="text-md inline-bock py-3 w-16 bg-red-400 duration-300 hover:shadow-md hover:bg-red-100 rounded-lg"
-                        onClick={deletePost}
-                     >
-                        Delete
-                     </button>
-                  </div>
-               )}
+               {isAuthor && <PostActions postId={post.$id} onDelete={deletePost} />}
                <div className="w-full flex justify-center ">
                   <img src={image} alt={post.title} className="rounded-2xl " />
                </div>
@@ -134,27 +145,14 @@ export default function Post() {
                      <li className="text-center">No comments yet</li>
                   ) : (
                      postComments.map((comment, index) => (
-                        <li key={index} className="mb-4 flex justify-between">
-                           <div className="flex items-center">
-                              <img
-                                 src={comment.avatar}
-                                 alt={comment.userName}
-                                 className="w-10 h-10 rounded-full"
-                              />
-                              <div className="ml-2 max-w-2/5">
-                                 <p className="font-bold">{comment.userName}</p>
-                                 <p>{comment.content}</p>
-                              </div>
-                           </div>
-                           {(isAuthor || comment.userId === userData.$id) && (
-                              <button
-                                 className="text-sm w-14 bg-red-400 duration-300 hover:shadow-md hover:bg-red-100 rounded-lg"
-                                 onClick={() => deleteComment(comment.$id)}
-                              >
-                                 Delete
-                              </button>
-                           )}
-                        </li>
+                        <Comment
+                           key={index}
+                           comment={comment}
+                           isAuthor={isAuthor}
+                           onDelete={deleteComment}
+                           userData={userData}
+                           formatDate={formatDate}
+                        />
                      ))
                   )}
                </ul>
