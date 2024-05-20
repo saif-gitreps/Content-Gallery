@@ -2,28 +2,25 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Container, Loader } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
+import appwriteCommentsService from "../appwrite/config-comments";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 
 export default function Post() {
-   const [post, setPost] = useState(null);
-   const [comments, setComment] = useState([]);
-
-   const { register, handleSubmit } = useForm({
-      defaultValues: {
-         content: "",
-         avatar: "",
-         articleId: "",
-         userName: "",
-      },
-   });
-
    const [image, setImage] = useState("");
    const [loading, setLoading] = useState(true);
    const { id } = useParams();
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
+   const [post, setPost] = useState(null);
+   const [postComments, setPostComments] = useState([]);
+
+   const { register, handleSubmit } = useForm({
+      defaultValues: {
+         content: "",
+      },
+   });
 
    useEffect(() => {
       const fetchData = async () => {
@@ -49,6 +46,22 @@ export default function Post() {
       fetchData();
    }, [id, navigate]);
 
+   useEffect(() => {
+      const fetchData = async () => {
+         try {
+            const commentsOnThePost = await appwriteCommentsService.getComments(
+               post?.$id
+            );
+            if (commentsOnThePost) {
+               setPostComments(commentsOnThePost.documents);
+            }
+         } catch (error) {
+            console.error("Error fetching comments:", error);
+         }
+      };
+      fetchData();
+   }, [post?.$id]);
+
    const deletePost = async () => {
       try {
          const status = await appwriteService.deletePost(post.$id);
@@ -62,6 +75,27 @@ export default function Post() {
    };
 
    const isAuthor = post && userData ? post.userId === userData.$id : false;
+
+   const addComments = async (data) => {
+      try {
+         await appwriteCommentsService.addComment(
+            data.content,
+            userData.prefs?.profilePicture,
+            post?.$id,
+            userData.name
+         );
+      } catch (error) {
+         console.error("Error adding comment:", error);
+      }
+   };
+
+   const deleteComment = async (id) => {
+      try {
+         await appwriteCommentsService.deleteComment(id);
+      } catch (error) {
+         console.error("Error deleting comment:", error);
+      }
+   };
 
    if (loading) {
       return <Loader />;
@@ -95,26 +129,36 @@ export default function Post() {
             </div>
             <div className="p-6 relative border rounded-2xl bg-white shadow-lg">
                <h1 className="text-2xl font-bold text-center">Comments</h1>
-               {comments.length === 0 ? (
-                  <p className="text-center">No comments yet</p>
-               ) : (
-                  comments.map((comment, index) => (
-                     <div key={index} className="mb-4">
-                        <div className="flex items-center">
-                           <img
-                              src={comment.avatar}
-                              alt={comment.userName}
-                              className="w-10 h-10 rounded-full"
-                           />
-                           <div className="ml-2">
-                              <p className="font-bold">{comment.userName}</p>
-                              <p>{comment.content}</p>
+               <ul>
+                  {postComments.length === 0 ? (
+                     <li className="text-center">No comments yet</li>
+                  ) : (
+                     postComments.map((comment, index) => (
+                        <li key={index} className="mb-4 flex justify-between">
+                           <div className="flex items-center">
+                              <img
+                                 src={comment.avatar}
+                                 alt={comment.userName}
+                                 className="w-10 h-10 rounded-full"
+                              />
+                              <div className="ml-2 max-w-2/5">
+                                 <p className="font-bold">{comment.userName}</p>
+                                 <p>{comment.content}</p>
+                              </div>
                            </div>
-                        </div>
-                     </div>
-                  ))
-               )}
-               <form onSubmit={handleSubmit()}>
+                           {(isAuthor || comment.userId === userData.$id) && (
+                              <button
+                                 className="text-sm w-14 bg-red-400 duration-300 hover:shadow-md hover:bg-red-100 rounded-lg"
+                                 onClick={() => deleteComment(comment.$id)}
+                              >
+                                 Delete
+                              </button>
+                           )}
+                        </li>
+                     ))
+                  )}
+               </ul>
+               <form onSubmit={handleSubmit(addComments)}>
                   <textarea
                      {...register("content", { required: true })}
                      className="w-full h-24 p-4 mt-4 border rounded-xl"
