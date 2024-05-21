@@ -6,8 +6,9 @@ import UpdatePhone from "./Profile/UpdatePhone";
 import UpdatePassword from "./Profile/UpdatePassword";
 import SaveAndCancelDiv from "./SaveAndCancelDiv";
 import LogoutButton from "./Header/LogoutButton";
-import CommentForm from "./PostForm/CommentForm";
 import Container from "./Container/Container";
+import PostActions from "./PostForm/PostActions";
+import CommentSection from "./PostForm/CommentSection";
 import PostForm from "./PostForm/PostForm";
 import Hamburger from "./Header/Hamburger";
 import AuthLayout from "./AuthLayout";
@@ -34,7 +35,8 @@ export {
    UpdatePassword,
    Comment,
    SaveAndCancelDiv,
-   CommentForm,
+   CommentSection,
+   PostActions,
    LogoutButton,
    Hamburger,
    Header,
