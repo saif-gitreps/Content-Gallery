@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import formatDate from "../../utils/formatDate";
 import { Comment } from "../../components";
@@ -6,9 +6,8 @@ import appwriteCommentsService from "../../appwrite/config-comments";
 
 function CommentSection({ post, userData, isAuthor }) {
    const [postComments, setPostComments] = useState([]);
-   const clearTextArea = useRef(null);
 
-   const { register, handleSubmit } = useForm({
+   const { register, handleSubmit, reset } = useForm({
       defaultValues: { content: "" },
    });
 
@@ -39,7 +38,7 @@ function CommentSection({ post, userData, isAuthor }) {
          const commentsOnThePost = await appwriteCommentsService.getComments(post?.$id);
          if (commentsOnThePost) {
             setPostComments(commentsOnThePost.documents);
-            clearTextArea.current.value = "";
+            reset({ content: "" });
          }
       } catch (error) {
          console.error("Error adding comment:", error);
@@ -80,7 +79,6 @@ function CommentSection({ post, userData, isAuthor }) {
                {...register("content", { required: true })}
                className="w-full h-24 p-4 mt-4 border rounded-xl"
                placeholder="Add a comment"
-               ref={clearTextArea}
             ></textarea>
             <button
                type="submit"
