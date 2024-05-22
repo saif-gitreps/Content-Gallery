@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import getNavItems from "./navItems";
 
 function Header() {
@@ -10,14 +11,20 @@ function Header() {
    let userData = useSelector((state) => state.auth.userData);
    const navigate = useNavigate();
    const [dp, setDp] = useState("/blank-dp.png");
-
-   useEffect(() => {
-      if (authStatus) {
-         setDp(userData.prefs?.profilePicture || "/blank-dp.png");
-      }
-   }, [authStatus, userData]);
+   const { register, handleSubmit, setValue } = useForm();
 
    const navItems = getNavItems(authStatus, userData);
+
+   useEffect(() => {
+      if (userData) {
+         setDp(userData.prefs?.profilePicture || "/blank-dp.png");
+      }
+   }, [userData]);
+
+   const onSearch = (data) => {
+      navigate(`/search?q=${data.query.trim()}`);
+      setValue("query", "");
+   };
 
    return (
       <header className="py-3 shadow bg-white font-medium">
@@ -32,12 +39,25 @@ function Header() {
                      />
                   </div>
                )}
-               <div className="flex justify-center items-center">
-                  <Input type="text" name="text" className="input" placeholder="Search" />
-                  <button className="text-2xl w-14 h-12 duration-300 hover:shadow-md rounded-lg">
+
+               <form
+                  onSubmit={handleSubmit(onSearch)}
+                  className="flex justify-center items-center"
+               >
+                  <Input
+                     {...register("query", { required: true })}
+                     type="text"
+                     className="input"
+                     placeholder="Search"
+                  />
+                  <button
+                     type="submit"
+                     className="text-2xl w-14 h-12 duration-300 hover:shadow-md rounded-full"
+                  >
                      🔍
                   </button>
-               </div>
+               </form>
+
                <div className="sm:hidden ml-auto">
                   <Hamburger navItems={navItems} logutButton={authStatus} />
                </div>

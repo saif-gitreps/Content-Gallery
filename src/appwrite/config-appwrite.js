@@ -103,6 +103,19 @@ export class Service {
       }
    }
 
+   async searchPosts(query) {
+      try {
+         return await this.databases.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteCollectionId,
+            [Query.or([Query.contains("title", query), Query.contains("content", query)])]
+         );
+      } catch (error) {
+         console.log("post search error: ", error);
+         throw error;
+      }
+   }
+
    async uploadFile(file) {
       try {
          return await this.bucket.createFile(config.appwriteBucketId, ID.unique(), file);

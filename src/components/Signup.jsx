@@ -43,11 +43,11 @@ function Signup() {
          <h2 className="text-center text-2xl font-bold leading-tight">
             Sign up to create account
          </h2>
-         <p className="text-lg text-center  text-black/60">
+         <p className="text-lg text-center font-medium ">
             Already have an account?&nbsp;
             <Link
                to="/login"
-               className="font-medium text-primary transition-all duration-200 hover:underline"
+               className="font-medium text-primary transition-all duration-200 hover:underline text-blue-600"
             >
                Sign In
             </Link>

@@ -46,7 +46,7 @@ function Login() {
             Don&apos;t have any account?&nbsp;
             <Link
                to="/signup"
-               className="font-medium transition-all duration-200 hover:underline text-gray-500"
+               className="font-medium transition-all duration-200 hover:underline text-blue-600"
             >
                Sign Up
             </Link>
@@ -84,7 +84,7 @@ function Login() {
             Forgot password?&nbsp;
             <Link
                to="/password-recovery-step-one"
-               className="font-semibold transition-all duration-200 hover:underline text-gray-500"
+               className="font-semibold transition-all duration-200 hover:underline text-blue-600"
             >
                Click here to recover.
             </Link>

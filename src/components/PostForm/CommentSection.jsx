@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Comment, Loader } from "../../components";
 import appwriteCommentsService from "../../appwrite/config-comments";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
-function CommentSection({ post, userData, isAuthor, authStatus }) {
+function CommentSection({ post, userData, isAuthor }) {
    const [postComments, setPostComments] = useState([]);
    const [loader, setLoader] = useState(true);
+   const authStatus = useSelector((state) => state.auth.status);
 
    const { register, handleSubmit, reset } = useForm({
       defaultValues: { content: "" },
@@ -89,6 +92,18 @@ function CommentSection({ post, userData, isAuthor, authStatus }) {
                   Add Comment
                </button>
             </form>
+         )}
+
+         {!authStatus && (
+            <p className="text-center mt-4 text-base">
+               <Link
+                  to="/login"
+                  className="font-semibold transition-all duration-200 hover:underline text-blue-600"
+               >
+                  Login{" "}
+               </Link>
+               to add a comment
+            </p>
          )}
       </div>
    );

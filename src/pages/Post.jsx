@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Loader, PostActions, CommentSection } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
-
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 

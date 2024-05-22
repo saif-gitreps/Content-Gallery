@@ -44,7 +44,7 @@ function PasswordRecoveryStepOne() {
             </form>
             <Link
                to="/login"
-               className="font-semibold mt-2 text-lg hover:underline text-gray-500"
+               className="font-semibold mt-2 text-lg hover:underline text-blue-600"
             >
                Back
             </Link>

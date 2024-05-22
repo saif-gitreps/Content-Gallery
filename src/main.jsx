@@ -18,6 +18,7 @@ import {
    EmailConfirmation,
    PasswordRecoveryStepOne,
    PasswordRecoveryStepTwo,
+   SearchResult,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -104,6 +105,14 @@ const router = createBrowserRouter([
          {
             path: "/post/:id",
             element: <Post />,
+         },
+         {
+            path: "/search",
+            element: <SearchResult />,
+         },
+         {
+            path: "*",
+            element: <h1>404</h1>,
          },
       ],
    },
