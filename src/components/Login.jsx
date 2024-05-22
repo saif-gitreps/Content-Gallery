@@ -33,7 +33,6 @@ function Login() {
       }
    };
 
-   /* To clear confusion, register is a function that returns an object, so we are basically taking all the objects this register function returns */
    return loader ? (
       <Loader />
    ) : (

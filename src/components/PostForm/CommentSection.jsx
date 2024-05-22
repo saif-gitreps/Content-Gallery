@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import formatDate from "../../utils/formatDate";
-import { Comment } from "../../components";
+import { Comment, Loader } from "../../components";
 import appwriteCommentsService from "../../appwrite/config-comments";
 
-function CommentSection({ post, userData, isAuthor }) {
+function CommentSection({ post, userData, isAuthor, authStatus }) {
    const [postComments, setPostComments] = useState([]);
+   const [loader, setLoader] = useState(true);
 
    const { register, handleSubmit, reset } = useForm({
       defaultValues: { content: "" },
@@ -19,6 +19,7 @@ function CommentSection({ post, userData, isAuthor }) {
             );
             if (commentsOnThePost) {
                setPostComments(commentsOnThePost.documents);
+               setLoader(false);
             }
          } catch (error) {
             console.error("Error fetching comments:", error);
@@ -59,7 +60,8 @@ function CommentSection({ post, userData, isAuthor }) {
       <div className="p-6 relative border rounded-2xl bg-white shadow-lg">
          <h1 className="text-2xl font-bold text-center">Comments</h1>
          <ul>
-            {postComments.length === 0 ? (
+            {loader && <Loader />}
+            {!loader && postComments.length === 0 ? (
                <li className="text-center">No comments yet</li>
             ) : (
                postComments.map((comment, index) => (
@@ -69,24 +71,25 @@ function CommentSection({ post, userData, isAuthor }) {
                      isAuthor={isAuthor}
                      onDelete={deleteComment}
                      userData={userData}
-                     formatDate={formatDate}
                   />
                ))
             )}
          </ul>
-         <form onSubmit={handleSubmit(addComments)}>
-            <textarea
-               {...register("content", { required: true })}
-               className="w-full h-24 p-4 mt-4 border rounded-xl"
-               placeholder="Add a comment"
-            ></textarea>
-            <button
-               type="submit"
-               className="w-full py-3 bg-blue-400 duration-300 hover:shadow-md hover:bg-blue-100 rounded-lg mt-4"
-            >
-               Add Comment
-            </button>
-         </form>
+         {authStatus && (
+            <form onSubmit={handleSubmit(addComments)}>
+               <textarea
+                  {...register("content", { required: true })}
+                  className="w-full h-24 p-4 mt-4 border rounded-xl"
+                  placeholder="Add a comment"
+               ></textarea>
+               <button
+                  type="submit"
+                  className="w-full py-3 bg-blue-400 duration-300 hover:shadow-md hover:bg-blue-100 rounded-lg mt-4"
+               >
+                  Add Comment
+               </button>
+            </form>
+         )}
       </div>
    );
 }

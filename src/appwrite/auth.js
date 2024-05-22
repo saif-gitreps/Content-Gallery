@@ -3,15 +3,6 @@ import appwriteService from "./config-appwrite";
 
 import { Client, Account, ID } from "appwrite";
 
-/*
-    This is the way it is done in documentation, the below one is more organized way.   
-
-    const client = new Client()
-    .setEndpoint(config.appwriteUrl)
-    .setProject(config.appwriteProjectId);
-
-    const account = new Account(client);
-*/
 export class AuthService {
    client = new Client();
    account;
@@ -30,7 +21,6 @@ export class AuthService {
             name
          );
          if (userAccount) {
-            // creating a user profile in dbs for pfp and other stuffs.
             await appwriteService.createUserProfile(userAccount.$id);
             return await this.login({ email, password });
          } else {

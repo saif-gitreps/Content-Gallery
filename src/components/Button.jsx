@@ -6,9 +6,6 @@ function Button({
    className = "",
    ...props
 }) {
-   // here children is basically the text part.
-   // adding a spread of props basically allows a user to add infinte amount of properties
-   // in the Component. Example a user may want to put a placeholder.
    return (
       <button
          type={type}

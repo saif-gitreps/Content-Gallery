@@ -12,6 +12,7 @@ export default function Post() {
    const { id } = useParams();
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
+
    const [post, setPost] = useState(null);
 
    useEffect(() => {
@@ -72,7 +73,7 @@ export default function Post() {
                   />
                </div>
             </div>
-            <CommentSection post={post} userData={userData} isAuthor={isAuthor} />
+            <CommentSection post={post} isAuthor={isAuthor} userData={userData} />
          </Container>
       </div>
    ) : null;

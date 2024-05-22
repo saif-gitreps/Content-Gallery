@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-catch */
 import config from "../config/config";
 import { ID, Client, Databases, Query, Storage } from "appwrite";
 
@@ -28,6 +27,7 @@ export class Service {
             }
          );
       } catch (error) {
+         console.log("post creation error: ", error);
          throw error;
       }
    }
@@ -46,6 +46,7 @@ export class Service {
             }
          );
       } catch (error) {
+         console.log("post update error: ", error);
          throw error;
       }
    }
@@ -71,6 +72,7 @@ export class Service {
             id
          );
       } catch (error) {
+         console.log("post retrieval error: ", error);
          throw error;
       }
    }

@@ -12,13 +12,14 @@ const Hamburger = ({ navItems, logutButton }) => {
 
    return (
       <div className="flex flex-col justify-center p-2">
-         <button onClick={openDropDown}>
-            <ul className="w-24 duration-300 hover:shadow-lg rounded-lg flex flex-col">
-               <li className="font-black">-------</li>
-               <li className="font-black">-------</li>
-               <li className="font-black">-------</li>
-            </ul>
-         </button>
+         <img
+            className={`w-20 p-2 hover:cursor-pointer hover:shadow-md rounded-full ${
+               open ? "rotate-90" : "rotate-0"
+            }`}
+            onClick={openDropDown}
+            src="/hamburger-icon.png"
+            alt="Burger"
+         />
          <ul>
             {open &&
                navItems.map((item) =>

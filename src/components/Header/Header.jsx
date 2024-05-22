@@ -1,4 +1,4 @@
-import { Container, Logo, Hamburger, DpDropdownMenuButton } from "../index";
+import { Container, Logo, Hamburger, DpDropdownMenuButton, Input } from "../index";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +32,12 @@ function Header() {
                      />
                   </div>
                )}
+               <div className="flex justify-center items-center">
+                  <Input type="text" name="text" className="input" placeholder="Search" />
+                  <button className="text-2xl w-14 h-12 duration-300 hover:shadow-md rounded-lg">
+                     🔍
+                  </button>
+               </div>
                <div className="sm:hidden ml-auto">
                   <Hamburger navItems={navItems} logutButton={authStatus} />
                </div>

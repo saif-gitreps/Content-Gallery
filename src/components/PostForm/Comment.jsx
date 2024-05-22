@@ -1,4 +1,9 @@
-function Comment({ comment, isAuthor, onDelete, userData, formatDate }) {
+import formatDate from "../../utils/formatDate";
+import { useSelector } from "react-redux";
+
+function Comment({ comment, isAuthor, onDelete, userData }) {
+   const authStatus = useSelector((state) => state.auth.status);
+
    return (
       <li className="mb-4 flex justify-between border-b-1 p-3 rounded-lg shadow-md">
          <div className="items-center w-10/12">
@@ -17,7 +22,7 @@ function Comment({ comment, isAuthor, onDelete, userData, formatDate }) {
                <p>{comment.content}</p>
             </div>
          </div>
-         {(isAuthor || comment.userId === userData.$id) && (
+         {authStatus && (isAuthor || comment.userId === userData?.$id) && (
             <button
                className="text-sm w-14 h-10 bg-red-400 duration-300 hover:shadow-md hover:bg-red-100 rounded-lg"
                onClick={() => onDelete(comment.$id)}
