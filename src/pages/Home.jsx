@@ -24,7 +24,7 @@ function Home() {
    }
    return (
       <div className="w-full py-8">
-         <Container>
+         <Container className="max-w-full">
             <h1 className="text-center">
                {posts.length === 0 && <p>No posts available.</p>}
             </h1>

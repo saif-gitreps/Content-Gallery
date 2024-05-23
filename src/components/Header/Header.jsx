@@ -28,7 +28,7 @@ function Header() {
 
    return (
       <header className="py-3 shadow bg-white font-medium">
-         <Container>
+         <Container className="max-w-full">
             <nav className="flex">
                {authStatus && (
                   <div className="hidden items-center sm:flex mx-4">
