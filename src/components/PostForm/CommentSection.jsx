@@ -37,7 +37,8 @@ function CommentSection({ post, userData, isAuthor }) {
             data.content,
             userData.prefs?.profilePicture,
             post?.$id,
-            userData.name
+            userData.name,
+            userData.$id
          );
          const commentsOnThePost = await appwriteCommentsService.getComments(post?.$id);
          if (commentsOnThePost) {

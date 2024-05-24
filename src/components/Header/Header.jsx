@@ -8,7 +8,7 @@ import getNavItems from "./navItems";
 
 function Header() {
    const authStatus = useSelector((state) => state.auth.status);
-   let userData = useSelector((state) => state.auth.userData);
+   const userData = useSelector((state) => state.auth.userData);
    const navigate = useNavigate();
    const [dp, setDp] = useState("/blank-dp.png");
    const { register, handleSubmit, setValue } = useForm();
@@ -16,10 +16,12 @@ function Header() {
    const navItems = getNavItems(authStatus, userData);
 
    useEffect(() => {
-      if (userData) {
-         setDp(userData.prefs?.profilePicture || "/blank-dp.png");
+      if (userData && authStatus) {
+         setDp(userData.prefs?.profilePicture);
+      } else {
+         setDp("/blank-dp.png");
       }
-   }, [userData]);
+   }, [userData, authStatus]);
 
    const onSearch = (data) => {
       navigate(`/search?q=${data.query.trim()}`);

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import authService from "../appwrite/auth";
-import appwriteUserService from "../appwrite/config-user.js";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../store/authSlice";
 import { Button, Input, Loader } from "./index.js";
@@ -22,12 +21,7 @@ function Signup() {
          if (userData) {
             const userData = await authService.getCurrentUser();
             if (userData) {
-               await appwriteUserService.createUserProfile(
-                  userData.$id,
-                  userData.name,
-                  userData.email,
-                  "/blank-dp.png"
-               );
+               await authService.updateProfilePicture("/blank-dp.png", "");
                dispatch(login(userData));
             }
             navigate("/");

@@ -12,7 +12,7 @@ export class Service {
       this.bucket = new Storage(this.client);
    }
 
-   async createUserProfile(userId, name, email, profilePicture) {
+   async createUserProfile(userId, name, profilePicture) {
       try {
          return await this.databases.createDocument(
             config.appwriteDatabaseId,
@@ -20,7 +20,6 @@ export class Service {
             userId,
             {
                name,
-               email,
                profilePicture,
             }
          );

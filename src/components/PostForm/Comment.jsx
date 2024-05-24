@@ -4,6 +4,10 @@ import { useSelector } from "react-redux";
 function Comment({ comment, isAuthor, onDelete, userData }) {
    const authStatus = useSelector((state) => state.auth.status);
 
+   const extractUserId = (comment) => {
+      return comment.$permissions[2].substring(13, comment.$permissions[2].length - 2);
+   };
+
    return (
       <li className="mb-4 flex justify-between border-b-1 p-3 rounded-lg shadow-md">
          <div className="items-center w-10/12">
@@ -22,7 +26,7 @@ function Comment({ comment, isAuthor, onDelete, userData }) {
                <p>{comment.content}</p>
             </div>
          </div>
-         {authStatus && (isAuthor || comment.userId === userData?.$id) && (
+         {authStatus && (isAuthor || extractUserId(comment) === userData?.$id) && (
             <button
                className="text-sm w-14 h-10 bg-red-400 duration-300 hover:shadow-md hover:bg-red-100 rounded-lg"
                onClick={() => onDelete(comment.$id)}

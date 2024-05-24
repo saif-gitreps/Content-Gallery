@@ -5,7 +5,6 @@ import { Button, Input, Loader } from "./index";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
-import appwriteUserService from "../appwrite/config-user";
 
 function Login() {
    const [loader, setLoader] = useState(false);
@@ -21,18 +20,13 @@ function Login() {
          const session = await authService.login(data);
          if (session) {
             const userData = await authService.getCurrentUser();
-            appwriteUserService
-               .getUserProfileData(userData.$id)
-               .then((userProfileData) => {
-                  userData.profilePicture = userProfileData.profilePicture;
-               });
             if (userData) {
                dispatch(authLogin(userData));
                navigate("/");
                setLoader(false);
+            } else {
+               setErrorMessage(true);
             }
-         } else {
-            setErrorMessage(true);
          }
       } catch (error) {
          setErrorMessage(true);

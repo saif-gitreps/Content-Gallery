@@ -19,7 +19,7 @@ export default function getNavItems(authStatus, userData) {
          forDropDownMenu: false,
       },
       {
-         name: `Profile (${userData?.name})`,
+         name: `Profile (${userData?.name || "User"})`,
          slug: "/profile",
          active: authStatus,
          forDropDownMenu: true,
