@@ -116,6 +116,49 @@ export class Service {
       }
    }
 
+   async getSavedPost(id) {
+      try {
+         return await this.databases.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteSavedCollectionId,
+            [Query.equal("articleId", id)]
+         );
+      } catch (error) {
+         console.log("saved post retrieval error: ", error);
+         throw error;
+      }
+   }
+
+   async unsavePost(saveId) {
+      try {
+         return await this.databases.deleteDocument(
+            config.appwriteDatabaseId,
+            config.appwriteSavedCollectionId,
+            saveId
+         );
+      } catch (error) {
+         console.log("post unsave error: ", error);
+         throw error;
+      }
+   }
+
+   async savePost(articleId, userId) {
+      try {
+         return await this.databases.createDocument(
+            config.appwriteDatabaseId,
+            config.appwriteSavedCollectionId,
+            ID.unique(),
+            {
+               articleId: articleId,
+               userId: userId,
+            }
+         );
+      } catch (error) {
+         console.log("post save error: ", error);
+         throw error;
+      }
+   }
+
    async uploadFile(file) {
       try {
          return await this.bucket.createFile(config.appwriteBucketId, ID.unique(), file);
@@ -135,56 +178,6 @@ export class Service {
 
    async getFilePrev(fileId) {
       return this.bucket.getFilePreview(config.appwriteBucketId, fileId);
-   }
-
-   async createUserProfile(userId, profilePicture) {
-      try {
-         return await this.databases.createDocument(
-            config.appwriteDatabaseId,
-            config.appwriteUserCollectionId,
-            userId,
-            {
-               profilePicture,
-            }
-         );
-      } catch (error) {
-         console.log("Appwrite serive :: uploadProfilePicture :: error", error);
-         return false;
-      }
-   }
-
-   async updateProfilePicture(userId, profilePicture) {
-      try {
-         // keep in mind i am storing the URL not the id from bucket.
-         const updatedProfilePic = await this.databases.updateDocument(
-            config.appwriteDatabaseId,
-            config.appwriteUserCollectionId,
-            userId,
-            {
-               profilePicture,
-            }
-         );
-         if (!updatedProfilePic) {
-            return await this.createUserProfile(userId, profilePicture);
-         }
-      } catch (error) {
-         console.log("Appwrite serive :: updateProfilePicture :: error", error);
-         return false;
-      }
-   }
-
-   async getUserProfileData(userId) {
-      try {
-         const userProfile = await this.databases.getDocument(
-            config.appwriteDatabaseId,
-            config.appwriteUserCollectionId,
-            userId
-         );
-         return userProfile.profilePicture;
-      } catch (error) {
-         console.log("Appwrite serive :: getProfilePicture :: error", error);
-         return false;
-      }
    }
 }
 

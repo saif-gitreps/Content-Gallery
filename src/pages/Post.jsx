@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 export default function Post() {
    const [image, setImage] = useState("");
    const [loading, setLoading] = useState(true);
+   const [saved, setSaved] = useState([]);
    const { id } = useParams();
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
@@ -26,7 +27,14 @@ export default function Post() {
                navigate("/");
                return;
             }
+
             setPost(post);
+            const isSaved = await appwriteService.getSavedPost(post.$id);
+
+            if (isSaved.documents.length > 0) {
+               setSaved(isSaved.documents[0]);
+            }
+
             const result = await appwriteService.getFilePrev(post.featuredImage);
             setImage(result);
             setLoading(false);
@@ -70,6 +78,22 @@ export default function Post() {
                      alt={post.title}
                      className="rounded-2xl h-96 object-cover"
                   />
+               </div>
+               <div>
+                  <button
+                     className="text-sm w-14 h-10 bg-green-500 duration-300 hover:shadow-md hover:bg-green-100 rounded-lg"
+                     onClick={async () => {
+                        if (saved) {
+                           setSaved(false);
+                           await appwriteService.unsavePost(saved.$id);
+                        } else {
+                           setSaved(true);
+                           await appwriteService.savePost(post.$id, userData.$id);
+                        }
+                     }}
+                  >
+                     {saved ? "Unsave" : "Save"}
+                  </button>
                </div>
             </div>
             <CommentSection post={post} isAuthor={isAuthor} userData={userData} />

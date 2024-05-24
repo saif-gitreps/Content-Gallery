@@ -6,6 +6,7 @@ const config = {
    appwriteCommentsCollectionId: String(
       import.meta.env.VITE_APPRWITE_COMMENTS_COLLECTION_ID
    ),
+   appwriteSavedCollectionId: String(import.meta.env.VITE_APPWRITE_SAVED_COLLECTION_ID),
    appwriteDatabaseId: String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
    appwriteBucketId: String(import.meta.env.VITE_APPWRITE_BUCKET_ID),
 };
