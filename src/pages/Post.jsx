@@ -4,6 +4,7 @@ import {
    PostActions,
    CommentSection,
    SharableLinks,
+   Button,
 } from "../components";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -90,13 +91,12 @@ export default function Post() {
                      />
                   </div>
                </div>
-               <div className="flex justify-between">
-                  <button
-                     className={`text-md py-3 h-14 w-16 duration-300 hover:shadow-md ${
-                        saved
-                           ? "text-white bg-black hover:bg-gray-700"
-                           : "bg-green-400 hover:bg-green-100"
-                     } rounded-lg`}
+               <div className="flex justify-end items-center">
+                  <Button
+                     text={saved ? "Saved" : "Save"}
+                     type="button"
+                     className="rounded-lg h-12"
+                     bgNumber={saved ? 0 : 1}
                      onClick={async () => {
                         if (saved) {
                            setSaved(false);
@@ -106,10 +106,7 @@ export default function Post() {
                            await appwriteService.savePost(post.$id, userData.$id);
                         }
                      }}
-                  >
-                     {saved ? "Saved" : "Save"}
-                  </button>
-
+                  />
                   <div className="relative">
                      {!showShareLinks ? (
                         <img

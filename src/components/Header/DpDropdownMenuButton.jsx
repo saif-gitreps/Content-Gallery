@@ -46,18 +46,18 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
                      (item) =>
                         item.active &&
                         item.forDropDownMenu && (
-                           <button
+                           <li
                               key={item.name}
                               onClick={() => navigate(item.slug)}
-                              className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                              className="block w-full px-4 py-2 text-left duration-300 hover:bg-gray-100 hover:cursor-pointer"
                            >
                               {item.name}
-                           </button>
+                           </li>
                         )
                   )}
                   {authStatus && (
                      <li className="flex items-center">
-                        <LogoutButton className="block w-full px-4 py-2 text-left hover:bg-gray-100" />
+                        <LogoutButton className="block w-full px-4 py-2 text-left duration-300 hover:bg-red-700 hover:cursor-pointer hover:text-white" />
                      </li>
                   )}
                </ul>

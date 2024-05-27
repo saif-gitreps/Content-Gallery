@@ -46,7 +46,7 @@ function Login() {
             Don&apos;t have any account?&nbsp;
             <Link
                to="/signup"
-               className="font-medium transition-all duration-200 hover:underline text-blue-600"
+               className="font-medium transition-all duration-200 hover:underline  text-blue-700 hover:text-blue-900"
             >
                Sign Up
             </Link>
@@ -68,7 +68,7 @@ function Login() {
                })}
             />
             <Input
-               className="text-xl font-normal"
+               className="text-lg font-normal"
                label="Password: "
                type="password"
                placeholder="Enter your password"
@@ -76,7 +76,7 @@ function Login() {
                   required: true,
                })}
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full " bgNumber={1} text="Login">
                Sign in
             </Button>
          </form>
@@ -84,7 +84,7 @@ function Login() {
             Forgot password?&nbsp;
             <Link
                to="/password-recovery-step-one"
-               className="font-semibold transition-all duration-200 hover:underline text-blue-600"
+               className="font-semibold transition-all duration-300 hover:underline text-blue-700 hover:text-blue-900"
             >
                Click here to recover.
             </Link>

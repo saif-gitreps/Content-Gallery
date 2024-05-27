@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function SharableLinks() {
    return (
-      <div className="absolute right-0 top-12 flex space-x-4 bg-white p-4 rounded-lg shadow-lg">
+      <div className="absolute right-0 top-13 flex space-x-4 bg-white p-4 rounded-lg shadow-lg">
          <Link
             href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
             target="_blank"

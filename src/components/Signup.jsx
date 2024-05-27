@@ -78,7 +78,7 @@ function Signup() {
                   })}
                />
                <Input
-                  className="text-xl font-normal"
+                  className="text-lg font-normal"
                   label="Password: "
                   type="password"
                   placeholder="Enter your password"
@@ -86,7 +86,7 @@ function Signup() {
                      required: true,
                   })}
                />
-               <Button type="submit" className="w-full">
+               <Button type="submit" className="w-full" text="Sign up" bgNumber={1}>
                   Create Account
                </Button>
             </div>

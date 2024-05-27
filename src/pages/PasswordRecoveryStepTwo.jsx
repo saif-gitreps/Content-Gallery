@@ -56,23 +56,25 @@ function PasswordRecoveryStepTwo() {
                      required: true,
                   })}
                />
-               <Button type="submit" className="w-full">
-                  Confirm
-               </Button>
+               <Button type="submit" className="w-full" bgNumber={1} text="Confirm" />
             </form>
             <Link
                to="/password-recovery-step-one"
-               className="font-semibold mt-2 text-lg hover:underline text-gray-500"
+               className="font-semibold mt-2 text-lg hover:underline text-blue-600"
             >
                Back
             </Link>
             <h2
-               className="text-lg text-green-600 font-medium mt-2 hidden"
+               className="text-lg font-medium mt-2 hidden"
                ref={passwordRecoveryVerificationMessage}
             >
                Your password has been recoverd.{" "}
                <Link className="hover:underline text-gray-500" to="/login">
-                  Click to login
+                  <Button
+                     type="button"
+                     className="bg-blue-700 hover:bg-blue-900"
+                     text="Login"
+                  />
                </Link>
             </h2>
          </div>

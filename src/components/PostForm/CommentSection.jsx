@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Comment, Loader } from "../../components";
+import { Comment, Loader, Button } from "../../components";
 import appwriteCommentsService from "../../appwrite/config-comments";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -86,12 +86,7 @@ function CommentSection({ post, userData, isAuthor }) {
                   className="w-full h-24 p-4 mt-4 border rounded-xl"
                   placeholder="Add a comment"
                ></textarea>
-               <button
-                  type="submit"
-                  className="w-full py-3 bg-blue-400 duration-300 hover:shadow-md hover:bg-blue-100 rounded-lg mt-4"
-               >
-                  Add Comment
-               </button>
+               <Button type="submit" text="Add Comment" className="w-full" bgNumber={1} />
             </form>
          )}
 
@@ -99,9 +94,9 @@ function CommentSection({ post, userData, isAuthor }) {
             <p className="text-center mt-4 text-base">
                <Link
                   to="/login"
-                  className="font-semibold transition-all duration-200 hover:underline text-blue-600"
+                  className="font-semibold transition-all duration-200 hover:underline text-blue-700"
                >
-                  Login{" "}
+                  <Button text="Login" type="button" bgNumber={1} />
                </Link>
                to add a comment
             </p>

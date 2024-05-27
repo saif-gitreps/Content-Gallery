@@ -1,5 +1,6 @@
 import formatDate from "../../utils/formatDate";
 import { useSelector } from "react-redux";
+import { Button } from "../../components";
 
 function Comment({ comment, isAuthor, onDelete, userData }) {
    const authStatus = useSelector((state) => state.auth.status);
@@ -27,12 +28,13 @@ function Comment({ comment, isAuthor, onDelete, userData }) {
             </div>
          </div>
          {authStatus && (isAuthor || extractUserId(comment) === userData?.$id) && (
-            <button
-               className="text-sm w-14 h-10 bg-red-400 duration-300 hover:shadow-md hover:bg-red-100 rounded-lg"
+            <Button
+               text="Delete"
+               type="button"
+               className="h-11 text-sm p-1"
+               bgNumber={2}
                onClick={() => onDelete(comment.$id)}
-            >
-               Delete
-            </button>
+            />
          )}
       </li>
    );

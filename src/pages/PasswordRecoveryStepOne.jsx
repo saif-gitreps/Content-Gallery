@@ -38,9 +38,7 @@ function PasswordRecoveryStepOne() {
                      required: true,
                   })}
                />
-               <Button type="submit" className="w-full">
-                  Next
-               </Button>
+               <Button type="submit" text="Next" className="w-full" bgNumber={1} />
             </form>
             <Link
                to="/login"

@@ -1,3 +1,5 @@
+import { Button } from "../components";
+
 function SaveAndCancelDiv({
    save = null,
    cancel = null,
@@ -7,19 +9,20 @@ function SaveAndCancelDiv({
 }) {
    return (
       <div className="flex justify-center items-center m-2">
-         <button
+         <Button
+            text={saveText}
             type={type}
-            className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
             onClick={save}
-         >
-            {saveText}
-         </button>
-         <button
-            className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
+            className="text-sm h-11"
+            bgNumber={0}
+         />
+         <Button
+            text={cancelText}
+            type={type}
             onClick={cancel}
-         >
-            {cancelText}
-         </button>
+            className="text-sm h-11"
+            bgNumber={2}
+         />
       </div>
    );
 }

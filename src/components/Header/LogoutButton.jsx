@@ -16,7 +16,7 @@ function LogoutButton({ className = "" }) {
    };
 
    return (
-      <button onClick={logoutHandler} className={`py-4 px-2 rounded-r-lg ${className}`}>
+      <button onClick={logoutHandler} className={`${className}`}>
          Logout
       </button>
    );

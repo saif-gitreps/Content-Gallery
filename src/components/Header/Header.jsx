@@ -52,12 +52,6 @@ function Header() {
                      className="input"
                      placeholder="Search"
                   />
-                  <button
-                     type="submit"
-                     className="text-2xl w-14 h-12 duration-300 hover:shadow-md rounded-full"
-                  >
-                     🔍
-                  </button>
                </form>
 
                <div className="sm:hidden ml-auto">
