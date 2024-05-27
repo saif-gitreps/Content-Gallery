@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function PostActions({ postId, onDelete }) {
    return (
-      <div className="absolute right-1 top-1">
+      <div className="absolute">
          <Link to={`/edit-post/${postId}`}>
             <button className="text-md py-3 w-16 bg-green-400 duration-300 hover:shadow-md hover:bg-green-100 rounded-lg mr-1">
                Edit

@@ -1,6 +1,12 @@
+import {
+   Container,
+   Loader,
+   PostActions,
+   CommentSection,
+   SharableLinks,
+} from "../components";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Loader, PostActions, CommentSection } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
@@ -9,6 +15,7 @@ export default function Post() {
    const [image, setImage] = useState("");
    const [loading, setLoading] = useState(true);
    const [saved, setSaved] = useState([]);
+   const [showShareLinks, setShowShareLinks] = useState(false);
    const { id } = useParams();
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
@@ -66,22 +73,30 @@ export default function Post() {
    return post ? (
       <div className="p-8">
          <Container>
-            <div className="mb-3 p-10 border rounded-2xl bg-white shadow-lg">
-               <div className="mb-6">
+            <div className="mb-6 p-10 border rounded-2xl bg-white shadow-lg space-y-5">
+               <div>
                   <h1 className="text-2xl font-bold">{post.title}</h1>
                   <div className="text-xl font-medium">{parse(post.content)}</div>
                </div>
-               <div className="relative flex justify-center">
-                  {isAuthor && <PostActions postId={post.$id} onDelete={deletePost} />}
-                  <img
-                     src={image}
-                     alt={post.title}
-                     className="rounded-2xl h-96 object-cover"
-                  />
-               </div>
                <div>
+                  <div className="relative flex justify-end">
+                     {isAuthor && <PostActions postId={post.$id} onDelete={deletePost} />}
+                  </div>
+                  <div className="flex justify-center">
+                     <img
+                        src={image}
+                        alt={post.title}
+                        className="rounded-2xl h-96 object-cover"
+                     />
+                  </div>
+               </div>
+               <div className="flex justify-between">
                   <button
-                     className="text-sm w-14 h-10 bg-green-500 duration-300 hover:shadow-md hover:bg-green-100 rounded-lg"
+                     className={`text-md py-3 h-14 w-16 duration-300 hover:shadow-md ${
+                        saved
+                           ? "text-white bg-black hover:bg-gray-700"
+                           : "bg-green-400 hover:bg-green-100"
+                     } rounded-lg`}
                      onClick={async () => {
                         if (saved) {
                            setSaved(false);
@@ -92,8 +107,29 @@ export default function Post() {
                         }
                      }}
                   >
-                     {saved ? "Unsave" : "Save"}
+                     {saved ? "Saved" : "Save"}
                   </button>
+
+                  <div className="relative">
+                     {!showShareLinks ? (
+                        <img
+                           onClick={() => setShowShareLinks(true)}
+                           src="/share-icon.png
+                     "
+                           alt="Share"
+                           className="w-14 p-3 rounded-r-lg hover:cursor-pointer hover:shadow-md rounded-xl duration-300"
+                        />
+                     ) : (
+                        <img
+                           onClick={() => setShowShareLinks(false)}
+                           src="/delete-button.png"
+                           alt="delete"
+                           className="w-14 p-3 rounded-r-lg hover:cursor-pointer hover:shadow-md rounded-xl duration-300"
+                        />
+                     )}
+
+                     {showShareLinks && <SharableLinks />}
+                  </div>
                </div>
             </div>
             <CommentSection post={post} isAuthor={isAuthor} userData={userData} />

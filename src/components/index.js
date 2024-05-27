@@ -8,6 +8,7 @@ import SaveAndCancelDiv from "./SaveAndCancelDiv";
 import LogoutButton from "./Header/LogoutButton";
 import Container from "./Container/Container";
 import PostActions from "./PostForm/PostActions";
+import SharableLinks from "./PostForm/SharableLinks";
 import CommentSection from "./PostForm/CommentSection";
 import PostForm from "./PostForm/PostForm";
 import Hamburger from "./Header/Hamburger";
@@ -35,6 +36,7 @@ export {
    UpdatePassword,
    Comment,
    SaveAndCancelDiv,
+   SharableLinks,
    CommentSection,
    PostActions,
    LogoutButton,
