@@ -1,52 +1,52 @@
 import DpDropdownMenuButton from "./Header/DpDropdownMenuButton";
+import CommentSection from "./PostComponents/CommentSection";
+import SharableLinks from "./PostComponents/SharableLinks";
 import UpdateProfilePic from "./Profile/UpdateProfilePic";
-import UpdateName from "./Profile/UpdateName";
-import UpdateEmail from "./Profile/UpdateEmail";
-import UpdatePhone from "./Profile/UpdatePhone";
+import PostActions from "./PostComponents/PostActions";
 import UpdatePassword from "./Profile/UpdatePassword";
 import SaveAndCancelDiv from "./SaveAndCancelDiv";
 import LogoutButton from "./Header/LogoutButton";
-import Container from "./Container/Container";
-import PostActions from "./PostForm/PostActions";
-import SharableLinks from "./PostForm/SharableLinks";
-import CommentSection from "./PostForm/CommentSection";
-import { LoaderMini } from "./Loader";
-import PostForm from "./PostForm/PostForm";
+import PostForm from "./PostComponents/PostForm";
+import UpdateEmail from "./Profile/UpdateEmail";
+import UpdatePhone from "./Profile/UpdatePhone";
+import Comment from "./PostComponents/Comment";
+import UpdateName from "./Profile/UpdateName";
 import Hamburger from "./Header/Hamburger";
-import LoadCards from "./LoadCards";
+import Pencil from "./Profile/Pencil";
+import { LoaderMini } from "./Loader";
 import AuthLayout from "./AuthLayout";
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
+import Container from "./Container";
+import LoadCards from "./LoadCards";
 import PostCard from "./PostCard";
 import Button from "./Button";
-import Comment from "./PostForm/Comment";
 import Signup from "./Signup";
 import Select from "./Select";
 import Loader from "./Loader";
-import Pencil from "./Pencil";
 import Login from "./Login";
 import Input from "./Input";
 import Logo from "./logo";
-import RTE from "./RTE";
 
 export {
    DpDropdownMenuButton,
    UpdateProfilePic,
-   UpdateName,
-   UpdateEmail,
-   UpdatePhone,
+   SaveAndCancelDiv,
+   CommentSection,
    UpdatePassword,
+   SharableLinks,
+   LogoutButton,
+   UpdateEmail,
+   UpdateName,
+   UpdatePhone,
    LoadCards,
    LoaderMini,
    Comment,
-   SaveAndCancelDiv,
-   SharableLinks,
-   CommentSection,
    PostActions,
-   LogoutButton,
    Hamburger,
    Header,
    Footer,
+   PostCard,
    Container,
    PostForm,
    AuthLayout,
@@ -54,10 +54,8 @@ export {
    Logo,
    Select,
    Button,
-   RTE,
    Login,
    Input,
    Signup,
-   PostCard,
    Loader,
 };

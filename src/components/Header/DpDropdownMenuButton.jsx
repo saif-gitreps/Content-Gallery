@@ -31,7 +31,11 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
             onClick={() => setOpen(!open)}
             ref={dpRef}
          >
-            <img src={src} alt="profile" className="w-16 h-16 rounded-full" />
+            <img
+               src={src}
+               alt="profile"
+               className="w-12 h-12  lg:w-16 lg:h-16 rounded-full"
+            />
             {open ? (
                <p className="ml-2 flex items-center">▲</p>
             ) : (
@@ -40,7 +44,7 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
          </div>
 
          {open && (
-            <ul className="dropdown-menu " ref={dropdownRef}>
+            <ul className="dropdown-menu top-16 lg:top-20" ref={dropdownRef}>
                {navItems.map(
                   (item) =>
                      item.active &&
@@ -48,7 +52,7 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
                         <li
                            key={item.name}
                            onClick={() => navigate(item.slug)}
-                           className="w-full px-4 py-2 text-left duration-300 hover:cursor-pointer hover:shadow-md rounded-md"
+                           className="w-full px-4 text-xs lg:text-base py-2 text-left duration-300 hover:cursor-pointer hover:shadow-md rounded-md"
                         >
                            {item.name}
                         </li>
@@ -56,7 +60,7 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
                )}
                {authStatus && (
                   <li className="flex items-center">
-                     <LogoutButton />
+                     <LogoutButton className="text-xs lg:text-base" />
                   </li>
                )}
             </ul>

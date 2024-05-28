@@ -29,7 +29,7 @@ function Header() {
    };
 
    return (
-      <header className="py-3 shadow bg-white font-medium">
+      <header className="py-1 shadow bg-white font-medium">
          <Container className="max-w-full">
             <nav className="flex">
                {authStatus && (
@@ -63,16 +63,16 @@ function Header() {
                         <li key={item.name} className="flex items-center">
                            <button
                               onClick={() => navigate(item.slug)}
-                              className="text-xl inline-bock px-3 py-4 duration-300 hover:shadow-md rounded-xl"
+                              className="text-base lg:text-lg inline-bock p-2 duration-300 hover:shadow-md rounded-xl"
                            >
                               {item.name}
                            </button>
                         </li>
                      ) : null
                   )}
-                  <li className="mx-4">
+                  <li className="mx-2">
                      <Link to="/">
-                        <Logo className="p-2 rounded-full duration-300 hover:shadow-md" />
+                        <Logo className="p-1 rounded-full duration-300 hover:shadow-md lg:w-20" />
                      </Link>
                   </li>
                </ul>

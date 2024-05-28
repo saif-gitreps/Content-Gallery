@@ -1,11 +1,11 @@
-import AddPost from "./AddPost";
-import EditPost from "./EditPost";
 import Home from "./Home";
-import Login from "./Login";
-import MyPosts from "./MyPosts";
 import Post from "./Post";
+import Login from "./Login";
 import Signup from "./Signup";
 import Profile from "./Profile";
+import MyPosts from "./MyPosts";
+import AddPost from "./AddPost";
+import EditPost from "./EditPost";
 import SearchResult from "./SearchResult";
 import MySavedPosts from "./MySavedPosts";
 import EmailConfirmation from "./EmailConfirmation";
@@ -13,17 +13,17 @@ import PasswordRecoveryStepOne from "./PasswordRecoveryStepOne";
 import PasswordRecoveryStepTwo from "./PasswordRecoveryStepTwo";
 
 export {
-   AddPost,
-   EditPost,
    Home,
    Login,
-   MyPosts,
    Post,
+   MyPosts,
    Signup,
    Profile,
-   EmailConfirmation,
+   AddPost,
+   EditPost,
    MySavedPosts,
    SearchResult,
+   EmailConfirmation,
    PasswordRecoveryStepOne,
    PasswordRecoveryStepTwo,
 };
