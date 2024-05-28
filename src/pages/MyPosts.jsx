@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, PostCard, Loader } from "../components";
+import { Container, Loader, LoadCards } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { useSelector } from "react-redux";
 
@@ -30,22 +30,7 @@ function MyPosts() {
    return (
       <div className="w-full py-8">
          <Container className="max-w-full">
-            <h1 className="text-center">
-               {posts.length === 0 && <p>No posts available.</p>}
-            </h1>
-            <div className="masonry-grid">
-               {posts.map((post) => {
-                  return (
-                     <div key={post.$id} className="masonry-item">
-                        <PostCard
-                           $id={post.$id}
-                           title={post.title}
-                           featuredImage={post.featuredImage}
-                        />
-                     </div>
-                  );
-               })}
-            </div>
+            <LoadCards posts={posts} />
          </Container>
       </div>
    );

@@ -10,8 +10,10 @@ import Container from "./Container/Container";
 import PostActions from "./PostForm/PostActions";
 import SharableLinks from "./PostForm/SharableLinks";
 import CommentSection from "./PostForm/CommentSection";
+import { LoaderMini } from "./Loader";
 import PostForm from "./PostForm/PostForm";
 import Hamburger from "./Header/Hamburger";
+import LoadCards from "./LoadCards";
 import AuthLayout from "./AuthLayout";
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
@@ -34,6 +36,8 @@ export {
    UpdateEmail,
    UpdatePhone,
    UpdatePassword,
+   LoadCards,
+   LoaderMini,
    Comment,
    SaveAndCancelDiv,
    SharableLinks,

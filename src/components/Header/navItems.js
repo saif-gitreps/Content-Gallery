@@ -26,7 +26,7 @@ export default function getNavItems(authStatus, userData) {
       },
       {
          name: "Saved Posts",
-         slug: "/saved",
+         slug: "/saved-posts",
          active: authStatus,
          forDropDownMenu: true,
       },

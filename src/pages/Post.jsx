@@ -5,22 +5,13 @@ import {
    CommentSection,
    SharableLinks,
    Button,
+   LoaderMini,
 } from "../components";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import appwriteService from "../appwrite/config-appwrite";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
-
-function SaveLoader() {
-   return (
-      <div className="flex flex-row gap-2">
-         <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
-         <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:.3s]"></div>
-         <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
-      </div>
-   );
-}
 
 export default function Post() {
    const [image, setImage] = useState("");
@@ -48,7 +39,8 @@ export default function Post() {
             }
 
             setPost(post);
-            const isSaved = await appwriteService.getSavedPost(post.$id);
+
+            const isSaved = await appwriteService.getSavedPost(userData.$id);
             console.log(isSaved);
             if (isSaved.documents.length > 0) {
                setSaved(isSaved.documents[0]);
@@ -63,7 +55,7 @@ export default function Post() {
          }
       };
       fetchData();
-   }, [id, navigate]);
+   }, [id, navigate, userData.$id]);
 
    const deletePost = async () => {
       try {
@@ -86,7 +78,7 @@ export default function Post() {
          setSaveLoader(false);
       } else {
          setSaveLoader(true);
-         const savedPost = await appwriteService.savePost(post.$id, userData.$id);
+         const savedPost = await appwriteService.savePost(userData.$id, post.$id);
          if (savedPost) {
             setSaved(savedPost);
             setSaveLoader(false);
@@ -121,7 +113,7 @@ export default function Post() {
                </div>
                <div className="flex justify-end items-center">
                   {saveLoader ? (
-                     <SaveLoader />
+                     <LoaderMini />
                   ) : (
                      <Button
                         text={!saved ? "Save" : "Saved"}

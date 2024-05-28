@@ -116,15 +116,28 @@ export class Service {
       }
    }
 
-   async getSavedPost(id) {
+   async getSavedPost(userId) {
       try {
          return await this.databases.listDocuments(
             config.appwriteDatabaseId,
             config.appwriteSavedCollectionId,
-            [Query.equal("articleId", id)]
+            [Query.equal("userId", userId)]
          );
       } catch (error) {
          console.log("saved post retrieval error: ", error);
+         throw error;
+      }
+   }
+
+   async getSavedPosts(userId) {
+      try {
+         return await this.databases.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteSavedCollectionId,
+            [Query.equal("userId", userId)]
+         );
+      } catch (error) {
+         console.log("saved posts retrieval error: ", error);
          throw error;
       }
    }
@@ -142,15 +155,15 @@ export class Service {
       }
    }
 
-   async savePost(articleId, userId) {
+   async savePost(userId, articleId) {
       try {
          return await this.databases.createDocument(
             config.appwriteDatabaseId,
             config.appwriteSavedCollectionId,
             ID.unique(),
             {
-               articleId: articleId,
                userId: userId,
+               articles: articleId,
             }
          );
       } catch (error) {

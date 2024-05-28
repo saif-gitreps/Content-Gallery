@@ -19,6 +19,7 @@ import {
    PasswordRecoveryStepOne,
    PasswordRecoveryStepTwo,
    SearchResult,
+   MySavedPosts,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -67,6 +68,14 @@ const router = createBrowserRouter([
             element: (
                <AuthLayout authentication>
                   <MyPosts />
+               </AuthLayout>
+            ),
+         },
+         {
+            path: "/saved-posts",
+            element: (
+               <AuthLayout authentication>
+                  <MySavedPosts />
                </AuthLayout>
             ),
          },
