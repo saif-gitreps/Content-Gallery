@@ -72,7 +72,7 @@ function Header() {
                   )}
                   <li className="mx-4">
                      <Link to="/">
-                        <Logo className="p-2 rounded-full duration-300 hover:shadow-lg" />
+                        <Logo className="p-2 rounded-full duration-300 hover:shadow-md" />
                      </Link>
                   </li>
                </ul>

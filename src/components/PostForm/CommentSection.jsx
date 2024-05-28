@@ -61,7 +61,7 @@ function CommentSection({ post, userData, isAuthor }) {
       }
    };
    return (
-      <div className="p-6 relative border rounded-2xl bg-white shadow-lg">
+      <div className="p-4 relative border rounded-2xl bg-white shadow-lg">
          <h1 className="text-2xl font-bold text-center">Comments</h1>
          <ul>
             {loader && <Loader />}

@@ -12,16 +12,27 @@ import appwriteService from "../appwrite/config-appwrite";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 
+function SaveLoader() {
+   return (
+      <div className="flex flex-row gap-2">
+         <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+         <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:.3s]"></div>
+         <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+      </div>
+   );
+}
+
 export default function Post() {
    const [image, setImage] = useState("");
+   const [saved, setSaved] = useState(null);
+   const [post, setPost] = useState(null);
    const [loading, setLoading] = useState(true);
-   const [saved, setSaved] = useState([]);
+   const [saveLoader, setSaveLoader] = useState(false);
    const [showShareLinks, setShowShareLinks] = useState(false);
    const { id } = useParams();
+
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
-
-   const [post, setPost] = useState(null);
 
    useEffect(() => {
       const fetchData = async () => {
@@ -38,7 +49,7 @@ export default function Post() {
 
             setPost(post);
             const isSaved = await appwriteService.getSavedPost(post.$id);
-
+            console.log(isSaved);
             if (isSaved.documents.length > 0) {
                setSaved(isSaved.documents[0]);
             }
@@ -66,6 +77,23 @@ export default function Post() {
       }
    };
 
+   const toggleSave = async () => {
+      setSaveLoader(true);
+      if (saved) {
+         setSaveLoader(true);
+         await appwriteService.unsavePost(saved.$id);
+         setSaved(null);
+         setSaveLoader(false);
+      } else {
+         setSaveLoader(true);
+         const savedPost = await appwriteService.savePost(post.$id, userData.$id);
+         if (savedPost) {
+            setSaved(savedPost);
+            setSaveLoader(false);
+         }
+      }
+   };
+
    const isAuthor = post && userData ? post.userId === userData.$id : false;
 
    if (loading) {
@@ -74,7 +102,7 @@ export default function Post() {
    return post ? (
       <div className="p-8">
          <Container>
-            <div className="mb-6 p-10 border rounded-2xl bg-white shadow-lg space-y-5">
+            <div className="mb-7 p-4 border rounded-2xl bg-white shadow-lg space-y-3">
                <div>
                   <h1 className="text-2xl font-bold">{post.title}</h1>
                   <div className="text-xl font-medium">{parse(post.content)}</div>
@@ -92,21 +120,18 @@ export default function Post() {
                   </div>
                </div>
                <div className="flex justify-end items-center">
-                  <Button
-                     text={saved ? "Saved" : "Save"}
-                     type="button"
-                     className="rounded-lg h-12"
-                     bgNumber={saved ? 0 : 1}
-                     onClick={async () => {
-                        if (saved) {
-                           setSaved(false);
-                           await appwriteService.unsavePost(saved.$id);
-                        } else {
-                           setSaved(true);
-                           await appwriteService.savePost(post.$id, userData.$id);
-                        }
-                     }}
-                  />
+                  {saveLoader ? (
+                     <SaveLoader />
+                  ) : (
+                     <Button
+                        text={!saved ? "Save" : "Saved"}
+                        type="button"
+                        className="rounded-lg h-12"
+                        bgNumber={!saved ? 0 : 1}
+                        onClick={toggleSave}
+                     />
+                  )}
+
                   <div className="relative">
                      {!showShareLinks ? (
                         <img

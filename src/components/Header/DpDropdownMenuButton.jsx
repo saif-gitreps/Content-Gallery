@@ -40,28 +40,26 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
          </div>
 
          {open && (
-            <div className="dropdown-menu" ref={dropdownRef}>
-               <ul>
-                  {navItems.map(
-                     (item) =>
-                        item.active &&
-                        item.forDropDownMenu && (
-                           <li
-                              key={item.name}
-                              onClick={() => navigate(item.slug)}
-                              className="block w-full px-4 py-2 text-left duration-300 hover:bg-gray-100 hover:cursor-pointer"
-                           >
-                              {item.name}
-                           </li>
-                        )
-                  )}
-                  {authStatus && (
-                     <li className="flex items-center">
-                        <LogoutButton className="block w-full px-4 py-2 text-left duration-300 hover:bg-red-700 hover:cursor-pointer hover:text-white" />
-                     </li>
-                  )}
-               </ul>
-            </div>
+            <ul className="dropdown-menu " ref={dropdownRef}>
+               {navItems.map(
+                  (item) =>
+                     item.active &&
+                     item.forDropDownMenu && (
+                        <li
+                           key={item.name}
+                           onClick={() => navigate(item.slug)}
+                           className="w-full px-4 py-2 text-left duration-300 hover:cursor-pointer hover:shadow-md rounded-md"
+                        >
+                           {item.name}
+                        </li>
+                     )
+               )}
+               {authStatus && (
+                  <li className="flex items-center">
+                     <LogoutButton />
+                  </li>
+               )}
+            </ul>
          )}
       </>
    );
