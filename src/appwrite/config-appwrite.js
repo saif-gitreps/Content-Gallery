@@ -116,19 +116,6 @@ export class Service {
       }
    }
 
-   async getSavedPost(userId) {
-      try {
-         return await this.databases.listDocuments(
-            config.appwriteDatabaseId,
-            config.appwriteSavedCollectionId,
-            [Query.equal("userId", userId)]
-         );
-      } catch (error) {
-         console.log("saved post retrieval error: ", error);
-         throw error;
-      }
-   }
-
    async getSavedPosts(userId) {
       try {
          return await this.databases.listDocuments(
@@ -162,7 +149,7 @@ export class Service {
             config.appwriteSavedCollectionId,
             ID.unique(),
             {
-               userId: userId,
+               userId,
                articles: articleId,
             }
          );

@@ -40,10 +40,12 @@ export default function Post() {
 
             setPost(post);
 
-            const isSaved = await appwriteService.getSavedPost(userData.$id);
-            console.log(isSaved);
-            if (isSaved.documents.length > 0) {
-               setSaved(isSaved.documents[0]);
+            const userSavedPosts = await appwriteService.getSavedPosts(userData.$id);
+            for (const posts of userSavedPosts.documents) {
+               if (posts.articles.$id === post.$id) {
+                  setSaved(posts);
+                  break;
+               }
             }
 
             const result = await appwriteService.getFilePrev(post.featuredImage);
