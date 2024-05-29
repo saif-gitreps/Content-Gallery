@@ -20,13 +20,13 @@ import Footer from "./Footer/Footer";
 import Container from "./Container";
 import LoadCards from "./LoadCards";
 import PostCard from "./PostCard";
+import Logo from "./Header/logo";
 import Button from "./Button";
 import Signup from "./Signup";
 import Select from "./Select";
 import Loader from "./Loader";
 import Login from "./Login";
 import Input from "./Input";
-import Logo from "./logo";
 
 export {
    DpDropdownMenuButton,

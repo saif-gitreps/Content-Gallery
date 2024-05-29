@@ -76,13 +76,13 @@ function UpdateProfilePic({ setErrorMessage }) {
          onSubmit={handleSubmitProfilePicture(onProfilePicUpload)}
          className="flex items-center flex-col"
       >
-         <img src={profilePicture} alt="Profile" className="w-32 h-32 rounded-full" />
+         <img src={profilePicture} alt="Profile" className="w-28 h-28 rounded-full" />
          {!editProfilePic && (
             <Pencil
                onClickAction={() => {
                   setEditProfilePic(true);
                }}
-               className="relative bottom-32 left-14"
+               className="relative bottom-28 left-12"
             />
          )}
          {editProfilePic && (

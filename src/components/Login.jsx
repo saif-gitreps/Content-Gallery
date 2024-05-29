@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
-import { Button, Input, Loader } from "./index";
+import { Button, Input, Loader, Container } from "./index";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
@@ -36,25 +36,23 @@ function Login() {
    return loader ? (
       <Loader />
    ) : (
-      <div
-         className={`flex flex-col items-center justify-center bg-white p-5 max-w-xl m-auto rounded-xl shadow-md`}
-      >
-         <h2 className="text-center text-2xl font-bold leading-tight">
+      <Container className="flex flex-col items-center justify-center bg-white p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
+         <h2 className="text-center text-lg font-bold leading-tight">
             Login to your account
          </h2>
-         <p className="text-lg text-center font-medium ">
+         <p className="text-base text-center font-medium ">
             Don&apos;t have any account?&nbsp;
             <Link
                to="/signup"
-               className="font-medium transition-all duration-200 hover:underline  text-blue-700 hover:text-blue-900"
+               className="font-medium transition-all duration-300 hover:underline  text-blue-600 hover:text-blue-800"
             >
                Sign Up
             </Link>
          </p>
 
-         <form onSubmit={handleSubmit(login)} className="mt-6 space-y-4">
+         <form onSubmit={handleSubmit(login)} className="space-y-4">
             <Input
-               className="text-xl font-normal"
+               className="text-sm md:text-base font-normal"
                label="Email: "
                placeholder="Enter your email"
                type="email"
@@ -68,7 +66,7 @@ function Login() {
                })}
             />
             <Input
-               className="text-lg font-normal"
+               className="text-sm md:text-base font-normal"
                label="Password: "
                type="password"
                placeholder="Enter your password"
@@ -80,7 +78,7 @@ function Login() {
                Sign in
             </Button>
          </form>
-         <p className="text-lg font-medium text-center">
+         <p className="text-sm font-medium text-center">
             Forgot password?&nbsp;
             <Link
                to="/password-recovery-step-one"
@@ -94,7 +92,7 @@ function Login() {
                Please check your credentials and try again.
             </p>
          )}
-      </div>
+      </Container>
    );
 }
 

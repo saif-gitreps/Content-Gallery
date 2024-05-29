@@ -27,24 +27,24 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
    return (
       <>
          <div
-            className="flex p-2 rounded-full duration-300 hover:shadow-md hover:cursor-pointer"
+            className="flex p-1 rounded-lg duration-300 hover:shadow-md hover:cursor-pointer"
             onClick={() => setOpen(!open)}
             ref={dpRef}
          >
             <img
                src={src}
                alt="profile"
-               className="w-12 h-12  lg:w-16 lg:h-16 rounded-full"
+               className="w-11 h-11  lg:w-14 lg:h-14 rounded-full"
             />
             {open ? (
-               <p className="ml-2 flex items-center">▲</p>
+               <p className="ml-1 flex items-center">▲</p>
             ) : (
-               <p className="ml-2 flex items-center">▼</p>
+               <p className="ml-1 flex items-center">▼</p>
             )}
          </div>
 
          {open && (
-            <ul className="dropdown-menu top-16 lg:top-20" ref={dropdownRef}>
+            <ul className="dropdown-menu top-14 lg:top-16" ref={dropdownRef}>
                {navItems.map(
                   (item) =>
                      item.active &&

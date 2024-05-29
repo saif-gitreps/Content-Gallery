@@ -37,10 +37,10 @@ function UpdateName({ setErrorMessage }) {
    return (
       <form
          onSubmit={handleSubmitName(onNameUpdate)}
-         className={`p-2 my-1 ${editName && "shadow-lg rounded-lg"}`}
+         className={`p-2 ${editName && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold ml-2">Name:</h2>
+            <h2 className="text-sm md:text-base font-semibold ml-2">Name:</h2>
             {!editName && (
                <Pencil
                   onClickAction={() => {
@@ -50,7 +50,7 @@ function UpdateName({ setErrorMessage }) {
             )}
          </div>
          <Input
-            className="text-xl font-normal"
+            className="text-sm md:text-base font-normal w-64"
             readOnly={!editName}
             {...registerName("name", { required: true })}
          />

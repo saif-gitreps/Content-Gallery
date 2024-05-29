@@ -77,10 +77,10 @@ function UpdatePhone({ setErrorMessage }) {
    return (
       <form
          onSubmit={handleSubmitPhone(onPhoneUpdate)}
-         className={`p-2 my-1 ${editPhone && "shadow-lg rounded-lg"}`}
+         className={`p-2 ${editPhone && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold ml-2">
+            <h2 className="text-sm md:text-base font-semibold ml-2">
                Phone :{" "}
                {!userData?.phoneVerification && (
                   <Link className="text-green-600 hover:underline" onClick={verifyPhone}>
@@ -97,7 +97,7 @@ function UpdatePhone({ setErrorMessage }) {
             )}
          </div>
          <Input
-            className="text-xl font-normal"
+            className="text-sm md:text-base font-normal w-64"
             readOnly={!editPhone}
             {...registerPhone("phone", { required: true })}
          />
@@ -105,29 +105,19 @@ function UpdatePhone({ setErrorMessage }) {
             <h2 className="text-base text-red-700 font-medium ml-2">
                Check the verification SMS on your Phone.
             </h2>
-            <Input className="text-xl font-normal" type="Number" />
-            <div className="flex justify-center items-center m-2">
-               <button
-                  className="bg-green-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                  onClick={connfirmPhoneVerification}
-               >
-                  Confirm
-               </button>
-               <button
-                  className="bg-red-300 p-2 mx-1 rounded-lg hover:cursor-pointer hover:opacity-50"
-                  onClick={() => {
-                     phoneVerificationDiv.current.classList.add("hidden");
-                  }}
-               >
-                  close
-               </button>
-            </div>
+            <Input className="text-sm md:text-base font-normal w-64" type="Number" />
+            <SaveAndCancelDiv
+               save={connfirmPhoneVerification}
+               cancel={() => {
+                  phoneVerificationDiv.current.classList.add("hidden");
+               }}
+            />
          </div>
          {editPhone && (
             <div>
-               <h2 className="text-lg font-semibold ml-2">Password:</h2>
+               <h2 className="text-sm md:text-base font-semibold ml-2">Password:</h2>
                <Input
-                  className="text-xl font-normal"
+                  className="text-sm md:text-base font-normal w-64"
                   type="password"
                   {...registerPhone("password", { required: true })}
                />

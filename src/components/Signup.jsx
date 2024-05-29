@@ -2,7 +2,7 @@ import { useState } from "react";
 import authService from "../appwrite/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../store/authSlice";
-import { Button, Input, Loader } from "./index.js";
+import { Button, Input, Loader, Container } from "./index.js";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 
@@ -37,26 +37,24 @@ function Signup() {
    return loader ? (
       <Loader />
    ) : (
-      <div
-         className={`flex flex-col items-center justify-center bg-white p-5 max-w-xl m-auto rounded-xl shadow-md`}
-      >
-         <h2 className="text-center text-2xl font-bold leading-tight">
+      <Container className="flex flex-col items-center justify-center bg-white p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
+         <h2 className="text-center text-lg font-bold leading-tight">
             Sign up to create account
          </h2>
-         <p className="text-lg text-center font-medium ">
+         <p className="text-base text-center font-medium ">
             Already have an account?&nbsp;
             <Link
                to="/login"
                className="font-medium text-primary transition-all duration-200 hover:underline text-blue-600"
             >
-               Sign In
+               Login
             </Link>
          </p>
 
-         <form onSubmit={handleSubmit(create)} className="mt-6">
+         <form onSubmit={handleSubmit(create)} className="space-y-4">
             <div className="space-y-4">
                <Input
-                  className="text-xl font-normal"
+                  className="text-sm md:text-base font-normal"
                   label="Full Name: "
                   placeholder="Enter your full name"
                   {...register("name", {
@@ -64,7 +62,7 @@ function Signup() {
                   })}
                />
                <Input
-                  className="text-xl font-normal"
+                  className="text-sm md:text-base font-normal"
                   label="Email: "
                   placeholder="Enter your email"
                   type="email"
@@ -78,7 +76,7 @@ function Signup() {
                   })}
                />
                <Input
-                  className="text-lg font-normal"
+                  className="text-sm md:text-base font-normal"
                   label="Password: "
                   type="password"
                   placeholder="Enter your password"
@@ -92,11 +90,11 @@ function Signup() {
             </div>
          </form>
          {errorMessage && (
-            <p className="text-red-600 mt-2 text-lg font-medium text-center">
+            <p className="text-red-600 mt-2 text-base font-medium text-center">
                Error signing up, please try again with different credentials.
             </p>
          )}
-      </div>
+      </Container>
    );
 }
 

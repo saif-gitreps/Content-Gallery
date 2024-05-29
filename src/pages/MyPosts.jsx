@@ -29,7 +29,7 @@ function MyPosts() {
    }
    return (
       <div className="w-full py-8">
-         <Container className="max-w-full">
+         <Container className="max-w-7xl">
             <LoadCards posts={posts} />
          </Container>
       </div>

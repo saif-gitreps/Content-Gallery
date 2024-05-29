@@ -33,10 +33,10 @@ function UpdatePassword({ setErrorMessage }) {
    return (
       <form
          onSubmit={handleSubmitPassword(onPasswordUpdate)}
-         className={`p-2 my-1 ${editPassword && "shadow-lg rounded-lg"}`}
+         className={`p-2 ${editPassword && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold ml-2">
+            <h2 className="text-sm md:text-base font-semibold ml-2">
                {editPassword ? "Old Password :" : "Password :"}
             </h2>
             {!editPassword && (
@@ -48,16 +48,16 @@ function UpdatePassword({ setErrorMessage }) {
             )}
          </div>
          <Input
-            className="text-xl font-normal"
+            className="text-sm md:text-base font-normal w-64"
             readOnly={!editPassword}
             value={editPassword ? "" : "********"}
             {...registerPassword("OldPassword", { required: true })}
          />
          {editPassword && (
             <div>
-               <h2 className="text-lg font-semibold ml-2">New Password:</h2>
+               <h2 className="text-sm md:text-base font-semibold ml-2">New Password:</h2>
                <Input
-                  className="text-xl font-normal"
+                  className="text-sm md:text-base font-normal w-64"
                   type="password"
                   value=""
                   {...registerPassword("newPassword", { required: true })}

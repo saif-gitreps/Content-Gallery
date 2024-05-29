@@ -57,10 +57,10 @@ function UpdateEmail({ setErrorMessage }) {
    return (
       <form
          onSubmit={handleSubmitEmail(onEmailUpdate)}
-         className={`p-2 my-1 ${editEmail && "shadow-lg rounded-lg"}`}
+         className={`p-1 ${editEmail && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold ml-2">
+            <h2 className="text-sm md:text-base font-semibold ml-2">
                Email :{" "}
                {!userData?.emailVerification && (
                   <Link onClick={verifyEmail} className="text-green-600 hover:underline">
@@ -77,7 +77,7 @@ function UpdateEmail({ setErrorMessage }) {
             )}
          </div>
          <Input
-            className="text-xl font-normal"
+            className="text-sm md:text-base font-normal w-64"
             readOnly={!editEmail}
             {...registerEmail("email", {
                required: true,
@@ -96,9 +96,9 @@ function UpdateEmail({ setErrorMessage }) {
          </h2>
          {editEmail && (
             <div>
-               <h2 className="text-lg font-semibold ml-2">Password:</h2>
+               <h2 className="text-sm md:text-base font-semibold ml-2">Password:</h2>
                <Input
-                  className="text-xl font-normal"
+                  className="text-sm md:text-base font-normal w-64"
                   type="password"
                   {...registerEmail("password", { required: true })}
                />

@@ -94,10 +94,10 @@ export default function Post() {
    return post ? (
       <div className="p-8">
          <Container>
-            <div className="mb-7 p-4 border rounded-2xl bg-white shadow-lg space-y-3">
+            <div className="mb-7 p-6 border rounded-2xl bg-white shadow-lg space-y-3">
                <div>
-                  <h1 className="text-2xl font-bold">{post.title}</h1>
-                  <div className="text-xl font-medium">{parse(post.content)}</div>
+                  <h1 className="text-xl font-bold">{post.title}</h1>
+                  <div className="text-base font-medium">{parse(post.content)}</div>
                </div>
                <div>
                   <div className="relative flex justify-end">
@@ -107,7 +107,7 @@ export default function Post() {
                      <img
                         src={image}
                         alt={post.title}
-                        className="rounded-2xl h-96 object-cover"
+                        className="rounded-2xl h-96 object-contain"
                      />
                   </div>
                </div>

@@ -13,14 +13,14 @@ function SaveAndCancelDiv({
             text={saveText}
             type={type}
             onClick={save}
-            className="text-sm h-11"
+            className="text-sm h-10"
             bgNumber={0}
          />
          <Button
             text={cancelText}
             type={type}
             onClick={cancel}
-            className="text-sm h-11"
+            className="text-sm h-10"
             bgNumber={2}
          />
       </div>
