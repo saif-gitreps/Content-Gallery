@@ -8,17 +8,17 @@ import { AuthLayout } from "./components";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import {
    Home,
-   AddPost,
    Login,
-   Signup,
-   EditPost,
    Post,
+   AddPost,
+   Signup,
    MyPosts,
    Profile,
+   EditPost,
+   SearchResult,
    EmailConfirmation,
    PasswordRecoveryStepOne,
    PasswordRecoveryStepTwo,
-   SearchResult,
    MySavedPosts,
 } from "./pages";
 

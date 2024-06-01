@@ -24,6 +24,7 @@ export default function Post() {
 
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
+   const authStatus = useSelector((state) => state.auth.status);
 
    useEffect(() => {
       const fetchData = async () => {
@@ -40,11 +41,13 @@ export default function Post() {
 
             setPost(post);
 
-            const userSavedPosts = await appwriteService.getSavedPosts(userData.$id);
-            for (const posts of userSavedPosts.documents) {
-               if (posts.articles.$id === post.$id) {
-                  setSaved(posts);
-                  break;
+            if (authStatus) {
+               const userSavedPosts = await appwriteService.getSavedPosts(userData.$id);
+               for (const post of userSavedPosts.documents) {
+                  if (post.articles.$id === post.$id) {
+                     setSaved(post);
+                     break;
+                  }
                }
             }
 
@@ -57,7 +60,7 @@ export default function Post() {
          }
       };
       fetchData();
-   }, [id, navigate, userData.$id]);
+   }, [id, navigate, authStatus, userData]);
 
    const deletePost = async () => {
       try {
@@ -114,17 +117,18 @@ export default function Post() {
                   </div>
                </div>
                <div className="flex justify-end items-center">
-                  {saveLoader ? (
-                     <LoaderMini />
-                  ) : (
-                     <Button
-                        text={!saved ? "Save" : "Saved"}
-                        type="button"
-                        className="rounded-lg h-12"
-                        bgNumber={!saved ? 0 : 1}
-                        onClick={toggleSave}
-                     />
-                  )}
+                  {authStatus &&
+                     (saveLoader ? (
+                        <LoaderMini />
+                     ) : (
+                        <Button
+                           text={!saved ? "Save" : "Saved"}
+                           type="button"
+                           className="rounded-lg h-12"
+                           bgNumber={!saved ? 0 : 1}
+                           onClick={toggleSave}
+                        />
+                     ))}
 
                   <div className="relative">
                      {!showShareLinks ? (

@@ -7,8 +7,7 @@ import { useForm } from "react-hook-form";
 import getNavItems from "./navItems";
 
 function Header() {
-   const authStatus = useSelector((state) => state.auth.status);
-   const userData = useSelector((state) => state.auth.userData);
+   const { status: authStatus, userData } = useSelector((state) => state.auth);
    const navigate = useNavigate();
    const [dp, setDp] = useState("/blank-dp.png");
    const { register, handleSubmit, setValue } = useForm();
@@ -23,13 +22,19 @@ function Header() {
       }
    }, [userData, authStatus]);
 
+   const [key, setKey] = useState(0);
+
+   useEffect(() => {
+      setKey((prevKey) => prevKey + 1);
+   }, [userData]);
+
    const onSearch = (data) => {
       navigate(`/search?q=${data.query.trim()}`);
       setValue("query", "");
    };
 
    return (
-      <header className="py-2 shadow bg-white font-medium">
+      <header className="py-2 shadow bg-white font-medium" key={key}>
          <Container className="max-w-7xl">
             <nav className="flex">
                {authStatus && (
