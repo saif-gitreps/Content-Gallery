@@ -1,46 +1,52 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import LogoutButton from "../Header/LogoutButton";
+import useClickOutSide from "../../hooks/useClickOutside";
 
 const Hamburger = ({ navItems, logutButton }) => {
    const navigate = useNavigate();
    const [open, setOpen] = useState(false);
+   const dropdownRef = useRef(null);
+   const hamburgerRef = useRef(null);
 
-   const openDropDown = () => {
-      setOpen(!open);
-   };
+   useClickOutSide([dropdownRef, hamburgerRef], () => setOpen(false));
 
    return (
-      <div className="flex flex-col justify-center p-2">
+      <div className="flex flex-col justify-center p-2 relative">
          <div className="flex justify-end">
             <img
-               className={`w-20 p-2 hover:cursor-pointer hover:shadow-md duration-300 rounded-full ${
+               className={`w-16 p-2 hover:cursor-pointer hover:shadow-md duration-300 rounded-full ${
                   open ? "rotate-90" : "rotate-0"
                }`}
-               onClick={openDropDown}
+               ref={hamburgerRef}
+               onClick={() => setOpen(!open)}
                src="/hamburger-icon.png"
                alt="Burger"
             />
          </div>
-         <ul>
-            {open &&
-               navItems.map((item) =>
+         {open && (
+            <ul className="dropdown-menu top-16 right-0 " ref={dropdownRef}>
+               {navItems.map((item) =>
                   item.active ? (
                      <li
                         key={item.name}
-                        onClick={() => navigate(item.slug)}
+                        onClick={() => {
+                           navigate(item.slug);
+                           setOpen(false);
+                        }}
                         className="w-full px-4 py-2 text-left duration-300 hover:shadow-md rounded-md hover:cursor-pointer"
                      >
                         {item.name}
                      </li>
                   ) : null
                )}
-            {open && logutButton && (
-               <li className="flex items-center">
-                  <LogoutButton className="py-2" />
-               </li>
-            )}
-         </ul>
+               {logutButton && (
+                  <li className="flex items-center" onClick={() => setOpen(false)}>
+                     <LogoutButton className="py-2" />
+                  </li>
+               )}
+            </ul>
+         )}
       </div>
    );
 };

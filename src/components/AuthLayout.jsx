@@ -1,5 +1,4 @@
 // this component is a wrapper or a containter which will render the children conditionally
-// now that conditionn is authentication related.
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

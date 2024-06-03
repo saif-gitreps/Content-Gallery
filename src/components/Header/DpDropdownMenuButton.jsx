@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogoutButton } from "../index";
+import useClickOutSide from "../../hooks/useClickOutside";
 
 function DpDropdownMenuButton({ src, authStatus, navItems }) {
    const [open, setOpen] = useState(false);
@@ -8,21 +9,7 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
    const dropdownRef = useRef(null);
    const dpRef = useRef(null);
 
-   useEffect(() => {
-      const handleClickOutside = (event) => {
-         if (
-            dropdownRef.current &&
-            !dropdownRef.current.contains(event.target) &&
-            !dpRef.current.contains(event.target)
-         ) {
-            setOpen(false);
-         }
-      };
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-         document.removeEventListener("mousedown", handleClickOutside);
-      };
-   }, [open]);
+   useClickOutSide([dropdownRef, dpRef], () => setOpen(false));
 
    return (
       <>

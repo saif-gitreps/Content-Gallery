@@ -22,19 +22,13 @@ function Header() {
       }
    }, [userData, authStatus]);
 
-   const [key, setKey] = useState(0);
-
-   useEffect(() => {
-      setKey((prevKey) => prevKey + 1);
-   }, [userData]);
-
    const onSearch = (data) => {
       navigate(`/search?q=${data.query.trim()}`);
       setValue("query", "");
    };
 
    return (
-      <header className="py-2 shadow bg-white font-medium" key={key}>
+      <header className="py-2 shadow bg-white font-medium">
          <Container className="max-w-7xl">
             <nav className="flex">
                {authStatus && (
@@ -68,7 +62,7 @@ function Header() {
                         <li key={item.name} className="flex items-center">
                            <button
                               onClick={() => navigate(item.slug)}
-                              className="text-sm md:text-base xl:text-lg inline-bock p-2 duration-300 hover:shadow-md rounded-xl"
+                              className="text-sm md:text-base xl:text-lg inline-bock p-2 duration-300 hover:shadow-md rounded-lg"
                            >
                               {item.name}
                            </button>
