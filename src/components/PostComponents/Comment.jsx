@@ -18,8 +18,8 @@ function Comment({ comment, isAuthor, onDelete, userData }) {
                   alt={comment.userName}
                   className="w-10 h-10 rounded-full"
                />
-               <p className="font-bold mx-2">{comment.userName}</p>
-               <p className="font-medium text-gray-500">
+               <p className="font-semibold mx-1">{comment.userName}</p>
+               <p className="text-sm font-medium text-gray-500">
                   {formatDate(comment.$createdAt)}
                </p>
             </div>
@@ -31,7 +31,7 @@ function Comment({ comment, isAuthor, onDelete, userData }) {
             <Button
                text="Delete"
                type="button"
-               className="h-11 text-sm p-1"
+               className="h-11 text-xs sm:text-sm p-1"
                bgNumber={2}
                onClick={() => onDelete(comment.$id)}
             />

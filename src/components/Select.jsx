@@ -5,7 +5,7 @@ function Select({ options, label, className, ...props }, ref) {
    return (
       <div className="w-full">
          {label && (
-            <label className="inline-block mb-1 pl -1" htmlFor={id}>
+            <label className="inline-block" htmlFor={id}>
                {label}
             </label>
          )}
@@ -13,10 +13,10 @@ function Select({ options, label, className, ...props }, ref) {
             {...props}
             id={id}
             ref={ref}
-            className={`px-3 py-2 rounded-lg bg-white text-black outline-none focus:bg-gray-50 duration-200 border border-gray-200 w-full ${className}`}
+            className={`p-2 ml-1 rounded-lg bg-white text-black outline-none focus:bg-gray-50 duration-300 border border-gray-200  ${className}`}
          >
             {options?.map((option) => (
-               <option key={option} value={option}>
+               <option key={option} value={option} className="sm:text-lg text-xs">
                   {option}
                </option>
             ))}

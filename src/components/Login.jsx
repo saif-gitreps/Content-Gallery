@@ -27,6 +27,8 @@ function Login() {
             } else {
                setErrorMessage(true);
             }
+         } else {
+            setErrorMessage(true);
          }
       } catch (error) {
          setErrorMessage(true);

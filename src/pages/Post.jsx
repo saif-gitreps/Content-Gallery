@@ -97,7 +97,7 @@ export default function Post() {
       return <Loader />;
    }
    return post ? (
-      <div className="p-8">
+      <div className="py-8">
          <Container>
             <div className="mb-7 p-6 border rounded-2xl bg-white shadow-lg space-y-3">
                <div>

@@ -31,7 +31,7 @@ function PasswordRecoveryStepTwo() {
       }
    };
    return (
-      <div className="p-8">
+      <div className="py-8">
          <Container className="flex flex-col items-center justify-center bg-white p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
             <h2 className="text-center text-base font-bold leading-tight">
                Enter your new password:
