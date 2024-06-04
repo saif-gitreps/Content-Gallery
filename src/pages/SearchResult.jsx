@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, PostCard, Loader } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
+import { Query } from "appwrite";
 import { useSearchParams } from "react-router-dom";
 
 function SearchResult() {
@@ -14,7 +15,12 @@ function SearchResult() {
          const query = searchParams.get("q");
          if (query) {
             try {
-               const results = await appwriteService.searchPosts(query);
+               const results = await appwriteService.getPosts([
+                  Query.or([
+                     Query.contains("title", query),
+                     Query.contains("content", query),
+                  ]),
+               ]);
                setPosts(results.documents);
             } catch (error) {
                console.error("Error fetching search results:", error);

@@ -64,12 +64,25 @@ export class Service {
       }
    }
 
-   async getPost(id) {
+   // async getPost(id) {
+   //    try {
+   //       return await this.databases.getDocument(
+   //          config.appwriteDatabaseId,
+   //          config.appwriteCollectionId,
+   //          id
+   //       );
+   //    } catch (error) {
+   //       console.log("post retrieval error: ", error);
+   //       throw error;
+   //    }
+   // }
+
+   async getPosts(queries, offset = 0) {
       try {
-         return await this.databases.getDocument(
+         return await this.databases.listDocuments(
             config.appwriteDatabaseId,
             config.appwriteCollectionId,
-            id
+            [Query.limit(5), Query.offset(offset), ...queries]
          );
       } catch (error) {
          console.log("post retrieval error: ", error);
@@ -77,57 +90,44 @@ export class Service {
       }
    }
 
-   async getPosts() {
-      try {
-         return await this.databases.listDocuments(
-            config.appwriteDatabaseId,
-            config.appwriteCollectionId,
-            [Query.equal("status", "active")]
-         );
-      } catch (error) {
-         console.log("post retrieval error: ", error);
-         throw error;
-      }
-   }
+   // async getUserPosts(userId) {
+   //    try {
+   //       return await this.databases.listDocuments(
+   //          config.appwriteDatabaseId,
+   //          config.appwriteCollectionId,
+   //          [Query.equal("userId", userId)]
+   //       );
+   //    } catch (error) {
+   //       console.log("user posts retrieval error: ", error);
+   //       throw error;
+   //    }
+   // }
 
-   async getUserPosts(userId) {
-      try {
-         return await this.databases.listDocuments(
-            config.appwriteDatabaseId,
-            config.appwriteCollectionId,
-            [Query.equal("userId", userId)]
-         );
-      } catch (error) {
-         console.log("user posts retrieval error: ", error);
-         throw error;
-      }
-   }
+   // async searchPosts(query) {
+   //    try {
+   //       return await this.databases.listDocuments(
+   //          config.appwriteDatabaseId,
+   //          config.appwriteCollectionId,
+   //          [Query.or([Query.contains("title", query), Query.contains("content", query)])]
+   //       );
+   //    } catch (error) {
+   //       console.log("post search error: ", error);
+   //       throw error;
+   //    }
+   // }
 
-   async searchPosts(query) {
-      try {
-         return await this.databases.listDocuments(
-            config.appwriteDatabaseId,
-            config.appwriteCollectionId,
-            [Query.or([Query.contains("title", query), Query.contains("content", query)])]
-         );
-      } catch (error) {
-         console.log("post search error: ", error);
-         throw error;
-      }
-   }
-
-   async getSavedPosts(userId) {
-      try {
-         return await this.databases.listDocuments(
-            config.appwriteDatabaseId,
-            config.appwriteSavedCollectionId,
-            [Query.equal("userId", userId)]
-         );
-      } catch (error) {
-         console.log("saved posts retrieval error: ", error);
-         throw error;
-      }
-   }
+   // async getSavedPosts(userId) {
+   //    try {
+   //       return await this.databases.listDocuments(
+   //          config.appwriteDatabaseId,
+   //          config.appwriteSavedCollectionId,
+   //          [Query.equal("userId", userId)]
+   //       );
+   //    } catch (error) {
+   //       console.log("saved posts retrieval error: ", error);
+   //       throw error;
+   //    }
+   // }
 
    async unsavePost(saveId) {
       try {

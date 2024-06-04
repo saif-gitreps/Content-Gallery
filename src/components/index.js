@@ -11,6 +11,7 @@ import UpdateEmail from "./Profile/UpdateEmail";
 import UpdatePhone from "./Profile/UpdatePhone";
 import Comment from "./PostComponents/Comment";
 import UpdateName from "./Profile/UpdateName";
+import SearchBar from "./Header/SearchBar";
 import Hamburger from "./Header/Hamburger";
 import Pencil from "./Profile/Pencil";
 import { LoaderMini } from "./Loader";
@@ -39,6 +40,7 @@ export {
    UpdateEmail,
    UpdateName,
    UpdatePhone,
+   SearchBar,
    LoadCards,
    LoaderMini,
    Comment,

@@ -1,16 +1,14 @@
-import { Container, Logo, Hamburger, DpDropdownMenuButton, Input } from "../index";
+import { Container, Logo, Hamburger, DpDropdownMenuButton, SearchBar } from "../index";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import getNavItems from "./navItems";
 
 function Header() {
    const { status: authStatus, userData } = useSelector((state) => state.auth);
    const navigate = useNavigate();
    const [dp, setDp] = useState("/blank-dp.png");
-   const { register, handleSubmit, setValue } = useForm();
 
    const navItems = getNavItems(authStatus, userData);
 
@@ -21,11 +19,6 @@ function Header() {
          setDp("/blank-dp.png");
       }
    }, [userData, authStatus]);
-
-   const onSearch = (data) => {
-      navigate(`/search?q=${data.query.trim()}`);
-      setValue("query", "");
-   };
 
    return (
       <header className="py-2 shadow bg-white font-medium">
@@ -41,17 +34,7 @@ function Header() {
                   </div>
                )}
 
-               <form
-                  onSubmit={handleSubmit(onSearch)}
-                  className="flex justify-center items-center"
-               >
-                  <Input
-                     {...register("query", { required: true })}
-                     type="text"
-                     className="input"
-                     placeholder="Search"
-                  />
-               </form>
+               <SearchBar />
 
                <div className="sm:hidden ml-auto">
                   <Hamburger navItems={navItems} logutButton={authStatus} />

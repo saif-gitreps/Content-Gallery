@@ -1,22 +1,50 @@
 import { useState, useEffect } from "react";
 import { Container, Loader, LoadCards } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
+import { Query } from "appwrite";
 
 function Home() {
-   const [posts, setPosts] = useState(null);
+   const [posts, setPosts] = useState([]);
    const [loading, setLoading] = useState(true);
+   const [offset, setOffset] = useState(0);
+
    useEffect(() => {
-      appwriteService
-         .getPosts()
-         .then((posts) => {
-            if (posts) {
-               setPosts(posts.documents);
-               setLoading(false);
+      const fetchPosts = async () => {
+         try {
+            setLoading(true);
+            const newPosts = await appwriteService.getPosts([
+               Query.equal("status", "active"),
+            ]);
+
+            console.log(newPosts);
+
+            if (posts.length === 0) {
+               setPosts(newPosts.documents);
+            } else {
+               setPosts((prev) => {
+                  setPosts(...prev, ...newPosts.documents);
+               });
             }
-         })
-         .catch((error) => {
+
+            setLoading(false);
+         } catch (error) {
             console.log(error);
-         });
+         }
+      };
+
+      fetchPosts();
+   }, [offset]);
+
+   useEffect(() => {
+      const handleScroll = (event) => {
+         const scrollHeight = event.target.documentElement.scrollHeight;
+         const currentHeight =
+            event.target.documentElement.scrollTop + window.innerHeight;
+         if (currentHeight + 1 >= scrollHeight) setOffset((prev) => prev + 5);
+      };
+
+      document.addEventListener("scroll", handleScroll);
+      return () => document.removeEventListener("scroll", handleScroll);
    }, []);
 
    if (loading) {
