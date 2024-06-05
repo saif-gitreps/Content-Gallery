@@ -1,37 +1,26 @@
-import { useState, useEffect } from "react";
-import { Container, Loader, LoadCards } from "../components";
-import appwriteService from "../appwrite/config-appwrite";
+import { Container, InfinityScrollLayout, LoadCards } from "../components";
 import { useSelector } from "react-redux";
+import appwriteService from "../appwrite/config-appwrite";
+import { Query } from "appwrite";
 
 function MyPosts() {
-   const [posts, setPosts] = useState(null);
-   const [loading, setLoading] = useState(true);
    const userData = useSelector((state) => state.auth.userData);
 
-   useEffect(() => {
-      if (userData) {
-         appwriteService
-            .getUserPosts(userData.$id)
-            .then((posts) => {
-               if (posts) {
-                  setPosts(posts.documents);
-                  setLoading(false);
-               }
-            })
-            .catch((error) => {
-               console.log(error);
-            });
-      }
-   }, [userData]);
-
-   if (loading) {
-      return <Loader />;
-   }
-   return (
-      <div className="w-full py-8">
+   const renderPosts = (posts) => {
+      return (
          <Container className="max-w-7xl">
             <LoadCards posts={posts} />
          </Container>
+      );
+   };
+
+   return (
+      <div className="w-full py-8">
+         <InfinityScrollLayout
+            fetchMethod={(queries, offset) => appwriteService.getPosts(queries, offset)}
+            queries={[Query.equal("userId", userData.$id)]}
+            renderPosts={renderPosts}
+         />
       </div>
    );
 }

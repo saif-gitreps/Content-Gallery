@@ -12,6 +12,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import appwriteService from "../appwrite/config-appwrite";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
+import { Query } from "appwrite";
 
 export default function Post() {
    const [image, setImage] = useState("");
@@ -33,25 +34,27 @@ export default function Post() {
                navigate("/");
                return;
             }
-            const post = await appwriteService.getPost(id);
-            if (!post) {
+            const fetchedPost = await appwriteService.getPosts(id);
+            if (!fetchedPost) {
                navigate("/");
                return;
             }
-
-            setPost(post);
+            setPost(fetchedPost);
 
             if (authStatus) {
-               const userSavedPosts = await appwriteService.getSavedPosts(userData.$id);
-               for (const post of userSavedPosts.documents) {
-                  if (post.articles.$id === post.$id) {
-                     setSaved(post);
+               const userSavedPosts = await appwriteService.getSavedPosts(
+                  [Query.equal("userId", userData.$id)],
+                  0,
+                  5000
+               );
+               for (const savedPost of userSavedPosts.documents) {
+                  if (savedPost.articles.$id === fetchedPost.$id) {
+                     setSaved(savedPost);
                      break;
                   }
                }
             }
-
-            const result = await appwriteService.getFilePrev(post.featuredImage);
+            const result = await appwriteService.getFilePrev(fetchedPost.featuredImage);
             setImage(result);
             setLoading(false);
          } catch (error) {

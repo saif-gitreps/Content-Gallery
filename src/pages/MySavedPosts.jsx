@@ -1,40 +1,19 @@
-import { useState, useEffect } from "react";
-import { Container, PostCard, Loader } from "../components";
+import { Container, PostCard, InfinityScrollLayout } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { useSelector } from "react-redux";
+import { Query } from "appwrite";
 
 function MySavedPosts() {
-   const [savedPosts, setSavedPosts] = useState(null);
-   const [loading, setLoading] = useState(true);
    const userData = useSelector((state) => state.auth.userData);
 
-   useEffect(() => {
-      if (userData) {
-         appwriteService
-            .getSavedPosts(userData.$id)
-            .then((posts) => {
-               if (posts) {
-                  setSavedPosts(posts.documents);
-                  setLoading(false);
-               }
-            })
-            .catch((error) => {
-               console.log(error);
-            });
-      }
-   }, [userData]);
-
-   if (loading) {
-      return <Loader />;
-   }
-   return (
-      <div className="py-8">
+   const renderPosts = (posts) => {
+      return (
          <Container className="max-w-7xl">
             <h1 className="text-center">
-               {savedPosts.length === 0 && <p>No posts available.</p>}
+               {posts.length === 0 && <p>No posts available.</p>}
             </h1>
             <div className="masonry-grid">
-               {savedPosts.map((saved) => {
+               {posts.map((saved) => {
                   return (
                      <div key={saved.articles.$id} className="masonry-item">
                         <PostCard
@@ -47,6 +26,18 @@ function MySavedPosts() {
                })}
             </div>
          </Container>
+      );
+   };
+
+   return (
+      <div className="py-8">
+         <InfinityScrollLayout
+            fetchMethod={(queries, offset) =>
+               appwriteService.getSavedPosts(queries, offset)
+            }
+            queries={[Query.equal("userId", userData.$id)]}
+            renderPosts={renderPosts}
+         />
       </div>
    );
 }

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import appwriteService from "../appwrite/config-appwrite";
+import { Loader } from "../components";
+import debounce from "../utils/debouncer";
 
-function useLoadPaginatedCards(queries) {
+function InfiniteScrollLayout({ fetchMethod, queries, renderPosts }) {
    const [posts, setPosts] = useState([]);
    const [loading, setLoading] = useState(true);
    const [offset, setOffset] = useState(0);
@@ -10,8 +11,7 @@ function useLoadPaginatedCards(queries) {
    useEffect(() => {
       const fetchPosts = async () => {
          try {
-            setLoading(true);
-            const newPosts = await appwriteService.getPosts([...queries], offset);
+            const newPosts = await fetchMethod(queries, offset);
 
             if (newPosts.documents.length > 0) {
                setPosts((prevPosts) => {
@@ -26,34 +26,41 @@ function useLoadPaginatedCards(queries) {
             } else {
                setHasMore(false);
             }
-
-            setLoading(false);
          } catch (error) {
             console.log(error);
+         } finally {
             setLoading(false);
          }
       };
 
       if (hasMore) {
+         setLoading(true);
          fetchPosts();
       }
-   }, [offset, hasMore, queries]);
+   }, [offset, hasMore, queries, fetchMethod]);
 
    useEffect(() => {
-      const handleScroll = (event) => {
+      const handleScroll = debounce((event) => {
          const scrollHeight = event.target.documentElement.scrollHeight;
          const currentHeight =
             event.target.documentElement.scrollTop + window.innerHeight;
          if (currentHeight + 1 >= scrollHeight && !loading && hasMore) {
             setOffset((prev) => prev + 5);
          }
-      };
+      }, 200);
 
       document.addEventListener("scroll", handleScroll);
       return () => document.removeEventListener("scroll", handleScroll);
    }, [loading, hasMore]);
 
-   return { posts, loading };
+   if (posts.length === 0 && loading) {
+      return <Loader />;
+   }
+   return (
+      <>
+         {renderPosts(posts)} {loading && <Loader />}
+      </>
+   );
 }
 
-export default useLoadPaginatedCards;
+export default InfiniteScrollLayout;
