@@ -90,19 +90,6 @@ export class Service {
       }
    }
 
-   // async searchPosts(query) {
-   //    try {
-   //       return await this.databases.listDocuments(
-   //          config.appwriteDatabaseId,
-   //          config.appwriteCollectionId,
-   //          [Query.or([Query.contains("title", query), Query.contains("content", query)])]
-   //       );
-   //    } catch (error) {
-   //       console.log("post search error: ", error);
-   //       throw error;
-   //    }
-   // }
-
    async getSavedPosts(queries, offset = 0, limit = 5) {
       try {
          return await this.databases.listDocuments(

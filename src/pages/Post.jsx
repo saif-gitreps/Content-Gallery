@@ -34,7 +34,7 @@ export default function Post() {
                navigate("/");
                return;
             }
-            const fetchedPost = await appwriteService.getPosts(id);
+            const fetchedPost = await appwriteService.getPost(id);
             if (!fetchedPost) {
                navigate("/");
                return;
