@@ -50,17 +50,17 @@ const router = createBrowserRouter([
          {
             path: "/password-recovery-step-one",
             element: (
-               <AuthLayout authentication={false}>
-                  <PasswordRecoveryStepOne />
-               </AuthLayout>
+               //<AuthLayout authentication={false}>
+               <PasswordRecoveryStepOne />
+               //</AuthLayout>
             ),
          },
          {
             path: "/password-recovery-step-two",
             element: (
-               <AuthLayout authentication={false}>
-                  <PasswordRecoveryStepTwo />
-               </AuthLayout>
+               //<AuthLayout authentication={false}>
+               <PasswordRecoveryStepTwo />
+               //</AuthLayout>
             ),
          },
          {
@@ -121,7 +121,9 @@ const router = createBrowserRouter([
          },
          {
             path: "*",
-            element: <h1>404</h1>,
+            element: (
+               <h1 className="text-2xl text-centre font-bold italic">404 not found</h1>
+            ),
          },
       ],
    },

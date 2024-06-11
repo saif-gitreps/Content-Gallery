@@ -7,9 +7,6 @@ function SearchBar() {
    const navigate = useNavigate();
 
    useEffect(() => {
-      if (searchQuery.trim() === "") {
-         navigate("/");
-      }
       if (searchQuery.trim() !== "") {
          navigate(`/search?q=${searchQuery.trim()}`);
       }

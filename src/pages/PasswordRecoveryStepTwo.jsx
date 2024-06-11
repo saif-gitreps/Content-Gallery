@@ -3,11 +3,12 @@ import { useRef } from "react";
 import { Button, Input, Container } from "../components";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 function PasswordRecoveryStepTwo() {
-   const url = new URL(window.location.href);
-   const userId = url.searchParams.get("userId");
-   const secret = url.searchParams.get("secret");
+   const [searchParams] = useSearchParams();
+   const userId = searchParams.get("userId");
+   const secret = searchParams.get("secret");
 
    const { register, handleSubmit } = useForm();
    const passwordRecoveryVerificationMessage = useRef(null);
@@ -17,7 +18,8 @@ function PasswordRecoveryStepTwo() {
          const response = await authService.confirmPasswordRecovery(
             userId,
             secret,
-            data.password
+            data.password,
+            data.confirmPassword
          );
          if (response) {
             passwordRecoveryVerificationMessage.current.classList.remove("hidden");
@@ -50,7 +52,7 @@ function PasswordRecoveryStepTwo() {
                   className="text-sm md:text-base font-normal"
                   type="password"
                   label="Confirm password:"
-                  {...register("password", {
+                  {...register("confirmPassword", {
                      required: true,
                   })}
                />

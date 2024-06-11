@@ -30,20 +30,19 @@ function App() {
    }, [dispatch]);
 
    if (loading) {
-      <Loader />;
-   } else {
-      return (
-         <div className="min-h-screen flex flex-wrap content-between bg-gray-100">
-            <div className="w-full block">
-               <Header />
-               <main className="min-h-screen">
-                  <Outlet />
-               </main>
-               <Footer />
-            </div>
-         </div>
-      );
+      return <Loader />;
    }
+   return (
+      <div className="min-h-screen flex flex-wrap content-between bg-gray-100">
+         <div className="w-full block">
+            <Header />
+            <main className="min-h-screen">
+               <Outlet />
+            </main>
+            <Footer />
+         </div>
+      </div>
+   );
 }
 
 export default App;
