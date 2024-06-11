@@ -1,14 +1,16 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../../store/authSlice";
-import { Input, Pencil, SaveAndCancelDiv } from "../index";
+import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 
-function UpdateName({ setErrorMessage }) {
+function UpdateName() {
    const [editName, setEditName] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
    const dispatch = useDispatch();
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState("");
 
    const { register: registerName, handleSubmit: handleSubmitName } = useForm({
       defaultValues: {
@@ -17,21 +19,23 @@ function UpdateName({ setErrorMessage }) {
    });
 
    const onNameUpdate = async (data) => {
+      setError("");
+      setLoading(true);
       try {
-         setErrorMessage(false);
-         // const updatedUserData = { ...userData };
-         userData.name = data.name;
+         const updatedUserData = { ...userData };
+         updatedUserData.name = data.name;
 
          const result = await authService.updateName(data.name);
-
-         if (result) {
-            dispatch(update(userData));
-            setEditName(false);
-         } else {
-            setErrorMessage(true);
+         if (!result) {
+            throw new Error();
          }
+
+         dispatch(update(updatedUserData));
+         setEditName(false);
       } catch (error) {
-         console.log("Name Update Error", error);
+         setError("Name update error.");
+      } finally {
+         setLoading(false);
       }
    };
    return (
@@ -54,15 +58,21 @@ function UpdateName({ setErrorMessage }) {
             readOnly={!editName}
             {...registerName("name", { required: true })}
          />
-         {editName && (
-            <SaveAndCancelDiv
-               type="submit"
-               cancel={() => {
-                  setEditName(false);
-                  setErrorMessage(false);
-               }}
-            />
-         )}
+         {editName &&
+            (loading ? (
+               <div className="flex justify-center items-center mt-2">
+                  <LoaderMini />
+               </div>
+            ) : (
+               <SaveAndCancelDiv
+                  type="submit"
+                  cancel={() => {
+                     setEditName(false);
+                     setError("");
+                  }}
+               />
+            ))}
+         <ErrorMessage error={error} />
       </form>
    );
 }

@@ -1,83 +1,75 @@
-import { useSelector, useDispatch } from "react-redux";
-import { update } from "../../store/authSlice";
-import { Input, SaveAndCancelDiv, Pencil } from "../index";
+import { useSelector } from "react-redux";
 import { useState, useRef } from "react";
-import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
+import authService from "../../appwrite/auth";
 import { Link } from "react-router-dom";
+import { Input, SaveAndCancelDiv, Pencil, LoaderMini, ErrorMessage } from "../index";
 
-function UpdatePhone({ setErrorMessage }) {
+function UpdatePhone() {
    const [editPhone, setEditPhone] = useState(false);
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState("");
    const userData = useSelector((state) => state.auth.userData);
-   const dispatch = useDispatch();
-   const { register: registerPhone, handleSubmit: handleSubmitPhone } = useForm({
+   const { register, handleSubmit, reset } = useForm({
       defaultValues: {
          phone: userData?.phone || "",
          password: "",
       },
    });
 
-   const onPhoneUpdate = async (data) => {
-      try {
-         setErrorMessage(false);
-         const updatedUserData = { ...userData };
-         updatedUserData.phone = data.phone;
-
-         const result = await authService.updatePhone(data.phone, data.password);
-
-         if (result) {
-            dispatch(update({ updatedUserData }));
-            setEditPhone(false);
-         } else {
-            setErrorMessage(true);
-         }
-      } catch (error) {
-         console.log("Phone Update Error", error);
-      }
-   };
-
    const phoneVerificationDiv = useRef(null);
 
-   const verifyPhone = async () => {
+   const onPhoneUpdate = async (data) => {
+      setError("");
+      setLoading(true);
       try {
-         if (userData.phone) {
-            setErrorMessage(false);
-            const result = await authService.createPhoneVerification();
-            if (result) {
-               phoneVerificationDiv.current.classList.remove("hidden");
-            } else {
-               phoneVerificationDiv.current.classList.remove("hidden");
-               setErrorMessage(true);
-            }
-         }
+         const result = await authService.updatePhone(data.phone, data.password);
+         if (!result) throw new Error();
+
+         setEditPhone(false);
       } catch (error) {
-         console.log("Phone Verification Error", error);
+         setError("Phone update error.");
+      } finally {
+         setLoading(false);
+         reset({ password: "" });
       }
    };
 
-   const connfirmPhoneVerification = async () => {
+   const verifyPhone = async () => {
+      setError("");
       try {
-         setErrorMessage(false);
-         const confirmInput = phoneVerificationDiv.current.querySelector("input").value;
-         const result = await authService.confirmPhoneVerification(
-            userData.$id,
-            confirmInput
-         );
-         if (result) {
-            phoneVerificationDiv.current.classList.add("hidden");
-         } else {
-            phoneVerificationDiv.current.classList.add("hidden");
-            setErrorMessage(true);
-         }
+         const result = await authService.createPhoneVerification();
+         if (!result) throw new Error();
+
+         phoneVerificationDiv.current.classList.remove("hidden");
       } catch (error) {
+         phoneVerificationDiv.current.classList.remove("hidden");
          phoneVerificationDiv.current.querySelector("h2").textContent =
-            "Phone confirmation failed, Please try again.";
+            "Phone verification error. Try Again.";
       }
    };
+
+   const confirmPhoneVerification = async () => {
+      setError("");
+      try {
+         const result = await authService.confirmPhoneVerification(
+            userData.$id,
+            phoneVerificationDiv.current.querySelector("input").value
+         );
+         if (!result) throw new Error();
+
+         phoneVerificationDiv.current.classList.add("hidden");
+      } catch (error) {
+         phoneVerificationDiv.current.classList.remove("hidden");
+         phoneVerificationDiv.current.querySelector("h2").textContent =
+            "Invalid Code. Try Again.";
+      }
+   };
+
    return (
       <form
-         onSubmit={handleSubmitPhone(onPhoneUpdate)}
-         className={`p-2 ${editPhone && "shadow-lg rounded-lg"}`}
+         onSubmit={handleSubmit(onPhoneUpdate)}
+         className={`p-2 ${editPhone ? "shadow-lg rounded-lg" : ""}`}
       >
          <div className="flex items-center justify-between">
             <h2 className="text-sm md:text-base font-semibold ml-2">
@@ -88,29 +80,21 @@ function UpdatePhone({ setErrorMessage }) {
                   </Link>
                )}
             </h2>
-            {!editPhone && (
-               <Pencil
-                  onClickAction={() => {
-                     setEditPhone(true);
-                  }}
-               />
-            )}
+            {!editPhone && <Pencil onClickAction={() => setEditPhone(true)} />}
          </div>
          <Input
             className="text-sm md:text-base font-normal w-64"
             readOnly={!editPhone}
-            {...registerPhone("phone", { required: true })}
+            {...register("phone", { required: true })}
          />
          <div ref={phoneVerificationDiv} className="hidden">
-            <h2 className="text-base text-red-700 font-medium ml-2">
+            <h2 className="text-base text-red-600 font-medium ml-2">
                Check the verification SMS on your Phone.
             </h2>
-            <Input className="text-sm md:text-base font-normal w-64" type="Number" />
+            <Input className="text-sm md:text-base font-normal w-64" type="number" />
             <SaveAndCancelDiv
-               save={connfirmPhoneVerification}
-               cancel={() => {
-                  phoneVerificationDiv.current.classList.add("hidden");
-               }}
+               save={confirmPhoneVerification}
+               cancel={() => phoneVerificationDiv.current.classList.add("hidden")}
             />
          </div>
          {editPhone && (
@@ -119,16 +103,25 @@ function UpdatePhone({ setErrorMessage }) {
                <Input
                   className="text-sm md:text-base font-normal w-64"
                   type="password"
-                  {...registerPhone("password", { required: true })}
+                  {...register("password", { required: true })}
                />
-               <SaveAndCancelDiv
-                  cancel={() => {
-                     setEditPhone(false);
-                     setErrorMessage(false);
-                  }}
-               />
+               {loading ? (
+                  <div className="flex justify-center items-center mt-2">
+                     <LoaderMini />
+                  </div>
+               ) : (
+                  <SaveAndCancelDiv
+                     save={() => handleSubmit(onPhoneUpdate)}
+                     cancel={() => {
+                        setEditPhone(false);
+                        setError("");
+                        reset();
+                     }}
+                  />
+               )}
             </div>
          )}
+         <ErrorMessage error={error} />
       </form>
    );
 }

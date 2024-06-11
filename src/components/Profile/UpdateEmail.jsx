@@ -1,17 +1,17 @@
-import { useSelector, useDispatch } from "react-redux";
-import { update } from "../../store/authSlice";
-import { Input, Pencil, SaveAndCancelDiv } from "../index";
+import { useSelector } from "react-redux";
 import { useState, useRef } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 
-function UpdateEmail({ setErrorMessage }) {
+function UpdateEmail() {
    const [editEmail, setEditEmail] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
-   const dispatch = useDispatch();
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState("");
 
-   const { register: registerEmail, handleSubmit: handleSubmitEmail } = useForm({
+   const { register, handleSubmit, reset } = useForm({
       defaultValues: {
          email: userData?.email || "",
          password: "",
@@ -21,42 +21,43 @@ function UpdateEmail({ setErrorMessage }) {
    const emailVerificationMessage = useRef(null);
 
    const onEmailUpdate = async (data) => {
+      setError(false);
+      setLoading(true);
       try {
-         setErrorMessage(false);
-         const updatedUserData = { ...userData };
-         updatedUserData.email = data.email;
-
          const result = await authService.updateEmail(data.email, data.password);
-
-         if (result) {
-            dispatch(update({ updatedUserData }));
-            setEditEmail(false);
-         } else {
-            setErrorMessage(true);
+         if (!result) {
+            throw new Error();
          }
+
+         setEditEmail(false);
       } catch (error) {
          console.log("Email Update Error", error);
+      } finally {
+         setLoading(false);
+         reset({ password: "" });
       }
    };
 
    const verifyEmail = async () => {
+      setError("");
       try {
-         setErrorMessage(false);
          if (userData.email) {
             const result = await authService.createEmailVerification();
-            if (result) {
-               emailVerificationMessage.current.classList.remove("hidden");
-            } else {
-               setErrorMessage(true);
+            if (!result) {
+               throw new Error();
             }
+
+            emailVerificationMessage.current.classList.remove("hidden");
          }
       } catch (error) {
-         console.log("Email Verification Error", error);
+         emailVerificationMessage.current.textContent =
+            "Email verification error, please try again.";
       }
    };
+
    return (
       <form
-         onSubmit={handleSubmitEmail(onEmailUpdate)}
+         onSubmit={handleSubmit(onEmailUpdate)}
          className={`p-1 ${editEmail && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
@@ -79,7 +80,7 @@ function UpdateEmail({ setErrorMessage }) {
          <Input
             className="text-sm md:text-base font-normal w-64"
             readOnly={!editEmail}
-            {...registerEmail("email", {
+            {...register("email", {
                required: true,
                validate: {
                   matchPatern: (value) =>
@@ -89,10 +90,10 @@ function UpdateEmail({ setErrorMessage }) {
             })}
          />
          <h2
-            className="text-base text-red-700 font-medium hidden"
+            className="text-base text-red-600 font-medium hidden"
             ref={emailVerificationMessage}
          >
-            Check your email for email verification
+            Check your email for Email verification
          </h2>
          {editEmail && (
             <div>
@@ -100,16 +101,23 @@ function UpdateEmail({ setErrorMessage }) {
                <Input
                   className="text-sm md:text-base font-normal w-64"
                   type="password"
-                  {...registerEmail("password", { required: true })}
+                  {...register("password", { required: true })}
                />
-               <SaveAndCancelDiv
-                  cancel={() => {
-                     setEditEmail(false);
-                     setErrorMessage(false);
-                  }}
-               />
+               {loading ? (
+                  <div className="flex justify-center items-center mt-2">
+                     <LoaderMini />
+                  </div>
+               ) : (
+                  <SaveAndCancelDiv
+                     cancel={() => {
+                        setEditEmail(false);
+                        setError("");
+                     }}
+                  />
+               )}
             </div>
          )}
+         <ErrorMessage error={error} />
       </form>
    );
 }

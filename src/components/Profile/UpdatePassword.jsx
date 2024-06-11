@@ -1,12 +1,14 @@
-import { Input, Pencil, SaveAndCancelDiv } from "../index";
 import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
+import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 
-function UpdatePassword({ setErrorMessage }) {
+function UpdatePassword() {
    const [editPassword, setEditPassword] = useState(false);
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState("");
 
-   const { register: registerPassword, handleSubmit: handleSubmitPassword } = useForm({
+   const { register, handleSubmit, reset } = useForm({
       defaultValues: {
          oldPassword: "",
          newPassword: "",
@@ -14,25 +16,27 @@ function UpdatePassword({ setErrorMessage }) {
    });
 
    const onPasswordUpdate = async (data) => {
+      setError("");
+      setLoading(true);
       try {
-         setErrorMessage(false);
          const result = await authService.updatePassword(
             data.OldPassword,
             data.newPassword
          );
 
-         if (result) {
-            setEditPassword(false);
-         } else {
-            setErrorMessage(true);
+         if (!result) {
+            throw new Error();
          }
+         setEditPassword(false);
       } catch (error) {
-         console.log("Password Update Error", error);
+         setError("Password update error.");
+      } finally {
+         setLoading(false);
       }
    };
    return (
       <form
-         onSubmit={handleSubmitPassword(onPasswordUpdate)}
+         onSubmit={handleSubmit(onPasswordUpdate)}
          className={`p-2 ${editPassword && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
@@ -49,9 +53,9 @@ function UpdatePassword({ setErrorMessage }) {
          </div>
          <Input
             className="text-sm md:text-base font-normal w-64"
+            type="password"
             readOnly={!editPassword}
-            value={editPassword ? "" : "********"}
-            {...registerPassword("OldPassword", { required: true })}
+            {...register("OldPassword", { required: true })}
          />
          {editPassword && (
             <div>
@@ -59,17 +63,24 @@ function UpdatePassword({ setErrorMessage }) {
                <Input
                   className="text-sm md:text-base font-normal w-64"
                   type="password"
-                  value=""
-                  {...registerPassword("newPassword", { required: true })}
+                  {...register("newPassword", { required: true })}
                />
-               <SaveAndCancelDiv
-                  cancel={() => {
-                     setEditPassword(false);
-                     setEditPassword(false);
-                  }}
-               />
+               {loading ? (
+                  <div className="flex justify-center items-center mt-2">
+                     <LoaderMini />
+                  </div>
+               ) : (
+                  <SaveAndCancelDiv
+                     cancel={() => {
+                        setEditPassword(false);
+                        setError("");
+                        reset({ OldPassword: "", newPassword: "" });
+                     }}
+                  />
+               )}
             </div>
          )}
+         <ErrorMessage error={error} />
       </form>
    );
 }
