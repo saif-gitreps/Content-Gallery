@@ -1,5 +1,4 @@
 import config from "../config/config";
-import appwriteService from "./config-appwrite";
 
 import { Client, Account, ID } from "appwrite";
 
@@ -14,18 +13,7 @@ export class AuthService {
 
    async createAccount({ email, password, name }) {
       try {
-         const userAccount = await this.account.create(
-            ID.unique(),
-            email,
-            password,
-            name
-         );
-         if (userAccount) {
-            await appwriteService.createUserProfile(userAccount.$id);
-            return await this.login({ email, password });
-         } else {
-            return userAccount;
-         }
+         return await this.account.create(ID.unique(), email, password, name);
       } catch (error) {
          console.log("Appwrite service :: creating account :: error", error);
          return null;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Loader } from "../components";
+import { Loader, ErrorMessage } from "../components";
 import debounce from "../utils/debouncer";
 
 function InfiniteScrollLayout({ fetchMethod, queries, renderPosts }) {
@@ -7,10 +7,12 @@ function InfiniteScrollLayout({ fetchMethod, queries, renderPosts }) {
    const [loading, setLoading] = useState(true);
    const [offset, setOffset] = useState(0);
    const [hasMore, setHasMore] = useState(true);
+   const [error, setError] = useState("");
 
    useEffect(() => {
       const fetchPosts = async () => {
          try {
+            setError("");
             const newPosts = await fetchMethod(queries, offset);
 
             if (newPosts.documents.length > 0) {
@@ -27,7 +29,7 @@ function InfiniteScrollLayout({ fetchMethod, queries, renderPosts }) {
                setHasMore(false);
             }
          } catch (error) {
-            console.log(error);
+            setError("Error fetching posts. Please try again.");
          } finally {
             setLoading(false);
          }
@@ -36,6 +38,7 @@ function InfiniteScrollLayout({ fetchMethod, queries, renderPosts }) {
       if (hasMore) {
          setLoading(true);
          fetchPosts();
+         setError("");
       }
    }, [offset, hasMore, queries, fetchMethod]);
 
@@ -58,7 +61,9 @@ function InfiniteScrollLayout({ fetchMethod, queries, renderPosts }) {
    }
    return (
       <>
-         {renderPosts(posts)} {loading && <Loader />}
+         <ErrorMessage error={error} />
+         {renderPosts(posts)}
+         {loading && <Loader />}
       </>
    );
 }

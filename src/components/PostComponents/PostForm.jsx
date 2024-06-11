@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Input, Select, SaveAndCancelDiv, LoaderMini } from "../index";
+import { Input, Select, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "../index";
 import appwriteService from "../../appwrite/config-appwrite";
 
 function PostForm({ post, pageTitle = "Create" }) {
@@ -10,9 +10,9 @@ function PostForm({ post, pageTitle = "Create" }) {
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
    const [loading, setLoading] = useState(false);
-   const [imageError, setImageError] = useState(false);
+   const [error, setError] = useState("");
 
-   const { register, handleSubmit } = useForm({
+   const { register, handleSubmit, reset } = useForm({
       defaultValues: {
          title: post?.title || "",
          content: post?.content || "",
@@ -21,35 +21,36 @@ function PostForm({ post, pageTitle = "Create" }) {
    });
 
    const submit = async (data) => {
-      if (imageError) {
-         return;
-      }
+      setError("");
       setLoading(true);
-      if (post) {
-         const file = data.image[0]
-            ? await appwriteService.uploadFile(data.image[0])
-            : null;
-
-         if (file) {
-            appwriteService.deleteFile(post.featuredImage);
+      try {
+         if (data.image[0] && data.image[0].size > 1024 * 1024) {
+            setError("Image size should be less than 1MB.");
+            setLoading(false);
+            return;
          }
 
-         const dbPost = await appwriteService.updatePost(post.$id, {
-            ...data,
-            featuredImage: file ? file.$id : undefined,
-         });
-
-         if (dbPost) {
-            navigate(`/post/${dbPost.$id}`);
+         let file;
+         if (data.image && data.image[0]) {
+            file = await appwriteService.uploadFile(data.image[0]);
+            if (post && post.featuredImage) {
+               await appwriteService.deleteFile(post.featuredImage);
+            }
          }
-      } else {
-         const file = await appwriteService.uploadFile(data.image[0]);
 
-         if (file) {
-            const fileId = file.$id;
-            data.featuredImage = fileId;
+         if (post) {
+            const dbPost = await appwriteService.updatePost(post.$id, {
+               ...data,
+               featuredImage: file ? file.$id : post.featuredImage,
+            });
+
+            if (dbPost) {
+               navigate(`/post/${dbPost.$id}`);
+            }
+         } else {
             const dbPost = await appwriteService.createPost({
                ...data,
+               featuredImage: file ? file.$id : undefined,
                userId: userData.$id,
             });
 
@@ -57,31 +58,35 @@ function PostForm({ post, pageTitle = "Create" }) {
                navigate(`/post/${dbPost.$id}`);
             }
          }
+      } catch (error) {
+         console.error("Error submitting post:", error);
+         setError("Something went wrong, please try again.");
+      } finally {
+         setLoading(false);
       }
-      setLoading(false);
    };
 
    useEffect(() => {
       const fetchImageSrc = async () => {
-         try {
-            if (post) {
+         setError("");
+         if (post && post.featuredImage) {
+            try {
                const imageUrl = await appwriteService.getFilePrev(post.featuredImage);
                setImageSrc(imageUrl);
+            } catch (error) {
+               console.error("Error loading image:", error);
+               setError("Failed to load image.");
             }
-         } catch (error) {
-            console.error("Error fetching image preview:", error);
          }
       };
+
       fetchImageSrc();
-   }, [post?.featuredImage, post]);
+      reset(post);
+   }, [post, reset]);
 
    const imagePreview = (event) => {
       const file = event.target.files[0];
-      if (file && file.size > 1024 * 1024) {
-         setImageError(true);
-      } else {
-         setImageError(false);
-      }
+
       if (file) {
          const reader = new FileReader();
          reader.onload = () => {
@@ -101,18 +106,18 @@ function PostForm({ post, pageTitle = "Create" }) {
             className="mt-6 space-y-4 flex flex-col justify-center"
          >
             <Input
-               label="Title :"
+               label="Title:"
                className="text-lg font-normal"
                {...register("title", { required: true })}
             />
             <Input
-               label="Content: "
+               label="Content:"
                className="text-lg font-normal"
                type="text"
                {...register("content", { required: true })}
             />
             <Input
-               label="Featured Image :"
+               label="Featured Image:"
                type="file"
                className=""
                {...register("image")}
@@ -124,7 +129,7 @@ function PostForm({ post, pageTitle = "Create" }) {
                </div>
             )}
             <Select
-               label="Status: "
+               label="Status:"
                options={["Active", "Inactive"]}
                className="font-normal"
                {...register("status", { required: true })}
@@ -147,11 +152,7 @@ function PostForm({ post, pageTitle = "Create" }) {
                   }}
                />
             )}
-            {imageError && (
-               <h2 className="text-sm text-center text-red-600 font-medium mt-2">
-                  Please choose an image with size smaller than 1 MB.
-               </h2>
-            )}
+            <ErrorMessage error={error} />
          </form>
       </div>
    );

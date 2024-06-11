@@ -19,13 +19,13 @@ function UpdateName({ setErrorMessage }) {
    const onNameUpdate = async (data) => {
       try {
          setErrorMessage(false);
-         const updatedUserData = { ...userData };
-         updatedUserData.name = data.name;
+         // const updatedUserData = { ...userData };
+         userData.name = data.name;
 
          const result = await authService.updateName(data.name);
 
          if (result) {
-            dispatch(update({ updatedUserData }));
+            dispatch(update(userData));
             setEditName(false);
          } else {
             setErrorMessage(true);

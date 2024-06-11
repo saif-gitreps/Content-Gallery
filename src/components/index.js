@@ -10,6 +10,7 @@ import LogoutButton from "./Header/LogoutButton";
 import PostForm from "./PostComponents/PostForm";
 import UpdateEmail from "./Profile/UpdateEmail";
 import UpdatePhone from "./Profile/UpdatePhone";
+import ErrorMessage from "./ErrorMessage";
 import Comment from "./PostComponents/Comment";
 import UpdateName from "./Profile/UpdateName";
 import SearchBar from "./Header/SearchBar";
@@ -42,6 +43,7 @@ export {
    UpdateEmail,
    UpdateName,
    UpdatePhone,
+   ErrorMessage,
    SearchBar,
    LoadCards,
    LoaderMini,

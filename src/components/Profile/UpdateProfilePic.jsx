@@ -28,17 +28,20 @@ function UpdateProfilePic({ setErrorMessage }) {
             }
             const filePreviw = await appwriteService.getFilePrev(file.$id);
 
-            const updatedUserData = { ...userData };
+            // const updatedUserData = { ...userData };
 
-            updatedUserData.prefs = {
-               ...userData.prefs,
-               profilePicture: filePreviw.href,
-               profilePictureId: file.$id,
-            };
+            // updatedUserData.prefs = {
+            //    ...userData.prefs,
+            //    profilePicture: filePreviw.href,
+            //    profilePictureId: file.$id,
+            // };
+
+            userData.prefs.profilePicture = filePreviw.href;
+            userData.prefs.profilePictureId = file.$id;
 
             await authService.updateProfilePicture(filePreviw.href, file.$id);
 
-            dispatch(update({ updatedUserData }));
+            dispatch(update(userData));
             setEditProfilePic(false);
 
             if (filePreviw) {

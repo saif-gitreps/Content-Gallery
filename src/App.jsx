@@ -16,7 +16,7 @@ function App() {
          .getCurrentUser()
          .then((userData) => {
             if (userData) {
-               dispatch(login({ userData }));
+               dispatch(login(userData));
             } else {
                dispatch(logout());
             }
@@ -39,7 +39,7 @@ function App() {
                <main className="min-h-screen">
                   <Outlet />
                </main>
-               {/* <Footer /> */}
+               <Footer />
             </div>
          </div>
       );
