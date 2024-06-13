@@ -10,18 +10,20 @@ function Comment({ comment, isAuthor, onDelete, userData }) {
    };
 
    return (
-      <li className="mb-4 flex justify-between border-b-1 p-3 rounded-lg shadow-md">
+      <li className="mb-2 flex justify-between border-b-1 p-3 rounded-lg shadow-md">
          <div className="items-center w-10/12">
-            <div className="flex items-center mb-2">
+            <div className="flex items-center mb-2 space-x-1">
                <img
                   src={comment.avatar || "blank-dp.png"}
                   alt={comment.userName}
                   className="w-10 h-10 rounded-full"
                />
-               <p className="font-semibold mx-1">{comment.userName}</p>
-               <p className="text-sm font-medium text-gray-500">
-                  {formatDate(comment.$createdAt)}
-               </p>
+               <div className="flex flex-col space-y-0">
+                  <p className="text-base font-medium">{comment.userName}</p>
+                  <p className="text-sm font-medium text-gray-500">
+                     {formatDate(comment.$createdAt)}
+                  </p>
+               </div>
             </div>
             <div className="ml-1 w-full overflow-hidden text-wrap">
                <p>{comment.content}</p>

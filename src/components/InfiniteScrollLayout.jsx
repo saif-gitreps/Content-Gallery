@@ -61,8 +61,8 @@ function InfiniteScrollLayout({ fetchMethod, queries, renderPosts }) {
    }
    return (
       <>
-         <ErrorMessage error={error} />
          {renderPosts(posts)}
+         <ErrorMessage error={error} />
          {loading && <Loader />}
       </>
    );

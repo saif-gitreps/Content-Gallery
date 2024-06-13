@@ -1,6 +1,6 @@
 import authService from "../appwrite/auth";
-import { useRef } from "react";
-import { Button, Input, Container } from "../components";
+import { useRef, useState } from "react";
+import { Button, Input, Container, LoaderMini } from "../components";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
@@ -9,11 +9,13 @@ function PasswordRecoveryStepTwo() {
    const [searchParams] = useSearchParams();
    const userId = searchParams.get("userId");
    const secret = searchParams.get("secret");
+   const [loading, setLoading] = useState(false);
 
    const { register, handleSubmit } = useForm();
    const passwordRecoveryVerificationMessage = useRef(null);
 
    const confirmRecovery = async (data) => {
+      setLoading(true);
       try {
          const response = await authService.confirmPasswordRecovery(
             userId,
@@ -30,6 +32,8 @@ function PasswordRecoveryStepTwo() {
          }
       } catch (error) {
          console.log("Appwrite service :: confirm password recovery :: error", error);
+      } finally {
+         setLoading(false);
       }
    };
    return (
@@ -56,7 +60,13 @@ function PasswordRecoveryStepTwo() {
                      required: true,
                   })}
                />
-               <Button type="submit" className="w-full" bgNumber={1} text="Confirm" />
+               {loading ? (
+                  <div className="flex justify-center items-center mt-2">
+                     <LoaderMini />
+                  </div>
+               ) : (
+                  <Button type="submit" className="w-full" bgNumber={1} text="Confirm" />
+               )}
             </form>
             <Link
                to="/password-recovery-step-one"
@@ -74,6 +84,7 @@ function PasswordRecoveryStepTwo() {
                      type="button"
                      className="bg-blue-700 hover:bg-blue-900"
                      text="Login"
+                     bgNumber={1}
                   />
                </Link>
             </h2>

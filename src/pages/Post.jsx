@@ -6,6 +6,7 @@ import {
    SharableLinks,
    Button,
    LoaderMini,
+   ErrorMessage,
 } from "../components";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -19,6 +20,7 @@ export default function Post() {
    const [saved, setSaved] = useState(null);
    const [post, setPost] = useState(null);
    const [loading, setLoading] = useState(true);
+   const [error, setError] = useState("");
    const [saveLoader, setSaveLoader] = useState(false);
    const [showShareLinks, setShowShareLinks] = useState(false);
    const { id } = useParams();
@@ -36,8 +38,7 @@ export default function Post() {
             }
             const fetchedPost = await appwriteService.getPost(id);
             if (!fetchedPost) {
-               navigate("/");
-               return;
+               throw new Error();
             }
             setPost(fetchedPost);
 
@@ -54,26 +55,32 @@ export default function Post() {
                   }
                }
             }
+
             const result = await appwriteService.getFilePrev(fetchedPost.featuredImage);
             setImage(result);
             setLoading(false);
          } catch (error) {
-            console.error("Error fetching post:", error);
-            navigate("/");
+            setError("Error fetching post. Redirecting to home page.");
+            setTimeout(() => navigate("/"), 2000);
          }
       };
       fetchData();
    }, [id, navigate, authStatus, userData]);
 
    const deletePost = async () => {
+      setError("");
+      setLoading(true);
       try {
-         const status = await appwriteService.deletePost(post.$id);
-         if (status) {
-            await appwriteService.deleteFile(post.featuredImage);
-            navigate("/");
+         const deletedPost = await appwriteService.deletePost(post.$id);
+         if (!deletedPost) {
+            throw new Error();
          }
+
+         await appwriteService.deleteFile(post.featuredImage);
+         navigate("/");
+         setLoading(false);
       } catch (error) {
-         console.error("Error deleting post:", error);
+         setError("Error deleting post. Please try again later.");
       }
    };
 
@@ -98,6 +105,9 @@ export default function Post() {
 
    if (loading) {
       return <Loader />;
+   }
+   if (error) {
+      return <ErrorMessage error={error} />;
    }
    return post ? (
       <div className="py-8">

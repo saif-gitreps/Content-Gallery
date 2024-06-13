@@ -1,14 +1,16 @@
-import { Button, Input, Container } from "../components";
+import { Button, Input, Container, LoaderMini } from "../components";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 function PasswordRecoveryStepOne() {
    const { register, handleSubmit } = useForm();
    const passwordRecoveryVerificationMessage = useRef(null);
+   const [loading, setLoading] = useState(false);
 
    const createRecovery = async (data) => {
+      setLoading(true);
       try {
          const response = await authService.createPasswordRecovery(data.email);
          if (response) {
@@ -19,6 +21,8 @@ function PasswordRecoveryStepOne() {
          }
       } catch (error) {
          console.log("Appwrite service :: create password recovery :: error", error);
+      } finally {
+         setLoading(false);
       }
    };
    return (
@@ -36,7 +40,13 @@ function PasswordRecoveryStepOne() {
                      required: true,
                   })}
                />
-               <Button type="submit" text="Next" className="w-full" bgNumber={1} />
+               {loading ? (
+                  <div className="flex justify-center items-center mt-2">
+                     <LoaderMini />
+                  </div>
+               ) : (
+                  <Button type="submit" className="w-full" bgNumber={1} text="Next" />
+               )}
             </form>
             <Link
                to="/login"

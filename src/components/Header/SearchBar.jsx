@@ -11,6 +11,7 @@ function SearchBar() {
          navigate(`/search?q=${searchQuery.trim()}`);
       }
    }, [searchQuery, navigate]);
+
    return (
       <div className="flex justify-center relative items-center">
          <Input

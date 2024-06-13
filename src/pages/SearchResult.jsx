@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Loader, LoadCards } from "../components";
+import { Container, Loader, LoadCards, ErrorMessage } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { Query } from "appwrite";
 import { useSearchParams } from "react-router-dom";
@@ -7,6 +7,7 @@ import debounce from "../utils/debouncer";
 
 function SearchResult() {
    const [searchParams] = useSearchParams();
+   const [error, setError] = useState("");
    const [posts, setPosts] = useState([]);
    const [loading, setLoading] = useState(true);
    const [offset, setOffset] = useState(0);
@@ -27,10 +28,15 @@ function SearchResult() {
          if (query) {
             try {
                const results = await fetchPosts(query, 0, 5);
+
+               if (!results) {
+                  throw new Error();
+               }
+
                setPosts(results.documents);
                setHasMore(results.documents.length >= 5);
             } catch (error) {
-               console.log(error);
+               setError("Error fetching posts. Please try again.");
             } finally {
                setLoading(false);
             }
@@ -52,6 +58,10 @@ function SearchResult() {
             try {
                const results = await fetchPosts(query, offset, 5);
 
+               if (!results) {
+                  throw new Error();
+               }
+
                setPosts((prevPosts) => [
                   ...prevPosts,
                   ...results.documents.filter(
@@ -60,7 +70,7 @@ function SearchResult() {
                ]);
                setHasMore(results.documents.length === 5);
             } catch (error) {
-               console.log(error);
+               setError("Error fetching posts. Please try again.");
             } finally {
                setIsFetching(false);
             }
@@ -88,6 +98,9 @@ function SearchResult() {
 
    if (posts.length === 0 && loading) {
       return <Loader />;
+   }
+   if (error) {
+      return <ErrorMessage error={error} />;
    }
    return (
       <div className="w-full py-8">
