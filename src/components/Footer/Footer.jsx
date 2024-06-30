@@ -1,4 +1,4 @@
-import { Logo, Container } from "../../components";
+import { Logo, Container, DarkModeToggle } from "../../components";
 
 function Footer() {
    return (

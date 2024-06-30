@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "./store/authSlice";
 import authService from "./appwrite/auth";
 import { Header, Footer, Loader } from "./components/index";
@@ -10,8 +10,11 @@ import "./App.css";
 function App() {
    const [loading, setLoading] = useState(true);
    const dispatch = useDispatch();
+   const theme = useSelector((state) => state.theme.theme);
 
    useEffect(() => {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+
       authService
          .getCurrentUser()
          .then((userData) => {
@@ -27,7 +30,7 @@ function App() {
          .finally(() => {
             setLoading(false);
          });
-   }, [dispatch]);
+   }, [dispatch, theme]);
 
    if (loading) {
       return <Loader />;

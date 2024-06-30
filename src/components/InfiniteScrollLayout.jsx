@@ -15,17 +15,18 @@ function InfiniteScrollLayout({ fetchMethod, queries, renderPosts }) {
             setError("");
             const newPosts = await fetchMethod(queries, offset);
 
-            if (newPosts.documents.length > 0) {
-               setPosts((prevPosts) => {
-                  const uniquePosts = newPosts.documents.filter(
-                     (newPost) => !prevPosts.some((post) => post.$id === newPost.$id)
-                  );
-                  return [...prevPosts, ...uniquePosts];
-               });
-               if (newPosts.documents.length < 5) {
-                  setHasMore(false);
-               }
-            } else {
+            if (newPosts.documents.length == 0) {
+               setHasMore(false);
+               return;
+            }
+
+            setPosts((prevPosts) => {
+               const uniquePosts = newPosts.documents.filter(
+                  (newPost) => !prevPosts.some((post) => post.$id === newPost.$id)
+               );
+               return [...prevPosts, ...uniquePosts];
+            });
+            if (newPosts.documents.length < 5) {
                setHasMore(false);
             }
          } catch (error) {

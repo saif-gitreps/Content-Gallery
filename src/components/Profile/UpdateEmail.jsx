@@ -43,6 +43,7 @@ function UpdateEmail() {
       try {
          if (userData.email) {
             const result = await authService.createEmailVerification();
+
             if (!result) {
                throw new Error();
             }

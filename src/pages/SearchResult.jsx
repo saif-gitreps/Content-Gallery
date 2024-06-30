@@ -25,21 +25,22 @@ function SearchResult() {
    useEffect(() => {
       const fetchInitialPosts = async () => {
          const query = searchParams.get("q");
-         if (query) {
-            try {
-               const results = await fetchPosts(query, 0, 5);
+         if (!query) {
+            return;
+         }
+         try {
+            const results = await fetchPosts(query, 0, 5);
 
-               if (!results) {
-                  throw new Error();
-               }
-
-               setPosts(results.documents);
-               setHasMore(results.documents.length >= 5);
-            } catch (error) {
-               setError("Error fetching posts. Please try again.");
-            } finally {
-               setLoading(false);
+            if (!results) {
+               throw new Error();
             }
+
+            setPosts(results.documents);
+            setHasMore(results.documents.length >= 5);
+         } catch (error) {
+            setError("Error fetching posts. Please try again.");
+         } finally {
+            setLoading(false);
          }
       };
 
@@ -53,27 +54,29 @@ function SearchResult() {
    useEffect(() => {
       const fetchMorePosts = async () => {
          const query = searchParams.get("q");
-         if (query && hasMore && !isFetching) {
-            setIsFetching(true);
-            try {
-               const results = await fetchPosts(query, offset, 5);
+         if (!(query && hasMore && !isFetching)) {
+            return;
+         }
 
-               if (!results) {
-                  throw new Error();
-               }
+         setIsFetching(true);
+         try {
+            const results = await fetchPosts(query, offset, 5);
 
-               setPosts((prevPosts) => [
-                  ...prevPosts,
-                  ...results.documents.filter(
-                     (newPost) => !prevPosts.some((post) => post.$id === newPost.$id)
-                  ),
-               ]);
-               setHasMore(results.documents.length === 5);
-            } catch (error) {
-               setError("Error fetching posts. Please try again.");
-            } finally {
-               setIsFetching(false);
+            if (!results) {
+               throw new Error();
             }
+
+            setPosts((prevPosts) => [
+               ...prevPosts,
+               ...results.documents.filter(
+                  (newPost) => !prevPosts.some((post) => post.$id === newPost.$id)
+               ),
+            ]);
+            setHasMore(results.documents.length === 5);
+         } catch (error) {
+            setError("Error fetching posts. Please try again.");
+         } finally {
+            setIsFetching(false);
          }
       };
 

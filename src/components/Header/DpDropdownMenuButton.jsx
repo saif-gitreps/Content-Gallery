@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogoutButton } from "../index";
+import { DarkModeToggle, LogoutButton } from "../index";
 import useClickOutSide from "../../hooks/useClickOutside";
 
 function DpDropdownMenuButton({ src, authStatus, navItems }) {
@@ -50,6 +50,7 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
                      <LogoutButton className="text-xs lg:text-base" />
                   </li>
                )}
+               <DarkModeToggle />
             </ul>
          )}
       </>

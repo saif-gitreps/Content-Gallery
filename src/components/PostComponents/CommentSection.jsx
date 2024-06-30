@@ -47,8 +47,6 @@ function CommentSection({ post, userData, isAuthor }) {
             userData.$id
          );
 
-         console.log(addedComment);
-
          if (!addedComment) {
             throw new Error();
          }

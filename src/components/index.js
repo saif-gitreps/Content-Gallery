@@ -5,9 +5,10 @@ import InfinityScrollLayout from "./InfiniteScrollLayout";
 import UpdateProfilePic from "./Profile/UpdateProfilePic";
 import PostActions from "./PostComponents/PostActions";
 import UpdatePassword from "./Profile/UpdatePassword";
+import DarkModeToggle from "./Header/DarkModeToggle";
 import SaveAndCancelDiv from "./SaveAndCancelDiv";
-import LogoutButton from "./Header/LogoutButton";
 import PostForm from "./PostComponents/PostForm";
+import LogoutButton from "./Header/LogoutButton";
 import UpdateEmail from "./Profile/UpdateEmail";
 import UpdatePhone from "./Profile/UpdatePhone";
 import ErrorMessage from "./ErrorMessage";
@@ -36,6 +37,7 @@ export {
    InfinityScrollLayout,
    UpdateProfilePic,
    SaveAndCancelDiv,
+   DarkModeToggle,
    CommentSection,
    UpdatePassword,
    SharableLinks,

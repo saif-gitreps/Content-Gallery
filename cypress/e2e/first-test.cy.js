@@ -19,8 +19,6 @@
     cypress works like a promise chaining mechanism, so you can chain commands together.
 
   
-
-
 */
 
 describe("Visiting the Home", () => {
