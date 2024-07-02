@@ -81,7 +81,7 @@ function CommentSection({ post, userData, isAuthor }) {
    };
 
    return (
-      <div className="p-4 relative border rounded-2xl bg-white shadow-lg">
+      <div className="p-4 relative border rounded-2xl dark:bg-background-darkBlack  shadow-lg">
          <h1 className="text-xl font-bold text-center">Comments</h1>
          <ErrorMessage error={error} />
 
@@ -106,7 +106,7 @@ function CommentSection({ post, userData, isAuthor }) {
             <form onSubmit={handleSubmit(addComments)}>
                <textarea
                   {...register("content", { required: true })}
-                  className="w-full h-24 p-4 mt-2 border rounded-xl"
+                  className="w-full h-24 p-4 mt-2 border rounded-xl dark:bg-background-darkGray dark:text-text-dark dark:border-none"
                   placeholder="Add a comment"
                ></textarea>
                {miniLoading ? (

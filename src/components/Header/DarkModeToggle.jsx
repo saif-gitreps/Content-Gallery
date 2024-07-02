@@ -6,8 +6,10 @@ function DarkModeToggle() {
    const theme = useSelector((state) => state.theme.theme);
 
    return (
-      <div className="py-2 px-4 w-full flex justify-between items-center hover:cursor-pointer duration-300 hover:shadow-md ">
-         <p className="text-xs lg:text-base text-left rounded-md">Dark Mode</p>
+      <div className="dark:bg-background-darkGray py-2 px-4 w-full flex justify-between items-center hover:cursor-pointer duration-300 hover:shadow-md ">
+         <p className="dark:text-text-dark text-xs lg:text-base text-left rounded-md">
+            Dark Mode
+         </p>
          <label className="switch-container">
             <input
                type="checkbox"

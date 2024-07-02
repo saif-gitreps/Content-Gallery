@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { DarkModeToggle, LogoutButton } from "../index";
+import { DarkModeToggle, ListItem, LogoutButton } from "../index";
 import useClickOutSide from "../../hooks/useClickOutside";
 
 function DpDropdownMenuButton({ src, authStatus, navItems }) {
@@ -36,18 +36,16 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
                   (item) =>
                      item.active &&
                      item.forDropDownMenu && (
-                        <li
+                        <ListItem
                            key={item.name}
                            onClick={() => navigate(item.slug)}
-                           className="w-full px-4 text-xs lg:text-base py-2 text-left duration-300 hover:cursor-pointer hover:shadow-md rounded-md"
-                        >
-                           {item.name}
-                        </li>
+                           children={item.name}
+                        />
                      )
                )}
                {authStatus && (
                   <li className="flex items-center">
-                     <LogoutButton className="text-xs lg:text-base" />
+                     <LogoutButton />
                   </li>
                )}
                <DarkModeToggle />

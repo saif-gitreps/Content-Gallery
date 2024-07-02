@@ -52,11 +52,11 @@
 }
 
 .input {
-   background-color: #f4f4f4;
+   /* background-color: #f4f4f4; */
    border: none;
    border-radius: 0.5rem;
    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-   color: #333;
+   /* color: #333; */
    font-family: "Helvetica Neue", sans-serif;
    font-size: 0.8rem;
    padding: 0.5rem;
@@ -105,7 +105,7 @@
 
 /* The slider */
 .switch-container .slider {
-   --background: linear-gradient(to right, #090613ef, #18151f);
+   --background: linear-gradient(to right, #5b5b5bef, #474747);
    position: absolute;
    cursor: pointer;
    top: 0;
@@ -131,7 +131,7 @@
 }
 
 .switch-container input:checked + .slider {
-   background-color: #000;
+   background-color: #5d5d5d;
 }
 
 .switch-container input:checked + .slider:before {

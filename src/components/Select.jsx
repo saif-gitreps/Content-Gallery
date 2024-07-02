@@ -13,7 +13,7 @@ function Select({ options, label, className, ...props }, ref) {
             {...props}
             id={id}
             ref={ref}
-            className={`p-2 ml-1 rounded-lg bg-white text-black outline-none focus:bg-gray-50 duration-300 border border-gray-200  ${className}`}
+            className={`p-2 ml-1 rounded-lg bg-white text-black outline-none focus:bg-gray-50 duration-300 border border-gray-200 dark:bg-background-darkGray dark:text-text-dark ${className}`}
          >
             {options?.map((option) => (
                <option key={option} value={option} className="sm:text-lg text-xs">

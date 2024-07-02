@@ -39,7 +39,7 @@ function App() {
       <div className="min-h-screen flex flex-wrap content-between bg-gray-100">
          <div className="w-full block">
             <Header />
-            <main className="min-h-screen">
+            <main className="min-h-screen dark:bg-background-darkGray dark:text-text-dark">
                <Outlet />
             </main>
             <Footer />

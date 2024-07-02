@@ -7,6 +7,7 @@ import {
    Button,
    LoaderMini,
    ErrorMessage,
+   ParentContainer,
 } from "../components";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -110,9 +111,9 @@ export default function Post() {
       return <ErrorMessage error={error} />;
    }
    return post ? (
-      <div className="py-8">
+      <ParentContainer>
          <Container>
-            <div className="mb-7 p-6 border rounded-2xl bg-white shadow-lg space-y-3">
+            <div className="mb-7 p-6 border rounded-2xl  shadow-lg space-y-3">
                <div>
                   <h1 className="text-xl font-bold">{post.title}</h1>
                   <div className="text-base font-medium">{parse(post.content)}</div>
@@ -150,7 +151,7 @@ export default function Post() {
                            src="/share-icon.png
                      "
                            alt="Share"
-                           className="w-14 p-3 rounded-r-lg hover:cursor-pointer hover:shadow-md rounded-xl duration-300"
+                           className="w-14 p-3 rounded-r-lg hover:cursor-pointer hover:shadow-md rounded-xl duration-300 dark:invert"
                         />
                      ) : (
                         <img
@@ -167,6 +168,6 @@ export default function Post() {
             </div>
             <CommentSection post={post} isAuthor={isAuthor} userData={userData} />
          </Container>
-      </div>
+      </ParentContainer>
    ) : null;
 }

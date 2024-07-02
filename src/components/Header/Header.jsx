@@ -21,7 +21,7 @@ function Header() {
    }, [userData, authStatus]);
 
    return (
-      <header className="py-2 shadow bg-white font-medium">
+      <header className="py-2 shadow dark:bg-background-darkBlack font-medium">
          <Container className="max-w-7xl">
             <nav className="flex">
                {authStatus && (
@@ -46,7 +46,7 @@ function Header() {
                         <li key={item.name} className="flex items-center">
                            <button
                               onClick={() => navigate(item.slug)}
-                              className="text-sm md:text-base xl:text-lg inline-bock p-2 duration-300 hover:shadow-md rounded-lg"
+                              className="text-sm md:text-base xl:text-lg inline-bock p-2 duration-300 hover:shadow-md rounded-lg dark:hover:bg-background-darkHover dark:hover:text-text-dark dark:text-text-dark"
                            >
                               {item.name}
                            </button>
@@ -56,7 +56,7 @@ function Header() {
 
                   <li className="mx-2">
                      <Link to="/">
-                        <Logo className="p-1 rounded-full duration-300 hover:shadow-md lg:w-16" />
+                        <Logo className="p-1 rounded-full duration-300 hover:shadow-md lg:w-16 dark:invert" />
                      </Link>
                   </li>
                </ul>

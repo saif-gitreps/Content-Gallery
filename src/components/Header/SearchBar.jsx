@@ -17,7 +17,7 @@ function SearchBar() {
          <Input
             onChange={(e) => setSearchQuery(e.target.value)}
             type="text"
-            className="input"
+            className="input bg-background-lightGray dark:bg-background-darkGray dark:text-text-dark"
             placeholder="Search"
             value={searchQuery}
          />
