@@ -88,7 +88,7 @@ function UpdatePhone() {
             {...register("phone", { required: true })}
          />
          <div ref={phoneVerificationDiv} className="hidden">
-            <h2 className="text-base text-red-600 font-medium ml-2">
+            <h2 className="text-base text-center text-red-600 font-medium  w-48">
                Check the verification SMS on your Phone.
             </h2>
             <Input className="text-sm md:text-base font-normal w-64" type="number" />

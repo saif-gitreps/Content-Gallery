@@ -91,7 +91,7 @@
 /* The switch - the box around the slider */
 .switch-container {
    position: relative;
-   display: inline-block;
+   display: block;
    width: 2.5rem;
    height: 1.4rem;
 }
@@ -121,7 +121,7 @@
    position: absolute;
    content: "";
    height: 1rem;
-   width: 1em;
+   width: 1rem;
    border-radius: 50%;
    left: 10%;
    bottom: 15%;

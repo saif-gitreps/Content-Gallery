@@ -97,7 +97,7 @@ function PostForm({ post, pageTitle = "Create" }) {
    };
 
    return (
-      <div className="flex flex-col items-center dark:bg-background-darkBlack dark:text-text-dark max-w-lg p-5 m-auto rounded-xl shadow-md">
+      <div className="flex flex-col items-center bg-background-lightWhite dark:bg-background-darkBlack dark:text-text-dark max-w-lg p-5 m-auto rounded-xl shadow-md">
          <h2 className="text-center text-2xl font-bold leading-tight">
             {pageTitle} Post
          </h2>

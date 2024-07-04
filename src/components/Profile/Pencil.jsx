@@ -3,7 +3,7 @@ function Pencil({ className = "", onClickAction = null }) {
       <img
          src="edit-icon.png"
          alt="Pencil"
-         className={`w-4 h-4 hover:cursor-pointer hover:opacity-50 ${className}`}
+         className={`dark:invert w-4 h-4 hover:cursor-pointer hover:opacity-50 ${className}`}
          onClick={onClickAction}
       />
    );

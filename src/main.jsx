@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { AuthLayout } from "./components";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import {
+   _404,
    Home,
    Login,
    Post,
@@ -121,11 +122,7 @@ const router = createBrowserRouter([
          },
          {
             path: "*",
-            element: (
-               <h1 className="text-2xl text-center font-bold italic mt-10">
-                  404 not found
-               </h1>
-            ),
+            element: <_404 />,
          },
       ],
    },

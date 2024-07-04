@@ -1,4 +1,4 @@
-import { Button, Input, Container, LoaderMini } from "../components";
+import { Button, Input, Container, LoaderMini, ParentContainer } from "../components";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { useRef, useState } from "react";
@@ -26,8 +26,8 @@ function PasswordRecoveryStepOne() {
       }
    };
    return (
-      <div className="py-8">
-         <Container className="flex flex-col items-center justify-center bg-white p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
+      <ParentContainer>
+         <Container className="flex flex-col items-center justify-center bg-white dark:bg-background-darkBlack dark:text-text-dark p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
             <h2 className="text-center text-base font-bold leading-tight">
                Enter your account email to recover your password:
             </h2>
@@ -61,7 +61,7 @@ function PasswordRecoveryStepOne() {
                Please check your email and click the link.
             </h2>
          </Container>
-      </div>
+      </ParentContainer>
    );
 }
 

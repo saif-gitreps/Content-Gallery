@@ -36,10 +36,10 @@ function App() {
       return <Loader />;
    }
    return (
-      <div className="min-h-screen flex flex-wrap content-between bg-gray-100">
+      <div className="min-h-screen flex flex-wrap content-between ">
          <div className="w-full block">
             <Header />
-            <main className="min-h-screen dark:bg-background-darkGray dark:text-text-dark">
+            <main className="min-h-screen bg-background-lightGray dark:bg-background-darkGray  dark:text-text-dark">
                <Outlet />
             </main>
             <Footer />

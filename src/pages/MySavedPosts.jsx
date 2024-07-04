@@ -1,4 +1,9 @@
-import { Container, PostCard, InfinityScrollLayout } from "../components";
+import {
+   Container,
+   PostCard,
+   InfinityScrollLayout,
+   ParentContainer,
+} from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { useSelector } from "react-redux";
 import { Query } from "appwrite";
@@ -30,7 +35,7 @@ function MySavedPosts() {
    };
 
    return (
-      <div className="py-8">
+      <ParentContainer>
          <InfinityScrollLayout
             fetchMethod={(queries, offset) =>
                appwriteService.getSavedPosts(queries, offset)
@@ -38,7 +43,7 @@ function MySavedPosts() {
             queries={[Query.equal("userId", userData.$id)]}
             renderPosts={renderPosts}
          />
-      </div>
+      </ParentContainer>
    );
 }
 

@@ -57,7 +57,7 @@ function Signup() {
    };
 
    return (
-      <Container className="flex flex-col items-center justify-center bg-white p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
+      <Container className="flex flex-col items-center justify-center bg-white dark:bg-background-darkBlack dark:text-text-dark p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
          <h2 className="text-center text-lg font-bold leading-tight">
             Sign up to create an account
          </h2>

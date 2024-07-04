@@ -1,10 +1,10 @@
-import { Login as LoginComp } from "../components";
+import { Login as LoginComp, ParentContainer } from "../components";
 
 function Login() {
    return (
-      <div className="py-8">
+      <ParentContainer>
          <LoginComp />
-      </div>
+      </ParentContainer>
    );
 }
 

@@ -113,7 +113,7 @@ export default function Post() {
    return post ? (
       <ParentContainer>
          <Container>
-            <div className="mb-7 p-6 border rounded-2xl  shadow-lg space-y-3">
+            <div className="mb-7 p-6 border rounded-2xl  shadow-lg space-y-3 bg-background-lightWhite dark:bg-background-darkBlack dark:text-text-dark">
                <div>
                   <h1 className="text-xl font-bold">{post.title}</h1>
                   <div className="text-base font-medium">{parse(post.content)}</div>

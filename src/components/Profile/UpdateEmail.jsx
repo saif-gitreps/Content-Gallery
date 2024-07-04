@@ -91,10 +91,10 @@ function UpdateEmail() {
             })}
          />
          <h2
-            className="text-base text-red-600 font-medium hidden"
+            className="text-base text-center hidden text-red-600 font-medium w-48"
             ref={emailVerificationMessage}
          >
-            Check your email for Email verification
+            Check your email for Email verification.
          </h2>
          {editEmail && (
             <div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PostForm } from "../components";
+import { ParentContainer, PostForm } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -21,9 +21,9 @@ function EditPost() {
    }, [id, navigate]);
 
    return post ? (
-      <div className="py-8">
+      <ParentContainer>
          <PostForm post={post} pageTitle="Update" />
-      </div>
+      </ParentContainer>
    ) : null;
 }
 

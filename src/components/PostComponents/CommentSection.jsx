@@ -81,7 +81,7 @@ function CommentSection({ post, userData, isAuthor }) {
    };
 
    return (
-      <div className="p-4 relative border rounded-2xl dark:bg-background-darkBlack  shadow-lg">
+      <div className="p-4 relative border rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack  shadow-lg">
          <h1 className="text-xl font-bold text-center">Comments</h1>
          <ErrorMessage error={error} />
 

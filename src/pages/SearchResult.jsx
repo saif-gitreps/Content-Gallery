@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Container, Loader, LoadCards, ErrorMessage } from "../components";
+import {
+   Container,
+   Loader,
+   LoadCards,
+   ErrorMessage,
+   ParentContainer,
+} from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { Query } from "appwrite";
 import { useSearchParams } from "react-router-dom";
@@ -106,13 +112,13 @@ function SearchResult() {
       return <ErrorMessage error={error} />;
    }
    return (
-      <div className="w-full py-8">
+      <ParentContainer>
          <Container className="max-w-full">
             <h1 className="text-center font-bold text-lg mb-4">Seach Results:</h1>
             <LoadCards posts={posts} />
             {isFetching && <Loader />}
          </Container>
-      </div>
+      </ParentContainer>
    );
 }
 

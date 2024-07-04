@@ -1,10 +1,10 @@
-import { Signup as SignupComp } from "../components";
+import { ParentContainer, Signup as SignupComp } from "../components";
 
 function Signup() {
    return (
-      <div className="py-8">
+      <ParentContainer>
          <SignupComp />
-      </div>
+      </ParentContainer>
    );
 }
 

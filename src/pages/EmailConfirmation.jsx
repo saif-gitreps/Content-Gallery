@@ -1,5 +1,5 @@
 import authService from "../appwrite/auth";
-import { Container, ErrorMessage } from "../components";
+import { Container, ErrorMessage, ParentContainer } from "../components";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -25,9 +25,9 @@ function EmailConfirmation() {
       }
    };
    return (
-      <div className="py-8">
+      <ParentContainer>
          <Container>
-            <div className="flex flex-col items-center justify-center bg-white max-w-xl m-auto rounded-xl shadow-md h-40 ">
+            <div className="flex flex-col items-center justify-center bg-white dark:bg-background-darkBlack dark:text-text-dark max-w-xl m-auto rounded-xl shadow-md h-40 ">
                <h1
                   className="text-base xl:text-2xl text-red-700 font-medium duration-200 hover:underline hover:cursor-pointer"
                   onClick={handleConfirm}
@@ -38,7 +38,7 @@ function EmailConfirmation() {
                <ErrorMessage error={error} />
             </div>
          </Container>
-      </div>
+      </ParentContainer>
    );
 }
 

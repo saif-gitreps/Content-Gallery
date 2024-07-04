@@ -1,3 +1,4 @@
+import _404 from "./_404";
 import Home from "./Home";
 import Post from "./Post";
 import Login from "./Login";
@@ -13,6 +14,7 @@ import PasswordRecoveryStepOne from "./PasswordRecoveryStepOne";
 import PasswordRecoveryStepTwo from "./PasswordRecoveryStepTwo";
 
 export {
+   _404,
    Home,
    Login,
    Post,
