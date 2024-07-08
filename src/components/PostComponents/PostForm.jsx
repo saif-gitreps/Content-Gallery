@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Input, Select, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "../index";
 import appwriteService from "../../appwrite/config-appwrite";
+import { useQuery } from "@tanstack/react-query";
 
 function PostForm({ post, pageTitle = "Create" }) {
    const [imageSrc, setImageSrc] = useState(null);
@@ -66,23 +67,32 @@ function PostForm({ post, pageTitle = "Create" }) {
       }
    };
 
-   useEffect(() => {
-      const fetchImageSrc = async () => {
-         setError("");
-         if (post && post.featuredImage) {
-            try {
-               const imageUrl = await appwriteService.getFilePrev(post.featuredImage);
-               setImageSrc(imageUrl);
-            } catch (error) {
-               console.error("Error loading image:", error);
-               setError("Failed to load image.");
-            }
+   const { data: imageSrcFromDbs, isLoading: isImageLoading } = useQuery({
+      queryKey: ["imageUrl", post?.featuredImage],
+      queryFn: async ({ queryKey }) => {
+         // Just retrieving the featured image $id from the queryKey
+         const [_, featuredImage] = queryKey;
+         if (!featuredImage) {
+            throw new Error("No featured image available");
          }
-      };
+         return await appwriteService.getFilePrev(featuredImage);
+      },
+      enabled: !!post && !!post?.featuredImage,
+      onError: (error) => {
+         if (error.message === "No featured image available") {
+            setError("No image available for this post.");
+         } else {
+            setError("Error fetching image preview.");
+         }
+      },
+      refetchOnWindowFocus: false,
+   });
 
-      fetchImageSrc();
-      reset(post);
-   }, [post, reset]);
+   useEffect(() => {
+      if (imageSrcFromDbs) {
+         setImageSrc(imageSrcFromDbs);
+      }
+   }, [imageSrcFromDbs]);
 
    const imagePreview = (event) => {
       const file = event.target.files[0];
@@ -123,6 +133,11 @@ function PostForm({ post, pageTitle = "Create" }) {
                {...register("image")}
                onChange={imagePreview}
             />
+            {isImageLoading && (
+               <div className="flex items-center justify-center">
+                  <LoaderMini />
+               </div>
+            )}
             {imageSrc && (
                <div className="w-full mb-4">
                   <img src={imageSrc} alt={post?.title || ""} className="rounded-lg" />

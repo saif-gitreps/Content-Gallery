@@ -1,11 +1,14 @@
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Header, Footer, Loader } from "./components/index";
 import { login, logout } from "./store/authSlice";
 import authService from "./appwrite/auth";
-import { Header, Footer, Loader } from "./components/index";
 import { Outlet } from "react-router-dom";
 
 import "./App.css";
+
+const queryClient = new QueryClient();
 
 function App() {
    const [loading, setLoading] = useState(true);
@@ -36,15 +39,17 @@ function App() {
       return <Loader />;
    }
    return (
-      <div className="min-h-screen flex flex-wrap content-between ">
-         <div className="w-full block">
-            <Header />
-            <main className="min-h-screen bg-background-lightGray dark:bg-background-darkGray  dark:text-text-dark">
-               <Outlet />
-            </main>
-            <Footer />
+      <QueryClientProvider client={queryClient}>
+         <div className="min-h-screen flex flex-wrap content-between ">
+            <div className="w-full block">
+               <Header />
+               <main className="min-h-screen bg-background-lightGray dark:bg-background-darkGray  dark:text-text-dark">
+                  <Outlet />
+               </main>
+               <Footer />
+            </div>
          </div>
-      </div>
+      </QueryClientProvider>
    );
 }
 
