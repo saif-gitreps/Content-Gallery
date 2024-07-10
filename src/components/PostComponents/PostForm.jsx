@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Input, Select, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "../index";
 import appwriteService from "../../appwrite/config-appwrite";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 function PostForm({ post, pageTitle = "Create" }) {
    const [imageSrc, setImageSrc] = useState(null);
@@ -21,14 +21,10 @@ function PostForm({ post, pageTitle = "Create" }) {
       },
    });
 
-   const submit = async (data) => {
-      setError("");
-      setLoading(true);
-      try {
+   const { mutate } = useMutation({
+      mutationFn: async (data) => {
          if (data.image[0] && data.image[0].size > 1024 * 1024) {
-            setError("Image size should be less than 1MB.");
-            setLoading(false);
-            return;
+            throw new Error("Image size should be less than 1MB.");
          }
 
          let file;
@@ -45,29 +41,51 @@ function PostForm({ post, pageTitle = "Create" }) {
                featuredImage: file ? file.$id : post.featuredImage,
             });
 
-            if (dbPost) {
-               navigate(`/post/${dbPost.$id}`);
+            if (!dbPost) {
+               throw new Error("Error updating post.");
             }
+
+            navigate(`/post/${dbPost.$id}`);
          } else {
+            if (!file) {
+               throw new Error("No image uploaded.");
+            }
             const dbPost = await appwriteService.createPost({
                ...data,
-               featuredImage: file ? file.$id : undefined,
+               featuredImage: file.$id,
                userId: userData.$id,
             });
 
-            if (dbPost) {
-               navigate(`/post/${dbPost.$id}`);
+            if (!dbPost) {
+               throw new Error("Error creating post.");
             }
+
+            navigate(`/post/${dbPost.$id}`);
          }
-      } catch (error) {
-         console.error("Error submitting post:", error);
-         setError("Something went wrong, please try again.");
-      } finally {
+      },
+
+      onError: (error) => {
+         setError(error);
          setLoading(false);
-      }
+      },
+      onSuccess: (dbPost) => {
+         if (dbPost) {
+            navigate(`/post/${dbPost.$id}`);
+         }
+      },
+   });
+
+   const submit = (data) => {
+      setError("");
+      setLoading(true);
+      mutate(data);
    };
 
-   const { data: imageSrcFromDbs, isLoading: isImageLoading } = useQuery({
+   const {
+      data: imageSrcFromDbs,
+      isLoading: isImageLoading,
+      error: imageError,
+   } = useQuery({
       queryKey: ["imageUrl", post?.featuredImage],
       queryFn: async ({ queryKey }) => {
          // Just retrieving the featured image $id from the queryKey
@@ -75,16 +93,15 @@ function PostForm({ post, pageTitle = "Create" }) {
          if (!featuredImage) {
             throw new Error("No featured image available");
          }
-         return await appwriteService.getFilePrev(featuredImage);
+
+         const imagePreview = await appwriteService.getFilePrev(featuredImage);
+         if (!imagePreview) {
+            throw new Error("Error fetching image preview");
+         }
+
+         return imagePreview;
       },
       enabled: !!post && !!post?.featuredImage,
-      onError: (error) => {
-         if (error.message === "No featured image available") {
-            setError("No image available for this post.");
-         } else {
-            setError("Error fetching image preview.");
-         }
-      },
       refetchOnWindowFocus: false,
    });
 
@@ -167,7 +184,7 @@ function PostForm({ post, pageTitle = "Create" }) {
                   }}
                />
             )}
-            <ErrorMessage error={error} />
+            <ErrorMessage error={error || imageError} />
          </form>
       </div>
    );
