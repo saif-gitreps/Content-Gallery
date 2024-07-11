@@ -10,101 +10,153 @@ import {
    ParentContainer,
 } from "../components";
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, redirect } from "react-router-dom";
 import appwriteService from "../appwrite/config-appwrite";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 import { Query } from "appwrite";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function Post() {
-   const [image, setImage] = useState("");
-   const [saved, setSaved] = useState(null);
-   const [post, setPost] = useState(null);
-   const [loading, setLoading] = useState(true);
+   const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
    const [saveLoader, setSaveLoader] = useState(false);
    const [showShareLinks, setShowShareLinks] = useState(false);
+   const queryClient = useQueryClient();
    const { id } = useParams();
 
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
    const authStatus = useSelector((state) => state.auth.status);
 
-   useEffect(() => {
-      const fetchData = async () => {
-         try {
-            if (!id) {
-               navigate("/");
-               return;
-            }
-            const fetchedPost = await appwriteService.getPost(id);
-            if (!fetchedPost) {
-               throw new Error();
-            }
-            setPost(fetchedPost);
-
-            if (authStatus) {
-               const userSavedPosts = await appwriteService.getSavedPosts(
-                  [Query.equal("userId", userData.$id)],
-                  0,
-                  5000
-               );
-               for (const savedPost of userSavedPosts.documents) {
-                  if (savedPost.articles.$id === fetchedPost.$id) {
-                     setSaved(savedPost);
-                     break;
-                  }
-               }
-            }
-
-            const result = await appwriteService.getFilePrev(fetchedPost.featuredImage);
-            setImage(result);
-            setLoading(false);
-         } catch (error) {
-            setError("Error fetching post. Redirecting to home page.");
-            setTimeout(() => navigate("/"), 2000);
+   const {
+      data: post,
+      error: postError,
+      isLoading,
+   } = useQuery({
+      queryKey: ["post", id],
+      queryFn: async () => {
+         const fetchedPost = await appwriteService.getPost(id);
+         if (!fetchedPost) {
+            throw new Error("Error fetching post");
          }
-      };
-      fetchData();
-   }, [id, navigate, authStatus, userData]);
+         return fetchedPost;
+      },
+      enabled: !!id,
+   });
+
+   const { data: image, error: imageError } = useQuery({
+      queryKey: ["image", post?.featuredImage],
+      queryFn: async () => {
+         return await appwriteService.getFilePrev(post.featuredImage);
+      },
+      enabled: !!post,
+   });
+
+   const { data: isSaved, error: savedPostError } = useQuery({
+      queryKey: ["saved", userData?.$id, post?.$id],
+      queryFn: async () => {
+         const userSavedPosts = await appwriteService.getSavedPosts(
+            [Query.equal("userId", userData.$id)],
+            0,
+            5000
+         );
+
+         for (const savedPost of userSavedPosts.documents) {
+            if (savedPost.articles.$id === fetchedPost.$id) {
+               return savedPost;
+            }
+         }
+
+         return null;
+      },
+      enabled: !!authStatus && !!userData && !!post,
+      staleTime: 1000 * 60 * 5,
+   });
+
+   useEffect(() => {
+      if (postError) {
+         setError("Error fetching post. Redirecting to home page.");
+         setTimeout(() => navigate("/"), 2000);
+      }
+
+      if (savedPostError) {
+         setError(savedPostError);
+      }
+
+      if (imageError) {
+         setError(imageError);
+      }
+   }, [postError, savedPostError, imageError]);
+
+   const deleteMutation = useMutation({
+      mutationKey: "deletePost",
+      mutationFn: async () => {
+         await appwriteService.deletePost(post.$id);
+         await appwriteService.deleteFile(post.featuredImage);
+      },
+      onError: () => {
+         setError("Error deleting post. Please try again later.");
+      },
+      onSuccess: () => {
+         setLoading(false);
+         navigate("/");
+      },
+   });
 
    const deletePost = async () => {
-      setError("");
       setLoading(true);
-      try {
-         const deletedPost = await appwriteService.deletePost(post.$id);
-         if (!deletedPost) {
-            throw new Error();
-         }
-
-         await appwriteService.deleteFile(post.featuredImage);
-         navigate("/");
-         setLoading(false);
-      } catch (error) {
-         setError("Error deleting post. Please try again later.");
-      }
+      deleteMutation.mutate();
    };
 
-   const toggleSave = async () => {
-      setSaveLoader(true);
-      if (saved) {
-         setSaveLoader(true);
-         await appwriteService.unsavePost(saved.$id);
-         setSaved(null);
-         setSaveLoader(false);
-      } else {
-         setSaveLoader(true);
-         const savedPost = await appwriteService.savePost(userData.$id, post.$id);
-         if (savedPost) {
-            setSaved(savedPost);
-            setSaveLoader(false);
+   const toggleSaveMutation = useMutation({
+      mutationFn: async () => {
+         if (isSaved) {
+            await appwriteService.unsavePost(isSaved.$id);
+            return null;
+         } else {
+            return await appwriteService.savePost(userData.$id, post.$id);
          }
-      }
+      },
+      onMutate: async () => {
+         // Cancel any outgoing refetches
+         await queryClient.cancelQueries(["saved", userData.$id, post.$id]);
+
+         const previousSaved = queryClient.getQueryData([
+            "saved",
+            userData.$id,
+            post.$id,
+         ]);
+
+         // Optimistically update to the new value
+         queryClient.setQueryData(["saved", userData.$id, post.$id], (old) => !old);
+
+         return { previousSaved };
+      },
+      onError: (context) => {
+         queryClient.setQueryData(
+            ["saved", userData.$id, post.$id],
+            context.previousSaved
+         );
+         setError("Error saving/unsaving post. Please try again.");
+      },
+      onSettled: () => {
+         queryClient.invalidateQueries(["saved", userData.$id, post.$id]);
+      },
+      onSuccess: () => {
+         setError("");
+         setSaveLoader(false);
+      },
+   });
+
+   const toggleSave = () => {
+      setSaveLoader(true);
+      toggleSaveMutation.mutate();
    };
 
    const isAuthor = post && userData ? post.userId === userData.$id : false;
 
-   if (loading) {
+   if (loading || isLoading) {
       return <Loader />;
    }
    if (error) {
@@ -136,10 +188,10 @@ export default function Post() {
                         <LoaderMini />
                      ) : (
                         <Button
-                           text={!saved ? "Save" : "Saved"}
+                           text={!isSaved ? "Save" : "Saved"}
                            type="button"
                            className="rounded-lg h-12"
-                           bgNumber={!saved ? 0 : 1}
+                           bgNumber={!isSaved ? 0 : 1}
                            onClick={toggleSave}
                         />
                      ))}
