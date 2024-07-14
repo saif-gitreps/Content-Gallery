@@ -45,6 +45,8 @@ export default function Post() {
       enabled: !!id,
    });
 
+   console.log(post);
+
    const { data: image, error: imageError } = useQuery({
       queryKey: ["image", post?.featuredImage],
       queryFn: async () => {
@@ -53,25 +55,28 @@ export default function Post() {
       enabled: !!post,
    });
 
-   const { data: isSaved, error: savedPostError } = useQuery({
+   const {
+      data: isSaved,
+      error: savedPostError,
+      isLoading: isSavedPostLoading,
+   } = useQuery({
       queryKey: ["saved", userData?.$id, post?.$id],
       queryFn: async () => {
          const userSavedPosts = await appwriteService.getSavedPosts(
-            [Query.equal("userId", userData.$id)],
+            [Query.equal("userId", userData?.$id)],
             0,
             5000
          );
 
          for (const savedPost of userSavedPosts.documents) {
-            if (savedPost.articles.$id === fetchedPost.$id) {
+            if (savedPost.articles.$id === post?.$id) {
                return savedPost;
             }
          }
 
          return null;
       },
-      enabled: !!authStatus && !!userData && !!post,
-      staleTime: 1000 * 60 * 5,
+      enabled: userData?.$id && !!post?.$id,
    });
 
    useEffect(() => {
@@ -79,18 +84,15 @@ export default function Post() {
          setError("Error fetching post. Redirecting to home page.");
          setTimeout(() => navigate("/"), 2000);
       }
-
       if (savedPostError) {
          setError(savedPostError);
       }
-
       if (imageError) {
          setError(imageError);
       }
-   }, [postError, savedPostError, imageError]);
+   }, [postError, imageError, savedPostError]);
 
    const deleteMutation = useMutation({
-      mutationKey: "deletePost",
       mutationFn: async () => {
          await appwriteService.deletePost(post.$id);
          await appwriteService.deleteFile(post.featuredImage);
@@ -184,7 +186,7 @@ export default function Post() {
                </div>
                <div className="flex justify-end items-center">
                   {authStatus &&
-                     (saveLoader ? (
+                     (saveLoader || isSavedPostLoading ? (
                         <LoaderMini />
                      ) : (
                         <Button
