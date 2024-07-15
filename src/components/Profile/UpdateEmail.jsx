@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 
 function UpdateEmail() {
@@ -11,7 +12,7 @@ function UpdateEmail() {
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
 
-   const { register, handleSubmit, reset } = useForm({
+   const { register, handleSubmit, reset, setValue } = useForm({
       defaultValues: {
          email: userData?.email || "",
          password: "",
@@ -20,40 +21,50 @@ function UpdateEmail() {
 
    const emailVerificationMessage = useRef(null);
 
-   const onEmailUpdate = async (data) => {
-      setError(false);
-      setLoading(true);
-      try {
+   const onEmailUpdateMutation = useMutation({
+      mutationFn: async () => {
          const result = await authService.updateEmail(data.email, data.password);
          if (!result) {
-            throw new Error();
+            throw new Error("Error updating email");
          }
-
+         console.log(result);
+         return result;
+      },
+      onError: (error) => {
+         setError(error);
+         setLoading(false);
+      },
+      onSuccess: () => {
          setEditEmail(false);
-      } catch (error) {
-         console.log("Email Update Error", error);
-      } finally {
          setLoading(false);
          reset({ password: "" });
-      }
+      },
+   });
+
+   const onEmailUpdate = async (data) => {
+      setError("");
+      setLoading(true);
+      onEmailUpdateMutation.mutate(data);
    };
+
+   const verifyEmailMutation = useMutation({
+      mutationFn: async () => {
+         const result = await authService.createEmailVerification();
+         if (!result) {
+            throw new Error("Error sending email verification");
+         }
+      },
+      onError: (error) => {
+         emailVerificationMessage.current.textContent = error;
+      },
+      onSuccess: () => {
+         emailVerificationMessage.current.classList.remove("hidden");
+      },
+   });
 
    const verifyEmail = async () => {
       setError("");
-      try {
-         if (userData.email) {
-            const result = await authService.createEmailVerification();
-
-            if (!result) {
-               throw new Error();
-            }
-
-            emailVerificationMessage.current.classList.remove("hidden");
-         }
-      } catch (error) {
-         emailVerificationMessage.current.textContent =
-            "Email verification error, please try again.";
-      }
+      verifyEmailMutation.mutate();
    };
 
    return (

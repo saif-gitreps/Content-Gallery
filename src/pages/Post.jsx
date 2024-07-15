@@ -45,8 +45,6 @@ export default function Post() {
       enabled: !!id,
    });
 
-   console.log(post);
-
    const { data: image, error: imageError } = useQuery({
       queryKey: ["image", post?.featuredImage],
       queryFn: async () => {

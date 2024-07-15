@@ -43,11 +43,7 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
                         />
                      )
                )}
-               {authStatus && (
-                  <li className="flex items-center">
-                     <LogoutButton />
-                  </li>
-               )}
+               {authStatus && <LogoutButton />}
                <DarkModeToggle />
             </ul>
          )}
