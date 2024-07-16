@@ -12,7 +12,7 @@ function UpdateEmail() {
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
 
-   const { register, handleSubmit, reset, setValue } = useForm({
+   const { register, handleSubmit, reset } = useForm({
       defaultValues: {
          email: userData?.email || "",
          password: "",
@@ -22,19 +22,18 @@ function UpdateEmail() {
    const emailVerificationMessage = useRef(null);
 
    const onEmailUpdateMutation = useMutation({
-      mutationFn: async () => {
+      mutationFn: async (data) => {
          const result = await authService.updateEmail(data.email, data.password);
          if (!result) {
             throw new Error("Error updating email");
          }
-         console.log(result);
          return result;
       },
       onError: (error) => {
          setError(error);
          setLoading(false);
       },
-      onSuccess: () => {
+      onSuccess: (data) => {
          setEditEmail(false);
          setLoading(false);
          reset({ password: "" });
