@@ -4,6 +4,7 @@ import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../in
 import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 
 function UpdateName() {
    const [editName, setEditName] = useState(false);
@@ -18,26 +19,35 @@ function UpdateName() {
       },
    });
 
+   const onNameUpdateMutation = useMutation({
+      mutationFn: async (name) => {
+         const result = await authService.updateName(name);
+         if (!result) {
+            throw new Error("Error updating name");
+         }
+         return result;
+      },
+      onError: (error) => {
+         setError(error);
+         setLoading(false);
+      },
+      onSuccess: (data) => {
+         setEditName(false);
+         setError("");
+         setLoading(false);
+
+         const updatedUserData = { ...userData };
+         updatedUserData.name = data.name;
+         dispatch(update(updatedUserData));
+      },
+   });
+
    const onNameUpdate = async (data) => {
       setError("");
       setLoading(true);
-      try {
-         const updatedUserData = { ...userData };
-         updatedUserData.name = data.name;
-
-         const result = await authService.updateName(data.name);
-         if (!result) {
-            throw new Error();
-         }
-
-         dispatch(update(updatedUserData));
-         setEditName(false);
-      } catch (error) {
-         setError("Name update error.");
-      } finally {
-         setLoading(false);
-      }
+      onNameUpdateMutation.mutate(data.name);
    };
+
    return (
       <form
          onSubmit={handleSubmitName(onNameUpdate)}

@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 
 function UpdateEmail() {
@@ -84,6 +84,7 @@ function UpdateEmail() {
                <Pencil
                   onClickAction={() => {
                      setEditEmail(true);
+                     emailVerificationMessage.current.classList.add("hidden");
                   }}
                />
             )}
