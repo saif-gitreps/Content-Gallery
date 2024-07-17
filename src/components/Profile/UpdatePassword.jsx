@@ -1,6 +1,7 @@
 import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 
 function UpdatePassword() {
@@ -15,28 +16,38 @@ function UpdatePassword() {
       },
    });
 
-   const onPasswordUpdate = async (data) => {
+   const updatePasswordMutation = useMutation({
+      mutationFn: async (data) => {
+         const result = await authService.updatePassword(
+            data.newPassword,
+            data.oldPassword
+         );
+         if (!result) {
+            throw new Error("Error updating password. Try again later.");
+         }
+         return result;
+      },
+      onError: (error) => {
+         setError(error);
+         setLoading(false);
+      },
+      onSuccess: () => {
+         setEditPassword(false);
+         setError("");
+         setLoading(false);
+         reset({ oldPassword: "", newPassword: "" });
+      },
+   });
+
+   const updatePassword = async (data) => {
       setError("");
       setLoading(true);
-      try {
-         const result = await authService.updatePassword(
-            data.OldPassword,
-            data.newPassword
-         );
-
-         if (!result) {
-            throw new Error();
-         }
-         setEditPassword(false);
-      } catch (error) {
-         setError("Password update error.");
-      } finally {
-         setLoading(false);
-      }
+      updatePasswordMutation.mutate(data);
    };
+
    return (
       <form
-         onSubmit={handleSubmit(onPasswordUpdate)}
+         onSubmit={handleSubmit(updatePassword)}
          className={`p-2 ${editPassword && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
@@ -55,7 +66,7 @@ function UpdatePassword() {
             className="text-sm md:text-base font-normal w-64"
             type="password"
             readOnly={!editPassword}
-            {...register("OldPassword", { required: true })}
+            {...register("oldPassword", { required: true })}
          />
          {editPassword && (
             <div>
@@ -74,7 +85,7 @@ function UpdatePassword() {
                      cancel={() => {
                         setEditPassword(false);
                         setError("");
-                        reset({ OldPassword: "", newPassword: "" });
+                        reset({ oldPassword: "", newPassword: "" });
                      }}
                   />
                )}
