@@ -1,6 +1,7 @@
 import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 
 function UpdatePassword() {
@@ -15,25 +16,35 @@ function UpdatePassword() {
       },
    });
 
-   const onPasswordUpdate = async (data) => {
-      setError("");
-      setLoading(true);
-      try {
+   const onPasswordUpdateMutation = useMutation({
+      mutationFn: async (data) => {
          const result = await authService.updatePassword(
             data.OldPassword,
             data.newPassword
          );
-
          if (!result) {
-            throw new Error();
+            throw new Error("Error updating password");
          }
-         setEditPassword(false);
-      } catch (error) {
-         setError("Password update error.");
-      } finally {
+         return result;
+      },
+      onError: (error) => {
+         setError(error);
          setLoading(false);
-      }
+      },
+      onSuccess: () => {
+         setEditPassword(false);
+         setError("");
+         setLoading(false);
+      },
+   });
+
+   const onPasswordUpdate = async (data) => {
+      setError("");
+      setLoading(true);
+      console.log(data);
+      onPasswordUpdateMutation.mutate(data);
    };
+
    return (
       <form
          onSubmit={handleSubmit(onPasswordUpdate)}
