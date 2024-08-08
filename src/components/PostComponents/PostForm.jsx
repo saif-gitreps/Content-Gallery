@@ -63,7 +63,6 @@ function PostForm({ post, pageTitle = "Create" }) {
             navigate(`/post/${dbPost.$id}`);
          }
       },
-
       onError: (error) => {
          setError(error);
          setLoading(false);
