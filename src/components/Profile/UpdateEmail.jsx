@@ -21,7 +21,7 @@ function UpdateEmail() {
 
    const emailVerificationMessage = useRef(null);
 
-   const onEmailUpdateMutation = useMutation({
+   const updateEmailMutation = useMutation({
       mutationFn: async (data) => {
          const result = await authService.updateEmail(data.email, data.password);
          if (!result) {
@@ -33,17 +33,17 @@ function UpdateEmail() {
          setError(error);
          setLoading(false);
       },
-      onSuccess: (data) => {
+      onSuccess: () => {
          setEditEmail(false);
          setLoading(false);
          reset({ password: "" });
       },
    });
 
-   const onEmailUpdate = async (data) => {
+   const updateEmail = async (data) => {
       setError("");
       setLoading(true);
-      onEmailUpdateMutation.mutate(data);
+      updateEmailMutation.mutate(data);
    };
 
    const verifyEmailMutation = useMutation({
@@ -68,7 +68,7 @@ function UpdateEmail() {
 
    return (
       <form
-         onSubmit={handleSubmit(onEmailUpdate)}
+         onSubmit={handleSubmit(updateEmail)}
          className={`p-1 ${editEmail && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">

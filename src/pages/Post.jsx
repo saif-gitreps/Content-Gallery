@@ -128,7 +128,6 @@ export default function Post() {
             post.$id,
          ]);
 
-         // Optimistically update to the new value
          queryClient.setQueryData(["saved", userData.$id, post.$id], (old) => !old);
 
          return { previousSaved };

@@ -1,109 +1,140 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Comment, Loader, Button, ErrorMessage, LoaderMini } from "../../components";
 import appwriteCommentsService from "../../appwrite/config-comments";
 import { useSelector } from "react-redux";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 function CommentSection({ post, userData, isAuthor }) {
-   const [postComments, setPostComments] = useState([]);
-   const [loading, setLoading] = useState(true);
    const [miniLoading, setMiniLoading] = useState(false);
    const authStatus = useSelector((state) => state.auth.status);
    const [error, setError] = useState("");
+   const queryClient = useQueryClient();
 
    const { register, handleSubmit, reset } = useForm({
       defaultValues: { content: "" },
    });
 
-   useEffect(() => {
-      const fetchData = async () => {
-         try {
-            const commentsOnThePost = await appwriteCommentsService.getComments(
-               post?.$id
-            );
-            if (!commentsOnThePost) {
-               throw new Error();
-            }
-            setPostComments(commentsOnThePost.documents);
-         } catch (error) {
-            setError("Error fetching comments. Please try again.");
-         } finally {
-            setLoading(false);
-         }
-      };
-      fetchData();
-   }, [post?.$id]);
+   const {
+      data: postComments,
+      isLoading,
+      isError,
+   } = useQuery({
+      queryKey: ["comments", post.$id],
+      queryFn: async () => {
+         const comments = await appwriteCommentsService.getComments(post.$id);
+         return comments?.documents;
+      },
+      enabled: !!post?.$id,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+   });
 
-   const addComments = async (data) => {
-      setError("");
-      setMiniLoading(true);
-      try {
-         const addedComment = await appwriteCommentsService.addComment(
+   const addCommentMutation = useMutation({
+      mutationFn: async (data) =>
+         await appwriteCommentsService.addComment(
             data.content,
             userData.prefs?.profilePicture,
             post?.$id,
             userData.name,
             userData.$id
-         );
-
-         if (!addedComment) {
-            throw new Error();
-         }
-
-         setPostComments((prev) => [...prev, addedComment]);
+         ),
+      onMutate: async (data) => {
+         const optimisticComment = {
+            $id: Date.now(),
+            content: data.content,
+            avatar: userData.prefs?.profilePicture,
+            articleId: post.$id,
+            userName: userData.name,
+         };
+         await queryClient.setQueryData(["comments", post.$id], (oldComments) => [
+            ...oldComments,
+            optimisticComment,
+         ]);
+         return { optimisticComment };
+      },
+      onError: () => {
+         setError("Error adding comment. Please try again.");
+         setMiniLoading(false);
          reset({ content: "" });
+      },
+      onSuccess: async () => {
+         setMiniLoading(false);
+         reset({ content: "" });
+         setError("");
+      },
+      onSettled: () => {
+         return queryClient.invalidateQueries(["comments", post.$id]);
+      },
+   });
+
+   const addComment = async (data) => {
+      setError("");
+      setMiniLoading(true);
+      try {
+         await addCommentMutation.mutateAsync(data);
       } catch (error) {
          setError("Error adding comment. Please try again.");
-      } finally {
-         setMiniLoading(false);
       }
    };
+
+   const deleteCommentMutation = useMutation({
+      mutationFn: async (commentId) =>
+         await appwriteCommentsService.deleteComment(commentId),
+      onMutate: async (commentId) => {
+         await queryClient.setQueryData(["comments", post.$id], (oldComments) =>
+            oldComments.filter((comment) => comment.$id !== commentId)
+         );
+      },
+      onError: () => {
+         setError("Error deleting comment. Please try again.");
+         setMiniLoading(false);
+      },
+      onSuccess: async () => {
+         setMiniLoading(false);
+         setError("");
+      },
+      onSettled: () => {
+         return queryClient.invalidateQueries(["comments", post.$id]);
+      },
+   });
 
    const deleteComment = async (commentId) => {
       setError("");
       setMiniLoading(true);
       try {
-         const deletedComment = await appwriteCommentsService.deleteComment(commentId);
-
-         if (!deletedComment) {
-            throw new Error();
-         }
-
-         setPostComments((prevComments) =>
-            prevComments.filter((comment) => comment.$id !== commentId)
-         );
+         await deleteCommentMutation.mutateAsync(commentId);
       } catch (error) {
          setError("Error deleting comment. Please try again.");
-      } finally {
-         setMiniLoading(false);
       }
    };
 
    return (
       <div className="p-4 relative border rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack  shadow-lg">
          <h1 className="text-xl font-bold text-center">Comments</h1>
-         <ErrorMessage error={error} />
+         <ErrorMessage error={error || isError} />
 
          <ul>
-            {loading && <Loader />}
-            {!loading && !error && postComments.length === 0 ? (
+            {isLoading && <Loader />}
+            {!isError && postComments?.length === 0 ? (
                <li className="text-center">No comments yet</li>
             ) : (
-               postComments.map((comment, index) => (
+               postComments?.map((comment) => (
                   <Comment
-                     key={index}
+                     key={comment.$id}
                      comment={comment}
                      isAuthor={isAuthor}
                      onDelete={deleteComment}
                      userData={userData}
+                     optimisticComment={addCommentMutation?.context?.optimisticComment}
                   />
                ))
             )}
          </ul>
 
          {authStatus && (
-            <form onSubmit={handleSubmit(addComments)}>
+            <form onSubmit={handleSubmit(addComment)}>
                <textarea
                   {...register("content", { required: true })}
                   className="w-full h-24 p-4 mt-2 border rounded-xl dark:bg-background-darkGray dark:text-text-dark dark:border-none"

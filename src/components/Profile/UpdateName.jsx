@@ -19,7 +19,7 @@ function UpdateName() {
       },
    });
 
-   const onNameUpdateMutation = useMutation({
+   const updateNameMutation = useMutation({
       mutationFn: async (name) => {
          const result = await authService.updateName(name);
          if (!result) {
@@ -42,15 +42,15 @@ function UpdateName() {
       },
    });
 
-   const onNameUpdate = async (data) => {
+   const updateName = async (data) => {
       setError("");
       setLoading(true);
-      onNameUpdateMutation.mutate(data.name);
+      updateNameMutation.mutate(data.name);
    };
 
    return (
       <form
-         onSubmit={handleSubmitName(onNameUpdate)}
+         onSubmit={handleSubmitName(updateName)}
          className={`p-2 ${editName && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">

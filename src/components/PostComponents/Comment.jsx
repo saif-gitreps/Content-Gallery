@@ -2,15 +2,21 @@ import formatDate from "../../utils/formatDate";
 import { useSelector } from "react-redux";
 import { Button } from "../../components";
 
-function Comment({ comment, isAuthor, onDelete, userData }) {
+function Comment({ comment, isAuthor, onDelete, userData, optimisticComment = false }) {
    const authStatus = useSelector((state) => state.auth.status);
 
    const extractUserId = (comment) => {
-      return comment.$permissions[2].substring(13, comment.$permissions[2].length - 2);
+      return comment?.$permissions[2]?.substring(13, comment.$permissions[2].length - 2);
    };
 
+   const isOptimistic = comment?.$id === optimisticComment?.$id;
+
    return (
-      <li className="mb-2 flex justify-between border-b-1 p-3 rounded-lg shadow-md">
+      <li
+         className={`mb-2 flex justify-between border-b-1 p-3 rounded-lg shadow-md ${
+            isOptimistic ? "opacity-50" : ""
+         }`}
+      >
          <div className="items-center w-10/12">
             <div className="flex items-center mb-2 space-x-1">
                <img
@@ -21,7 +27,7 @@ function Comment({ comment, isAuthor, onDelete, userData }) {
                <div className="flex flex-col space-y-0">
                   <p className="text-base font-medium">{comment.userName}</p>
                   <p className="text-sm font-medium text-gray-500">
-                     {formatDate(comment.$createdAt)}
+                     {isOptimistic ? "Posting..." : formatDate(comment.$createdAt)}
                   </p>
                </div>
             </div>
@@ -29,15 +35,17 @@ function Comment({ comment, isAuthor, onDelete, userData }) {
                <p>{comment.content}</p>
             </div>
          </div>
-         {authStatus && (isAuthor || extractUserId(comment) === userData?.$id) && (
-            <Button
-               text="Delete"
-               type="button"
-               className="h-11 text-xs sm:text-sm p-1"
-               bgNumber={2}
-               onClick={() => onDelete(comment.$id)}
-            />
-         )}
+         {!isOptimistic &&
+            authStatus &&
+            (isAuthor || extractUserId(comment) === userData?.$id) && (
+               <Button
+                  text="Delete"
+                  type="button"
+                  className="h-11 text-xs sm:text-sm p-1"
+                  bgNumber={2}
+                  onClick={() => onDelete(comment.$id)}
+               />
+            )}
       </li>
    );
 }

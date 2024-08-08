@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import authService from "../../appwrite/auth";
 import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import { Input, SaveAndCancelDiv, Pencil, LoaderMini, ErrorMessage } from "../index";
 
 function UpdatePhone() {
@@ -19,56 +20,79 @@ function UpdatePhone() {
 
    const phoneVerificationDiv = useRef(null);
 
-   const onPhoneUpdate = async (data) => {
-      setError("");
-      setLoading(true);
-      try {
+   const updatePhoneMutation = useMutation({
+      mutationFn: async (data) => {
          const result = await authService.updatePhone(data.phone, data.password);
-         if (!result) throw new Error();
-
+         if (!result) {
+            throw new Error("Error updating phone. Try again later.");
+         }
+         return result;
+      },
+      onError: (error) => {
+         setError(error);
+         setLoading(false);
+      },
+      onSuccess: () => {
          setEditPhone(false);
-      } catch (error) {
-         setError("Phone update error.");
-      } finally {
+         setError("");
          setLoading(false);
          reset({ password: "" });
-      }
+      },
+   });
+
+   const updatePhone = async (data) => {
+      setError("");
+      setLoading(true);
+      updatePhoneMutation.mutate(data);
    };
+
+   const verifyPhoneMutation = useMutation({
+      mutationFn: async () => {
+         const result = await authService.createPhoneVerification();
+         if (!result) {
+            throw new Error("Error sending phone verification");
+         }
+      },
+      onError: (error) => {
+         phoneVerificationDiv.current.querySelector("h2").textContent = error;
+      },
+      onSuccess: () => {
+         phoneVerificationDiv.current.classList.remove("hidden");
+      },
+   });
 
    const verifyPhone = async () => {
       setError("");
-      try {
-         const result = await authService.createPhoneVerification();
-         if (!result) throw new Error();
-
-         phoneVerificationDiv.current.classList.remove("hidden");
-      } catch (error) {
-         phoneVerificationDiv.current.classList.remove("hidden");
-         phoneVerificationDiv.current.querySelector("h2").textContent =
-            "Phone verification error. Try Again.";
-      }
+      verifyPhoneMutation.mutate();
    };
+
+   const confirmPhoneVerificationMutation = useMutation({
+      mutationFn: async (code) => {
+         const result = await authService.confirmPhoneVerification(userData.$id, code);
+         if (!result) {
+            throw new Error("Error verifying phone or invalid code. Try again.");
+         }
+         return result;
+      },
+      onError: (error) => {
+         phoneVerificationDiv.current.classList.remove("hidden");
+         phoneVerificationDiv.current.querySelector("h2").textContent = error;
+      },
+      onSuccess: () => {
+         phoneVerificationDiv.current.classList.add("hidden");
+      },
+   });
 
    const confirmPhoneVerification = async () => {
       setError("");
-      try {
-         const result = await authService.confirmPhoneVerification(
-            userData.$id,
-            phoneVerificationDiv.current.querySelector("input").value
-         );
-         if (!result) throw new Error();
-
-         phoneVerificationDiv.current.classList.add("hidden");
-      } catch (error) {
-         phoneVerificationDiv.current.classList.remove("hidden");
-         phoneVerificationDiv.current.querySelector("h2").textContent =
-            "Invalid Code. Try Again.";
-      }
+      confirmPhoneVerificationMutation.mutate(
+         phoneVerificationDiv.current.querySelector("input").value
+      );
    };
 
    return (
       <form
-         onSubmit={handleSubmit(onPhoneUpdate)}
+         onSubmit={handleSubmit(updatePhone)}
          className={`p-2 ${editPhone ? "shadow-lg rounded-lg" : ""}`}
       >
          <div className="flex items-center justify-between">

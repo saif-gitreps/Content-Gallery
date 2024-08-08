@@ -4,6 +4,7 @@ import { useState } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import appwriteService from "../../appwrite/config-appwrite";
+import { useMutation } from "@tanstack/react-query";
 import { Input, Pencil, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "../index";
 
 function UpdateProfilePic() {
@@ -19,42 +20,51 @@ function UpdateProfilePic() {
 
    const { register, handleSubmit } = useForm();
 
-   const onProfilePicUpload = async (data) => {
-      setError("");
-      setLoading(true);
-      try {
+   const updateProfilePictureMutation = useMutation({
+      mutationFn: async (data) => {
          const file = await appwriteService.uploadFile(data.profilePicture[0]);
+
          if (!file) {
-            setError("Profile picture upload error");
-            return;
+            throw new Error("Profile picture upload error");
          }
+
+         const filePreview = await appwriteService.getFilePrev(file.$id);
+         if (!filePreview) {
+            throw new Error("Failed to get file preview.");
+         }
+
          if (userData.prefs.profilePictureId) {
             await appwriteService.deleteFile(userData.prefs.profilePictureId);
          }
-         const filePreviw = await appwriteService.getFilePrev(file.$id);
 
-         const updatedUserData = { ...userData };
-         updatedUserData.prefs = {
-            profilePicture: filePreviw.href,
-            profilePictureId: file.$id,
+         await authService.updateProfilePicture(filePreview.href, file.$id);
+
+         return { filePreview, file };
+      },
+      onError: (error) => {
+         setError(error);
+         setLoading(false);
+      },
+      onSuccess: ({ filePreview, file }) => {
+         const updatedUserData = {
+            ...userData,
+            prefs: {
+               profilePicture: filePreview.href,
+               profilePictureId: file.$id,
+            },
          };
-
-         await authService.updateProfilePicture(filePreviw.href, file.$id);
 
          dispatch(update(updatedUserData));
          setEditProfilePic(false);
-
-         if (!filePreviw) {
-            setError("Profile picture upload error");
-            return;
-         }
-
-         setProfilePicture(filePreviw);
-      } catch (error) {
-         setError("Profile picture upload error");
-      } finally {
          setLoading(false);
-      }
+         setProfilePicture(filePreview);
+      },
+   });
+
+   const updateProfilePicture = async (data) => {
+      setError("");
+      setLoading(true);
+      updateProfilePictureMutation.mutate(data);
    };
 
    const handleProfilePicPreview = (event) => {
@@ -76,7 +86,7 @@ function UpdateProfilePic() {
 
    return (
       <form
-         onSubmit={handleSubmit(onProfilePicUpload)}
+         onSubmit={handleSubmit(updateProfilePicture)}
          className="flex items-center flex-col"
       >
          <img src={profilePicture} alt="Profile" className="w-28 h-28 rounded-full" />
