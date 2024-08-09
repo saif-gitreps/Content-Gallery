@@ -1,44 +1,20 @@
 import { Container, LoadCards, ParentContainer } from "../components";
 import { Query } from "appwrite";
 import appwriteService from "../appwrite/config-appwrite";
-import { useEffect } from "react";
 import { Loader, ErrorMessage } from "../components";
-import debounce from "../utils/debouncer";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
+import useInfinitePosts from "../hooks/useInfinityPost";
 
 function MyPosts() {
    const userData = useSelector((state) => state.auth.userData);
 
-   const { data, error, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
-      queryKey: ["myPosts", userData.$id],
-      queryFn: async ({ pageParam = 0 }) =>
-         await appwriteService.getPosts(
-            [Query.equal("userId", userData.$id)],
-            pageParam,
-            5
-         ),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage, pages) => {
-         return lastPage.documents.length > 0 ? pages.length * 5 : undefined;
-      },
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-   });
+   const queryFn = async ({ pageParam = 0 }) =>
+      await appwriteService.getPosts([Query.equal("userId", userData.$id)], pageParam, 5);
 
-   const allPosts = data?.pages?.flatMap((page) => page.documents) || [];
-
-   useEffect(() => {
-      const handleScroll = debounce((event) => {
-         const scrollHeight = event.target.documentElement.scrollHeight;
-         const currentHeight =
-            event.target.documentElement.scrollTop + window.innerHeight;
-         if (currentHeight + 1 >= scrollHeight && hasNextPage) fetchNextPage();
-      }, 200);
-
-      document.addEventListener("scroll", handleScroll);
-      return () => document.removeEventListener("scroll", handleScroll);
-   }, [hasNextPage, fetchNextPage]);
+   const { allPosts, error, isFetching } = useInfinitePosts(
+      ["myPosts", userData.$id],
+      queryFn
+   );
 
    return (
       <ParentContainer>

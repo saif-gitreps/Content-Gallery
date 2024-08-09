@@ -1,37 +1,37 @@
-import { useState, useEffect } from "react";
-import { Input } from "../index";
+import { Input, Button } from "../index";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function SearchBar() {
-   const [searchQuery, setSearchQuery] = useState("");
    const navigate = useNavigate();
-
-   useEffect(() => {
-      if (searchQuery.trim() !== "") {
-         navigate(`/search?q=${searchQuery.trim()}`);
-      }
-   }, [searchQuery, navigate]);
+   const [searchQuery, setSearchQuery] = useState("");
 
    return (
-      <div className="flex justify-center relative items-center">
-         <Input
-            onChange={(e) => setSearchQuery(e.target.value)}
-            type="text"
-            className="input bg-background-lightGray dark:bg-background-darkGray dark:text-text-dark"
-            placeholder="Search"
-            value={searchQuery}
+      <div className="flex justify-center items-center space-x-1">
+         <div className="flex justify-between items-center relative">
+            <Input
+               onChange={(e) => setSearchQuery(e.target.value)}
+               type="text"
+               className="input bg-background-lightGray dark:bg-background-darkGray dark:text-text-dark"
+               value={searchQuery}
+            />
+            {searchQuery != "" && (
+               <p
+                  className="absolute right-2 font-bold hover:opacity-50 cursor-pointer dark:text-white"
+                  onClick={() => {
+                     setSearchQuery("");
+                     navigate("/");
+                  }}
+               >
+                  X
+               </p>
+            )}
+         </div>
+         <Button
+            onClick={() => navigate(`/search?q=${searchQuery.trim()}`)}
+            className="h-9 w-10 flex text-sm items-center justify-center text-white dark:bg-black"
+            text={"Search"}
          />
-         {searchQuery && (
-            <p
-               className="absolute right-1 rounded-lg text-bold px-3 py-1 hover:shadow-md   hover:cursor-pointer"
-               onClick={() => {
-                  setSearchQuery("");
-                  navigate("/");
-               }}
-            >
-               X
-            </p>
-         )}
       </div>
    );
 }
