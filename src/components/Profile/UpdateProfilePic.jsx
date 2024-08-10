@@ -87,15 +87,15 @@ function UpdateProfilePic() {
    return (
       <form
          onSubmit={handleSubmit(updateProfilePicture)}
-         className="flex items-center flex-col"
+         className="flex justify-center items-center flex-col"
       >
-         <img src={profilePicture} alt="Profile" className="w-28 h-28 rounded-full" />
+         <img src={profilePicture} alt="Profile" className="w-56 h-56 rounded-full" />
          {!editProfilePic && (
             <Pencil
                onClickAction={() => {
                   setEditProfilePic(true);
                }}
-               className="relative bottom-28 left-12"
+               className="relative bottom-56 left-20"
             />
          )}
          {editProfilePic && (
@@ -117,7 +117,7 @@ function UpdateProfilePic() {
                )}
             </div>
          )}
-         <ErrorMessage error={error} />
+         {/* <ErrorMessage error={error} /> */}
       </form>
    );
 }

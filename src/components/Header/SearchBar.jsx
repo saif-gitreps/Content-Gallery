@@ -18,18 +18,18 @@ function SearchBar() {
             {searchQuery != "" && (
                <p
                   className="absolute right-2 font-bold hover:opacity-50 cursor-pointer dark:text-white"
-                  onClick={() => {
-                     setSearchQuery("");
-                     navigate("/");
-                  }}
+                  onClick={() => setSearchQuery("")}
                >
-                  X
+                  x
                </p>
             )}
          </div>
          <Button
-            onClick={() => navigate(`/search?q=${searchQuery.trim()}`)}
-            className="h-9 w-10 flex text-sm items-center justify-center text-white dark:bg-black"
+            onClick={() => {
+               navigate(`/search?q=${searchQuery.trim()}`);
+            }}
+            className="h-9 w-10 flex text-sm"
+            bgNumber={1}
             text={"Search"}
          />
       </div>

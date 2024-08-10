@@ -21,6 +21,7 @@ import {
    PasswordRecoveryStepOne,
    PasswordRecoveryStepTwo,
    MySavedPosts,
+   EditProfile,
 } from "./pages";
 
 const router = createBrowserRouter([
@@ -50,19 +51,11 @@ const router = createBrowserRouter([
          },
          {
             path: "/password-recovery-step-one",
-            element: (
-               //<AuthLayout authentication={false}>
-               <PasswordRecoveryStepOne />
-               //</AuthLayout>
-            ),
+            element: <PasswordRecoveryStepOne />,
          },
          {
             path: "/password-recovery-step-two",
-            element: (
-               //<AuthLayout authentication={false}>
-               <PasswordRecoveryStepTwo />
-               //</AuthLayout>
-            ),
+            element: <PasswordRecoveryStepTwo />,
          },
          {
             path: "/my-posts",
@@ -81,10 +74,18 @@ const router = createBrowserRouter([
             ),
          },
          {
-            path: "/profile",
+            path: "/profile/",
             element: (
                <AuthLayout authentication>
                   <Profile />
+               </AuthLayout>
+            ),
+         },
+         {
+            path: "/edit-profile",
+            element: (
+               <AuthLayout authentication>
+                  <EditProfile />
                </AuthLayout>
             ),
          },

@@ -8,115 +8,44 @@ import {
 } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { Query } from "appwrite";
+import useInfinitePosts from "../hooks/useInfinityPost";
 import { useSearchParams } from "react-router-dom";
-import debounce from "../utils/debouncer";
 
 function SearchResult() {
    const [searchParams] = useSearchParams();
-   const [error, setError] = useState("");
-   const [posts, setPosts] = useState([]);
-   const [loading, setLoading] = useState(true);
-   const [offset, setOffset] = useState(0);
-   const [hasMore, setHasMore] = useState(true);
-   const [isFetching, setIsFetching] = useState(false);
-
-   const fetchPosts = (query, offset, limit) => {
-      return appwriteService.getPosts(
-         [Query.or([Query.contains("title", query), Query.contains("content", query)])],
-         offset,
-         limit
-      );
-   };
+   const [query, setQuery] = useState(searchParams.get("q"));
 
    useEffect(() => {
-      const fetchInitialPosts = async () => {
-         const query = searchParams.get("q");
-         if (!query) {
-            return;
-         }
-         try {
-            const results = await fetchPosts(query, 0, 5);
-
-            if (!results) {
-               throw new Error();
-            }
-
-            setPosts(results.documents);
-            setHasMore(results.documents.length >= 5);
-         } catch (error) {
-            setError("Error fetching posts. Please try again.");
-         } finally {
-            setLoading(false);
-         }
-      };
-
-      setOffset(0);
-      setHasMore(true);
-      setLoading(true);
-      setPosts([]);
-      fetchInitialPosts();
+      setQuery(searchParams.get("q"));
+      if (query) {
+         refetch();
+      }
    }, [searchParams]);
 
-   useEffect(() => {
-      const fetchMorePosts = async () => {
-         const query = searchParams.get("q");
-         if (!(query && hasMore && !isFetching)) {
-            return;
-         }
+   const queryFn = async ({ pageParam = 0 }) =>
+      await appwriteService.getPosts(
+         [Query.or([Query.contains("title", query), Query.contains("content", query)])],
+         pageParam,
+         5
+      );
 
-         setIsFetching(true);
-         try {
-            const results = await fetchPosts(query, offset, 5);
-
-            if (!results) {
-               throw new Error();
-            }
-
-            setPosts((prevPosts) => [
-               ...prevPosts,
-               ...results.documents.filter(
-                  (newPost) => !prevPosts.some((post) => post.$id === newPost.$id)
-               ),
-            ]);
-            setHasMore(results.documents.length === 5);
-         } catch (error) {
-            setError("Error fetching posts. Please try again.");
-         } finally {
-            setIsFetching(false);
-         }
-      };
-
-      if (offset > 0) {
-         fetchMorePosts();
-         setLoading(true);
+   const { allPosts, error, isFetching, refetch, isRefetching } = useInfinitePosts(
+      ["searchPosts", query],
+      queryFn,
+      {
+         enabled: !!query,
       }
-   }, [offset, searchParams, hasMore, isFetching]);
+   );
 
-   useEffect(() => {
-      const handleScroll = debounce(() => {
-         const scrollHeight = document.documentElement.scrollHeight;
-         const currentHeight = window.innerHeight + document.documentElement.scrollTop;
-         if (currentHeight + 1 >= scrollHeight && !loading && hasMore && !isFetching) {
-            setOffset((prev) => prev + 5);
-         }
-      }, 200);
-
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-   }, [loading, hasMore, isFetching]);
-
-   if (posts.length === 0 && loading) {
-      return <Loader />;
-   }
-   if (error) {
-      return <ErrorMessage error={error} />;
-   }
    return (
       <ParentContainer>
          <Container className="max-w-full">
-            <h1 className="text-center font-bold text-lg mb-4">Seach Results:</h1>
-            <LoadCards posts={posts} />
-            {isFetching && <Loader />}
+            <h1 className="text-center font-bold text-lg mb-4">
+               Seach Results for "{query}"
+            </h1>
+            <LoadCards posts={allPosts} />
+            <ErrorMessage error={error} />
+            {(isFetching || isRefetching) && <Loader />}
          </Container>
       </ParentContainer>
    );

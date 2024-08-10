@@ -1,7 +1,6 @@
 import DpDropdownMenuButton from "./Header/DpDropdownMenuButton";
 import CommentSection from "./PostComponents/CommentSection";
 import SharableLinks from "./PostComponents/SharableLinks";
-import InfinityScrollLayout from "./InfiniteScrollLayout";
 import UpdateProfilePic from "./Profile/UpdateProfilePic";
 import PostActions from "./PostComponents/PostActions";
 import UpdatePassword from "./Profile/UpdatePassword";
@@ -36,7 +35,6 @@ import Input from "./Input";
 
 export {
    DpDropdownMenuButton,
-   InfinityScrollLayout,
    UpdateProfilePic,
    ParentContainer,
    SaveAndCancelDiv,

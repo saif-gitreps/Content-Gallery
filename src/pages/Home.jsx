@@ -1,7 +1,12 @@
-import { Container, LoadCards, ParentContainer } from "../components";
+import {
+   Container,
+   LoadCards,
+   ParentContainer,
+   Loader,
+   ErrorMessage,
+} from "../components";
 import { Query } from "appwrite";
 import appwriteService from "../appwrite/config-appwrite";
-import { Loader, ErrorMessage } from "../components";
 import useInfinitePosts from "../hooks/useInfinityPost";
 
 function Home() {

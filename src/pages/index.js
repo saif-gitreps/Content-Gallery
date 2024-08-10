@@ -7,6 +7,7 @@ import Profile from "./Profile";
 import MyPosts from "./MyPosts";
 import AddPost from "./AddPost";
 import EditPost from "./EditPost";
+import EditProfile from "./EditProfile";
 import SearchResult from "./SearchResult";
 import MySavedPosts from "./MySavedPosts";
 import EmailConfirmation from "./EmailConfirmation";
@@ -24,6 +25,7 @@ export {
    AddPost,
    EditPost,
    MySavedPosts,
+   EditProfile,
    SearchResult,
    EmailConfirmation,
    PasswordRecoveryStepOne,
