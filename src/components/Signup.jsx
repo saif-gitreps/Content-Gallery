@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import authService from "../appwrite/auth";
+import appwriteUserService from "../appwrite/config-user";
 import { login } from "../store/authSlice";
 import { Button, Input, LoaderMini, Container, ErrorMessage } from "./index";
 
@@ -23,34 +24,30 @@ function Signup() {
       setLoading(true);
       try {
          const userData = await authService.createAccount(data);
-         if (!userData) {
-            setError("Error signing up. Please try again.");
-            return;
-         }
+         if (!userData) throw Error("Error signing up. Please try again.");
+
+         const profileData = await appwriteUserService.createUserProfile(
+            userData.$id,
+            data.name
+         );
+         if (!profileData) throw Error("Error creating user profile. Please try again.");
 
          const session = await authService.login({
             email: data.email,
             password: data.password,
          });
-         if (!session) {
-            setError("Error logging in. Please try again.");
-            return;
-         }
+         if (!session) throw Error("Error logging in. Please try again.");
 
          const currentUserData = await authService.getCurrentUser();
-         if (!currentUserData) {
-            setError("Error fetching user data. Please try again.");
-            return;
-         }
+         if (!currentUserData) throw Error("Error getting user data. Please try again.");
 
-         await authService.updateProfilePicture("/blank-dp.png", "");
-         currentUserData.prefs.profilePicture = "/blank-dp.png";
-         currentUserData.prefs.profilePictureId = "";
+         currentUserData.profilePicture = profileData.profilePicture;
+         currentUserData.bio = profileData.bio;
 
          dispatch(login(currentUserData));
          navigate("/");
       } catch (error) {
-         setError("Something went wrong. Please try again.");
+         setError(error);
       } finally {
          setLoading(false);
       }

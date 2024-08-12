@@ -12,7 +12,7 @@ export class Service {
       this.bucket = new Storage(this.client);
    }
 
-   async createUserProfile(userId, name, profilePicture) {
+   async createUserProfile(userId, name, profilePicture = "/blank-dp.png", bio = "") {
       try {
          return await this.databases.createDocument(
             config.appwriteDatabaseId,
@@ -21,6 +21,7 @@ export class Service {
             {
                name,
                profilePicture,
+               bio,
             }
          );
       } catch (error) {
@@ -29,34 +30,32 @@ export class Service {
       }
    }
 
-   async updateProfilePicture(userId, profilePicture) {
+   async updateProfileDetail(userId, name, profilePicture, bio) {
       try {
-         // keep in mind i am storing the URL not the id from bucket.
-         const updatedProfilePic = await this.databases.updateDocument(
+         // I am storing the URL not the id from bucket.
+         return await this.databases.updateDocument(
             config.appwriteDatabaseId,
             config.appwriteUserCollectionId,
             userId,
             {
+               name,
                profilePicture,
+               bio,
             }
          );
-         if (!updatedProfilePic) {
-            return await this.createUserProfile(userId, profilePicture);
-         }
       } catch (error) {
          console.log("Appwrite serive :: updateProfilePicture :: error", error);
          return false;
       }
    }
 
-   async getUserProfileData(userId) {
+   async getUserProfile(userId) {
       try {
-         const userProfile = await this.databases.getDocument(
+         return await this.databases.getDocument(
             config.appwriteDatabaseId,
             config.appwriteUserCollectionId,
             userId
          );
-         return userProfile.profilePicture;
       } catch (error) {
          console.log("Appwrite serive :: getProfilePicture :: error", error);
          return false;

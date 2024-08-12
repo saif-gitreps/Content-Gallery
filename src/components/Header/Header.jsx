@@ -2,23 +2,13 @@ import { Container, Logo, Hamburger, DpDropdownMenuButton, SearchBar } from "../
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import getNavItems from "./navItems";
 
 function Header() {
    const { status: authStatus, userData } = useSelector((state) => state.auth);
    const navigate = useNavigate();
-   const [dp, setDp] = useState("/blank-dp.png");
 
    const navItems = getNavItems(authStatus, userData);
-
-   useEffect(() => {
-      if (userData && authStatus) {
-         setDp(userData.prefs?.profilePicture);
-      } else {
-         setDp("/blank-dp.png");
-      }
-   }, [userData, authStatus]);
 
    return (
       <header className="py-2 shadow bg-background-lightWhite dark:bg-background-darkBlack font-medium">
@@ -27,7 +17,7 @@ function Header() {
                {authStatus && (
                   <div className="hidden items-center sm:flex mx-4">
                      <DpDropdownMenuButton
-                        src={dp}
+                        src={userData?.profilePicture}
                         navItems={navItems}
                         authStatus={authStatus}
                      />

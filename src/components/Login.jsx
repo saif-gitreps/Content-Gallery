@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
+import appwriteUserService from "../appwrite/config-user";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
@@ -8,6 +9,7 @@ import { Button, Input, LoaderMini, Container, ErrorMessage } from "./index";
 
 function Login() {
    const [loading, setLoading] = useState(false);
+   const [error, setError] = useState("");
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const {
@@ -15,28 +17,28 @@ function Login() {
       handleSubmit,
       formState: { errors },
    } = useForm();
-   const [error, setError] = useState("");
 
    const login = async (data) => {
       setError("");
       setLoading(true);
       try {
          const session = await authService.login(data);
-         if (!session) {
-            setError("Error logging in. Please try again.");
-            return;
-         }
+         if (!session)
+            throw Error("Error logging in. Please check your email and password.");
 
          const userData = await authService.getCurrentUser();
-         if (!userData) {
-            setError("Error fetching user data. Please try again.");
-            return;
-         }
+         if (!userData) throw Error("Error getting user data. Please try again.");
+
+         const profileData = await appwriteUserService.getUserProfile(userData.$id);
+         if (!profileData) throw Error("Error getting user profile. Please try again.");
+
+         userData.profilePicture = profileData.profilePicture;
+         userData.bio = profileData.bio;
 
          dispatch(authLogin(userData));
          navigate("/");
       } catch (error) {
-         setError("Something went wrong. Please try again later.");
+         setError(error);
       } finally {
          setLoading(false);
       }

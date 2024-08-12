@@ -112,26 +112,26 @@ export class AuthService {
       }
    }
 
-   async updateProfilePicture(profilePicture, profilePictureId) {
-      try {
-         return await this.account.updatePrefs({
-            profilePicture: profilePicture,
-            profilePictureId: profilePictureId,
-         });
-      } catch (error) {
-         console.log("Appwrite service :: update profile pic :: error", error);
-         return null;
-      }
-   }
+   // async updateProfilePicture(profilePicture, profilePictureId) {
+   //    try {
+   //       return await this.account.updatePrefs({
+   //          profilePicture: profilePicture,
+   //          profilePictureId: profilePictureId,
+   //       });
+   //    } catch (error) {
+   //       console.log("Appwrite service :: update profile pic :: error", error);
+   //       return null;
+   //    }
+   // }
 
-   async getProfilePicture() {
-      try {
-         return await this.account.getPrefs();
-      } catch (error) {
-         console.log("Appwrite service :: getting profile picture :: error", error);
-         return null;
-      }
-   }
+   // async getProfilePicture() {
+   //    try {
+   //       return await this.account.getPrefs();
+   //    } catch (error) {
+   //       console.log("Appwrite service :: getting profile picture :: error", error);
+   //       return null;
+   //    }
+   // }
 
    async createPasswordRecovery(email) {
       try {
