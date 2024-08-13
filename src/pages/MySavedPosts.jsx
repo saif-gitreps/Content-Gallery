@@ -28,20 +28,24 @@ function MySavedPosts() {
    return (
       <ParentContainer>
          <Container className="max-w-7xl">
-            <h1 className="text-center">
-               {allPosts?.length === 0 && <p>No posts available.</p>}
-            </h1>
-            <div className="masonry-grid">
-               {allPosts?.map((saved) => (
-                  <div key={saved.articles.$id} className="masonry-item">
-                     <PostCard
-                        $id={saved.articles.$id}
-                        title={saved.articles.title}
-                        featuredImage={saved.articles.featuredImage}
-                     />
+            {!isFetching && (
+               <>
+                  <h1 className="text-center">
+                     {allPosts?.length === 0 && <p>No posts available.</p>}
+                  </h1>
+                  <div className="masonry-grid">
+                     {allPosts?.map((saved) => (
+                        <div key={saved.articles.$id} className="masonry-item">
+                           <PostCard
+                              $id={saved.articles.$id}
+                              title={saved.articles.title}
+                              featuredImage={saved.articles.featuredImage}
+                           />
+                        </div>
+                     ))}
                   </div>
-               ))}
-            </div>
+               </>
+            )}
             <ErrorMessage error={error} />
             {isFetching && <Loader />}
          </Container>

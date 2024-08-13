@@ -23,7 +23,7 @@ export class Service {
                content,
                featuredImage,
                status,
-               userId,
+               user: userId,
             }
          );
       } catch (error) {

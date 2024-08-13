@@ -32,16 +32,8 @@ function Profile() {
                <div className="flex lg:flex-row flex-col justify-evenly items-center">
                   <UpdateProfilePic />
                   <div className="max-w-lg xl:max-w-4xl  space-y-3">
-                     <h1 className="text-xl font-semibold">Name</h1>
-                     <p className="text-lg font-medium">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure vel
-                        impedit similique, dolore omnis cumque modi quae obcaecati soluta
-                        quas quos amet beatae rerum. Praesentium explicabo magni quae
-                        modi. Delectus. Lorem ipsum dolor sit amet consectetur adipisicing
-                        elit. Maiores animi rem sapiente cumque dignissimos alias tenetur
-                        officiis vitae ipsum similique placeat corporis, odio porro,
-                        labore, corrupti beatae nostrum exercitationem temporibus.
-                     </p>
+                     <h1 className="text-xl font-semibold">{userData.name}</h1>
+                     <p className="text-lg font-medium">{userData.bio}</p>
                      <Button
                         text={"Edit profile"}
                         bgNumber={1}
@@ -52,7 +44,7 @@ function Profile() {
                </div>
             </div>
             <h1 className="text-2xl font-bold text-center">My posts</h1>
-            <LoadCards posts={allPosts} />
+            {!isFetching && <LoadCards posts={allPosts} />}
             <ErrorMessage error={error} />
             {isFetching && <Loader />}
          </Container>

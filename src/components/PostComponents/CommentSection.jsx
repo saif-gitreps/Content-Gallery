@@ -33,20 +33,13 @@ function CommentSection({ post, userData, isAuthor }) {
 
    const addCommentMutation = useMutation({
       mutationFn: async (data) =>
-         await appwriteCommentsService.addComment(
-            data.content,
-            userData.prefs?.profilePicture,
-            post?.$id,
-            userData.name,
-            userData.$id
-         ),
+         await appwriteCommentsService.addComment(data.content, post?.$id, userData.$id),
       onMutate: async (data) => {
          const optimisticComment = {
             $id: Date.now(),
             content: data.content,
-            avatar: userData.prefs?.profilePicture,
-            articleId: post.$id,
-            userName: userData.name,
+            articles: post.$id,
+            user: userData.$id,
          };
          await queryClient.setQueryData(["comments", post.$id], (oldComments) => [
             ...oldComments,

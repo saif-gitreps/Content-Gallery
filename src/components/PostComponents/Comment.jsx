@@ -1,13 +1,9 @@
 import formatDate from "../../utils/formatDate";
 import { useSelector } from "react-redux";
-import { Button } from "../../components";
+import { Button, UserHeader } from "../../components";
 
 function Comment({ comment, isAuthor, onDelete, userData, optimisticComment = false }) {
    const authStatus = useSelector((state) => state.auth.status);
-
-   const extractUserId = (comment) => {
-      return comment?.$permissions[2]?.substring(13, comment.$permissions[2].length - 2);
-   };
 
    const isOptimistic = comment?.$id === optimisticComment?.$id;
 
@@ -18,26 +14,19 @@ function Comment({ comment, isAuthor, onDelete, userData, optimisticComment = fa
          }`}
       >
          <div className="items-center w-10/12">
-            <div className="flex items-center mb-2 space-x-1">
-               <img
-                  src={comment.avatar || "blank-dp.png"}
-                  alt={comment.userName}
-                  className="w-10 h-10 rounded-full"
-               />
-               <div className="flex flex-col space-y-0">
-                  <p className="text-base font-medium">{comment.userName}</p>
-                  <p className="text-sm font-medium text-gray-500">
-                     {isOptimistic ? "Posting..." : formatDate(comment.$createdAt)}
-                  </p>
-               </div>
-            </div>
+            <UserHeader
+               src={comment.user.profilePicture}
+               name={comment.user.name}
+               $id={comment.user.$id}
+               date={isOptimistic ? "Posting..." : comment.$createdAt}
+            />
             <div className="ml-1 w-full overflow-hidden text-wrap">
                <p>{comment.content}</p>
             </div>
          </div>
          {!isOptimistic &&
             authStatus &&
-            (isAuthor || extractUserId(comment) === userData?.$id) && (
+            (isAuthor || comment.user.$id === userData.$id) && (
                <Button
                   text="Delete"
                   type="button"

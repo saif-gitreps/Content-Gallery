@@ -12,7 +12,7 @@ export class Service {
       this.bucket = new Storage(this.client);
    }
 
-   async addComment(content, avatar, articleId, userName) {
+   async addComment(content, articleId, userId) {
       try {
          return await this.databases.createDocument(
             config.appwriteDatabaseId,
@@ -20,9 +20,8 @@ export class Service {
             ID.unique(),
             {
                content,
-               avatar,
                articleId,
-               userName,
+               user: userId,
             }
          );
       } catch (error) {

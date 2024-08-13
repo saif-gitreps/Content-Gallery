@@ -43,7 +43,7 @@ function SearchResult() {
             <h1 className="text-center font-bold text-lg mb-4">
                Seach Results for "{query}"
             </h1>
-            <LoadCards posts={allPosts} />
+            {!isFetching && <LoadCards posts={allPosts} />}
             <ErrorMessage error={error} />
             {(isFetching || isRefetching) && <Loader />}
          </Container>

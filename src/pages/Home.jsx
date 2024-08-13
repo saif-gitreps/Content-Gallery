@@ -18,7 +18,7 @@ function Home() {
    return (
       <ParentContainer>
          <Container className="max-w-7xl">
-            <LoadCards posts={allPosts} />
+            {!isFetching && <LoadCards posts={allPosts} />}
             <ErrorMessage error={error} />
             {isFetching && <Loader />}
          </Container>

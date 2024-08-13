@@ -2,9 +2,9 @@ import DpDropdownMenuButton from "./Header/DpDropdownMenuButton";
 import CommentSection from "./PostComponents/CommentSection";
 import SharableLinks from "./PostComponents/SharableLinks";
 import UpdateProfilePic from "./Profile/UpdateProfilePic";
-import PostActions from "./PostComponents/PostActions";
 import UpdatePassword from "./Profile/UpdatePassword";
 import DarkModeToggle from "./Header/DarkModeToggle";
+import UserHeader from "./PostComponents/UserHeader";
 import SaveAndCancelDiv from "./SaveAndCancelDiv";
 import PostForm from "./PostComponents/PostForm";
 import ParentContainer from "./ParentContainer";
@@ -44,8 +44,8 @@ export {
    SharableLinks,
    ErrorMessage,
    LogoutButton,
-   PostActions,
    UpdateEmail,
+   UserHeader,
    UpdateName,
    UpdatePhone,
    SearchBar,

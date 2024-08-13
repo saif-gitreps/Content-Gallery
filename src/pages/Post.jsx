@@ -1,30 +1,27 @@
 import {
    Container,
    Loader,
-   PostActions,
    CommentSection,
-   SharableLinks,
    Button,
    LoaderMini,
    ErrorMessage,
    ParentContainer,
+   UserHeader,
 } from "../components";
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, redirect } from "react-router-dom";
-import appwriteService from "../appwrite/config-appwrite";
-import parse from "html-react-parser";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Query } from "appwrite";
+import parse from "html-react-parser";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import appwriteService from "../appwrite/config-appwrite";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function Post() {
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
    const [saveLoader, setSaveLoader] = useState(false);
-   const [showShareLinks, setShowShareLinks] = useState(false);
    const queryClient = useQueryClient();
    const { id } = useParams();
-
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
    const authStatus = useSelector((state) => state.auth.status);
@@ -77,18 +74,10 @@ export default function Post() {
       enabled: userData?.$id && !!post?.$id,
    });
 
-   useEffect(() => {
-      if (postError) {
-         setError("Error fetching post. Redirecting to home page.");
-         setTimeout(() => navigate("/"), 2000);
-      }
-      if (savedPostError) {
-         setError(savedPostError);
-      }
-      if (imageError) {
-         setError(imageError);
-      }
-   }, [postError, imageError, savedPostError]);
+   if (postError) {
+      setError("Error fetching post. Redirecting to home page.");
+      setTimeout(() => navigate("/"), 2000);
+   }
 
    const deleteMutation = useMutation({
       mutationFn: async () => {
@@ -148,31 +137,32 @@ export default function Post() {
       },
    });
 
-   const toggleSave = () => {
-      setSaveLoader(true);
-      toggleSaveMutation.mutate();
-   };
-
-   const isAuthor = post && userData ? post.userId === userData.$id : false;
+   const isAuthor = post && userData ? post.user.$id === userData.$id : false;
 
    if (loading || isLoading) {
       return <Loader />;
    }
-   if (error) {
-      return <ErrorMessage error={error} />;
+   if (error || imageError || savedPostError) {
+      return <ErrorMessage error={error || imageError || savedPostError} />;
    }
    return post ? (
       <ParentContainer>
          <Container>
             <div className="mb-7 p-6 border rounded-2xl  shadow-lg space-y-3 bg-background-lightWhite dark:bg-background-darkBlack dark:text-text-dark">
                <div>
-                  <h1 className="text-xl font-bold">{post.title}</h1>
-                  <div className="text-base font-medium">{parse(post.content)}</div>
+                  <UserHeader
+                     src={post.user.profilePicture}
+                     name={post.user.name}
+                     $id={post.user.$id}
+                     date={post.$createdAt}
+                  />
+                  <h1 className="text-xl font-semibold">{post.title}</h1>
+                  <div className="text-base text-gray-600 font-medium">
+                     {parse(post.content)}
+                  </div>
                </div>
                <div>
-                  <div className="relative flex justify-end">
-                     {isAuthor && <PostActions postId={post.$id} onDelete={deletePost} />}
-                  </div>
+                  <div className="relative flex justify-end"></div>
                   <div className="flex justify-center">
                      <img
                         src={image}
@@ -181,7 +171,7 @@ export default function Post() {
                      />
                   </div>
                </div>
-               <div className="flex justify-end items-center">
+               <div className="flex  justify-between items-center">
                   {authStatus &&
                      (saveLoader || isSavedPostLoading ? (
                         <LoaderMini />
@@ -191,30 +181,26 @@ export default function Post() {
                            type="button"
                            className="rounded-lg h-12"
                            bgNumber={!isSaved ? 0 : 1}
-                           onClick={toggleSave}
+                           onClick={() => {
+                              setSaveLoader(true);
+                              toggleSaveMutation.mutate();
+                           }}
                         />
                      ))}
 
-                  <div className="relative">
-                     {!showShareLinks ? (
-                        <img
-                           onClick={() => setShowShareLinks(true)}
-                           src="/share-icon.png
-                     "
-                           alt="Share"
-                           className="w-14 p-3 rounded-r-lg hover:cursor-pointer hover:shadow-md rounded-xl duration-300 dark:invert"
+                  {isAuthor && (
+                     <div className="flex">
+                        <Link to={`/edit-post/${post.$id}`}>
+                           <Button text="Edit" type="button" bgNumber={0} />
+                        </Link>
+                        <Button
+                           text="Delete"
+                           type="button"
+                           bgNumber={2}
+                           onClick={deletePost}
                         />
-                     ) : (
-                        <img
-                           onClick={() => setShowShareLinks(false)}
-                           src="/delete-button.png"
-                           alt="delete"
-                           className="w-14 p-3 rounded-r-lg hover:cursor-pointer hover:shadow-md rounded-xl duration-300"
-                        />
-                     )}
-
-                     {showShareLinks && <SharableLinks />}
-                  </div>
+                     </div>
+                  )}
                </div>
             </div>
             <CommentSection post={post} isAuthor={isAuthor} userData={userData} />

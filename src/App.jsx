@@ -50,22 +50,26 @@ function App() {
       document.documentElement.classList.toggle("dark", theme === "dark");
    }, [theme]);
 
-   if (isLoading) return <Loader />;
-
    if (isError)
       return (
          <h1 className="text-xl text-center font-bold">Sorry something went wrong.</h1>
       );
 
    return (
-      <div className="min-h-screen flex flex-wrap content-between ">
-         <div className="w-full block">
-            <Header />
-            <main className="min-h-screen bg-background-lightGray dark:bg-background-darkGray  dark:text-text-dark">
-               <Outlet />
-            </main>
-            <Footer />
-         </div>
+      <div className="min-h-screen flex flex-wrap justify-center bg-background-lightGray dark:bg-background-darkGray  dark:text-text-dark">
+         {isLoading ? (
+            <div className="mt-20">
+               <Loader />
+            </div>
+         ) : (
+            <div className="w-full">
+               <Header />
+               <main className="min-h-screen ">
+                  <Outlet />
+               </main>
+               <Footer />
+            </div>
+         )}
       </div>
    );
 }
