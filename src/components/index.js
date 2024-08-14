@@ -10,6 +10,7 @@ import PostForm from "./PostComponents/PostForm";
 import ParentContainer from "./ParentContainer";
 import LogoutButton from "./Header/LogoutButton";
 import UpdateEmail from "./Profile/UpdateEmail";
+import UpdateBio from "./Profile/UpdateBio";
 import UpdatePhone from "./Profile/UpdatePhone";
 import Comment from "./PostComponents/Comment";
 import UpdateName from "./Profile/UpdateName";
@@ -45,6 +46,7 @@ export {
    ErrorMessage,
    LogoutButton,
    UpdateEmail,
+   UpdateBio,
    UserHeader,
    UpdateName,
    UpdatePhone,

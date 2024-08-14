@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import debounce from "../utils/debouncer";
 
-const useInfinitePosts = (queryKey, queryFn) => {
+const useInfinitePosts = (queryKey, queryFn, queryEnabled = false) => {
    const { data, error, fetchNextPage, hasNextPage, isFetching, refetch, isRefetching } =
       useInfiniteQuery({
          queryKey,
@@ -13,6 +13,7 @@ const useInfinitePosts = (queryKey, queryFn) => {
          },
          refetchOnReconnect: false,
          refetchOnWindowFocus: false,
+         enabled: queryEnabled,
       });
 
    const allPosts = data?.pages?.flatMap((page) => page.documents) || [];

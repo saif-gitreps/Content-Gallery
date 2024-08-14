@@ -61,14 +61,6 @@ const router = createBrowserRouter([
             element: <PasswordRecoveryStepTwo />,
          },
          {
-            path: "/my-posts",
-            element: (
-               <AuthLayout authentication>
-                  <MyPosts />
-               </AuthLayout>
-            ),
-         },
-         {
             path: "/saved-posts",
             element: (
                <AuthLayout authentication>
@@ -77,7 +69,7 @@ const router = createBrowserRouter([
             ),
          },
          {
-            path: "/profile/",
+            path: "/profile/:id",
             element: (
                <AuthLayout authentication>
                   <Profile />

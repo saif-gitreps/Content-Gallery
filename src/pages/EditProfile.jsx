@@ -1,3 +1,4 @@
+import { ErrorProvider } from "../context/ErrorContext";
 import {
    UpdateEmail,
    UpdateName,
@@ -6,21 +7,30 @@ import {
    ParentContainer,
    Container,
    ErrorMessage,
+   UpdateProfilePic,
+   UpdateBio,
 } from "../components";
 
 function EditProfile() {
    return (
-      <ParentContainer>
-         <Container className="flex flex-col items-center bg-white dark:bg-background-darkBlack dark:text-text-dark max-w-md py-6 m-auto rounded-xl shadow-md space-y-2">
-            <h1 className="text-2xl font-semibold">Edit Profile</h1>
-            <UpdateName />
-            {/* Update Bio */}
-            <UpdateEmail />
-            <UpdatePhone />
-            <UpdatePassword />
-            <ErrorMessage />
-         </Container>
-      </ParentContainer>
+      <ErrorProvider>
+         <ParentContainer>
+            <Container className="bg-white dark:bg-background-darkBlack dark:text-text-dark max-w-5xl py-6 m-auto rounded-xl shadow-md space-y-3">
+               <h1 className="text-2xl font-semibold text-center">Edit Profile</h1>
+               <div className="flex flex-col lg:flex-row space-x-3 justify-evenly items-center">
+                  <UpdateProfilePic />
+                  <div className="flex flex-wrap justify-center items-center max-w-2xl">
+                     <UpdateName />
+                     <UpdateEmail />
+                     <UpdatePhone />
+                     <UpdatePassword />
+                     <UpdateBio />
+                  </div>
+               </div>
+               <ErrorMessage />
+            </Container>
+         </ParentContainer>
+      </ErrorProvider>
    );
 }
 

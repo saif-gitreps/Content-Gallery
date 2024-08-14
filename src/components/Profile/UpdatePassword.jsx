@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
+import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
+import { ErrorContext } from "../../context/ErrorContext";
 
 function UpdatePassword() {
    const [editPassword, setEditPassword] = useState(false);
    const [loading, setLoading] = useState(false);
-   const [error, setError] = useState("");
+   const { setError } = useContext(ErrorContext);
 
    const { register, handleSubmit, reset } = useForm({
       defaultValues: {
@@ -17,18 +18,10 @@ function UpdatePassword() {
    });
 
    const updatePasswordMutation = useMutation({
-      mutationFn: async (data) => {
-         const result = await authService.updatePassword(
-            data.newPassword,
-            data.oldPassword
-         );
-         if (!result) {
-            throw new Error("Error updating password. Try again later.");
-         }
-         return result;
-      },
-      onError: (error) => {
-         setError(error);
+      mutationFn: async (data) =>
+         await authService.updatePassword(data.newPassword, data.oldPassword),
+      onError: () => {
+         setError("Failed to update password. Try again later.");
          setLoading(false);
       },
       onSuccess: () => {
@@ -51,7 +44,7 @@ function UpdatePassword() {
          className={`p-2 ${editPassword && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-sm md:text-base font-semibold ml-2">
+            <h2 className="text-base font-semibold ml-2">
                {editPassword ? "Old Password :" : "Password :"}
             </h2>
             {!editPassword && (
@@ -63,16 +56,16 @@ function UpdatePassword() {
             )}
          </div>
          <Input
-            className="text-sm md:text-base font-normal w-64"
+            className="text-base font-normal w-64"
             type="password"
             readOnly={!editPassword}
             {...register("oldPassword", { required: true })}
          />
          {editPassword && (
             <div>
-               <h2 className="text-sm md:text-base font-semibold ml-2">New Password:</h2>
+               <h2 className="text-base font-semibold ml-2">New Password:</h2>
                <Input
-                  className="text-sm md:text-base font-normal w-64"
+                  className="text-base font-normal w-64"
                   type="password"
                   {...register("newPassword", { required: true })}
                />
@@ -91,7 +84,6 @@ function UpdatePassword() {
                )}
             </div>
          )}
-         <ErrorMessage error={error} />
       </form>
    );
 }

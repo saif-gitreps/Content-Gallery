@@ -1,17 +1,19 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../../store/authSlice";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import appwriteService from "../../appwrite/config-appwrite";
+import appwriteUserService from "../../appwrite/config-user";
 import { useMutation } from "@tanstack/react-query";
-import { Input, Pencil, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "../index";
+import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
+import { ErrorContext } from "../../context/ErrorContext";
 
 function UpdateProfilePic() {
    const [editProfilePic, setEditProfilePic] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
    const [loading, setLoading] = useState(false);
-   const [error, setError] = useState("");
+   const { setError } = useContext(ErrorContext);
 
    const [profilePicture, setProfilePicture] = useState(
       userData?.prefs?.profilePicture || "/blank-dp.png"
@@ -38,30 +40,23 @@ function UpdateProfilePic() {
          }
 
          await authService.updateProfilePicture(filePreview.href, file.$id);
+         await appwriteUserService.updateProfilePicture(userData.$id, filePreview.href);
 
-         return { filePreview, file };
+         return filePreview;
       },
       onError: (error) => {
          setError(error);
          setLoading(false);
       },
-      onSuccess: ({ filePreview, file }) => {
-         const updatedUserData = {
-            ...userData,
-            prefs: {
-               profilePicture: filePreview.href,
-               profilePictureId: file.$id,
-            },
-         };
-
-         dispatch(update(updatedUserData));
+      onSuccess: (filePreview) => {
+         dispatch(update({ ...userData, profilePicture: filePreview.href }));
          setEditProfilePic(false);
          setLoading(false);
          setProfilePicture(filePreview);
       },
    });
 
-   const updateProfilePicture = async (data) => {
+   const updateProfilePicture = (data) => {
       setError("");
       setLoading(true);
       updateProfilePictureMutation.mutate(data);
@@ -117,7 +112,6 @@ function UpdateProfilePic() {
                )}
             </div>
          )}
-         {/* <ErrorMessage error={error} /> */}
       </form>
    );
 }

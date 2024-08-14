@@ -1,16 +1,17 @@
 import { useSelector } from "react-redux";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
+import { ErrorContext } from "../../context/ErrorContext";
+import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 
 function UpdateEmail() {
    const [editEmail, setEditEmail] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
    const [loading, setLoading] = useState(false);
-   const [error, setError] = useState("");
+   const { setError } = useContext(ErrorContext);
 
    const { register, handleSubmit, reset } = useForm({
       defaultValues: {
@@ -22,15 +23,10 @@ function UpdateEmail() {
    const emailVerificationMessage = useRef(null);
 
    const updateEmailMutation = useMutation({
-      mutationFn: async (data) => {
-         const result = await authService.updateEmail(data.email, data.password);
-         if (!result) {
-            throw new Error("Error updating email");
-         }
-         return result;
-      },
-      onError: (error) => {
-         setError(error);
+      mutationFn: async (data) =>
+         await authService.updateEmail(data.email, data.password),
+      onError: () => {
+         setError("Failed to update email. Try again later.");
          setLoading(false);
       },
       onSuccess: () => {
@@ -40,21 +36,17 @@ function UpdateEmail() {
       },
    });
 
-   const updateEmail = async (data) => {
+   const updateEmail = (data) => {
       setError("");
       setLoading(true);
       updateEmailMutation.mutate(data);
    };
 
    const verifyEmailMutation = useMutation({
-      mutationFn: async () => {
-         const result = await authService.createEmailVerification();
-         if (!result) {
-            throw new Error("Error sending email verification");
-         }
-      },
-      onError: (error) => {
-         emailVerificationMessage.current.textContent = error;
+      mutationFn: async () => await authService.createEmailVerification(),
+      onError: () => {
+         emailVerificationMessage.current.textContent =
+            "Failed to send email verification. Try again later.";
       },
       onSuccess: () => {
          emailVerificationMessage.current.classList.remove("hidden");
@@ -69,10 +61,10 @@ function UpdateEmail() {
    return (
       <form
          onSubmit={handleSubmit(updateEmail)}
-         className={`p-1 ${editEmail && "shadow-lg rounded-lg"}`}
+         className={`p-2 ${editEmail && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-sm md:text-base font-semibold ml-2">
+            <h2 className="text-base font-semibold ml-2">
                Email :{" "}
                {!userData?.emailVerification && (
                   <Link onClick={verifyEmail} className="text-green-600 hover:underline">
@@ -90,7 +82,7 @@ function UpdateEmail() {
             )}
          </div>
          <Input
-            className="text-sm md:text-base font-normal w-64"
+            className="text-base font-normal w-64"
             readOnly={!editEmail}
             {...register("email", {
                required: true,
@@ -109,9 +101,9 @@ function UpdateEmail() {
          </h2>
          {editEmail && (
             <div>
-               <h2 className="text-sm md:text-base font-semibold ml-2">Password:</h2>
+               <h2 className="text-base font-semibold ml-2">Password:</h2>
                <Input
-                  className="text-sm md:text-base font-normal w-64"
+                  className="text-base font-normal w-64"
                   type="password"
                   {...register("password", { required: true })}
                />
@@ -129,7 +121,6 @@ function UpdateEmail() {
                )}
             </div>
          )}
-         <ErrorMessage error={error} />
       </form>
    );
 }

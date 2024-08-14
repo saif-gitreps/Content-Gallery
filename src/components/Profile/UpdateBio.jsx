@@ -1,75 +1,73 @@
 import { useSelector, useDispatch } from "react-redux";
-import { update } from "../../store/authSlice";
 import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 import { useState, useContext } from "react";
-import authService from "../../appwrite/auth";
 import appwriteUserService from "../../appwrite/config-user";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorContext } from "../../context/ErrorContext";
+import { update } from "../../store/authSlice";
 
-function UpdateName() {
-   const [editName, setEditName] = useState(false);
+function UpdateBio() {
+   const [editBio, setEditBio] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
-   const dispatch = useDispatch();
    const [loading, setLoading] = useState(false);
+   const dispatch = useDispatch();
    const { setError } = useContext(ErrorContext);
 
-   const { register: registerName, handleSubmit: handleSubmitName } = useForm({
+   const { register: registerBio, handleSubmit: handleSubmitBio } = useForm({
       defaultValues: {
-         name: userData?.name || "",
+         bio: userData?.bio || "",
       },
    });
 
-   const updateNameMutation = useMutation({
-      mutationFn: async (name) => {
+   const updateBioMutation = useMutation({
+      mutationFn: async (bio) =>
          await appwriteUserService.updateProfileDetail(
             userData.$id,
-            name,
+            userData.name,
             userData.profilePicture,
-            userData.bio
-         );
-         return await authService.updateName(name);
-      },
-      onError: (error) => {
-         setError(error);
+            bio
+         ),
+      onError: () => {
+         setError("Failed to update bio. Try again later.");
          setLoading(false);
       },
       onSuccess: (data) => {
-         setEditName(false);
+         setEditBio(false);
          setError("");
          setLoading(false);
-         dispatch(update({ ...userData, name: data.name }));
+
+         dispatch(update({ ...userData, bio: data.bio }));
       },
    });
 
-   const updateName = async (data) => {
-      setError("");
+   const updateBio = (data) => {
       setLoading(true);
-      updateNameMutation.mutate(data.name);
+      setError("");
+      updateBioMutation.mutate(data.bio);
    };
 
    return (
       <form
-         onSubmit={handleSubmitName(updateName)}
-         className={`p-2 ${editName && "shadow-lg rounded-lg"}`}
+         onSubmit={handleSubmitBio(updateBio)}
+         className={`p-2 ${editBio && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold ml-2">Name:</h2>
-            {!editName && (
+            <h2 className="text-base font-semibold ml-2">Bio:</h2>
+            {!editBio && (
                <Pencil
                   onClickAction={() => {
-                     setEditName(true);
+                     setEditBio(true);
                   }}
                />
             )}
          </div>
          <Input
-            className="text-base font-normal w-64"
-            readOnly={!editName}
-            {...registerName("name", { required: true })}
+            className="text-base font-normal sm:w-96 w-64"
+            readOnly={!editBio}
+            {...registerBio("bio", { required: true, maxLength: 248 })}
          />
-         {editName &&
+         {editBio &&
             (loading ? (
                <div className="flex justify-center items-center mt-2">
                   <LoaderMini />
@@ -78,7 +76,7 @@ function UpdateName() {
                <SaveAndCancelDiv
                   type="submit"
                   cancel={() => {
-                     setEditName(false);
+                     setEditBio(false);
                      setError("");
                   }}
                />
@@ -87,4 +85,4 @@ function UpdateName() {
    );
 }
 
-export default UpdateName;
+export default UpdateBio;

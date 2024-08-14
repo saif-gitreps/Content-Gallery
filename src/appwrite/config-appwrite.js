@@ -24,6 +24,7 @@ export class Service {
                featuredImage,
                status,
                user: userId,
+               userId,
             }
          );
       } catch (error) {
