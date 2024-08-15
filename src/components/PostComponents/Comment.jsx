@@ -1,4 +1,3 @@
-import formatDate from "../../utils/formatDate";
 import { useSelector } from "react-redux";
 import { Button, UserHeader } from "../../components";
 
@@ -8,11 +7,7 @@ function Comment({ comment, isAuthor, onDelete, userData, optimisticComment = fa
    const isOptimistic = comment?.$id === optimisticComment?.$id;
 
    return (
-      <li
-         className={`mb-2 flex justify-between border-b-1 p-3 rounded-lg shadow-md ${
-            isOptimistic ? "opacity-50" : ""
-         }`}
-      >
+      <li className={`flex justify-between  ${isOptimistic ? "opacity-50" : ""}`}>
          <div className="items-center w-10/12">
             <UserHeader
                src={comment.user.profilePicture}
@@ -30,7 +25,7 @@ function Comment({ comment, isAuthor, onDelete, userData, optimisticComment = fa
                <Button
                   text="Delete"
                   type="button"
-                  className="h-11 text-xs sm:text-sm p-1"
+                  className="h-7 p-1 text-xs"
                   bgNumber={2}
                   onClick={() => onDelete(comment.$id)}
                />

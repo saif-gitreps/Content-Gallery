@@ -95,7 +95,7 @@ function UpdatePhone() {
             {!editPhone && <Pencil onClickAction={() => setEditPhone(true)} />}
          </div>
          <Input
-            className="text-sm md:text-base font-normal w-64"
+            className="text-base font-normal w-64"
             readOnly={!editPhone}
             {...register("phone", { required: true })}
          />
@@ -103,7 +103,7 @@ function UpdatePhone() {
             <h2 className="text-base text-center text-red-600 font-medium  w-48">
                Check the verification SMS on your Phone.
             </h2>
-            <Input className="text-sm md:text-base font-normal w-64" type="number" />
+            <Input className="text-base font-normal w-64" type="number" />
             <SaveAndCancelDiv
                save={confirmPhoneVerification}
                cancel={() => phoneVerificationDiv.current.classList.add("hidden")}
@@ -111,9 +111,9 @@ function UpdatePhone() {
          </div>
          {editPhone && (
             <div>
-               <h2 className="text-sm md:text-base font-semibold ml-2">Password:</h2>
+               <h2 className="text-base font-semibold ml-2">Password:</h2>
                <Input
-                  className="text-sm md:text-base font-normal w-64"
+                  className="text-base font-normal w-64"
                   type="password"
                   {...register("password", { required: true })}
                />
@@ -133,7 +133,6 @@ function UpdatePhone() {
                )}
             </div>
          )}
-         <ErrorMessage error={error} />
       </form>
    );
 }

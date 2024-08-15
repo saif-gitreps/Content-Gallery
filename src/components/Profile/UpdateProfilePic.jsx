@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { update } from "../../store/authSlice";
 import { useState, useContext } from "react";
-import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import appwriteService from "../../appwrite/config-appwrite";
 import appwriteUserService from "../../appwrite/config-user";
@@ -16,7 +15,7 @@ function UpdateProfilePic() {
    const { setError } = useContext(ErrorContext);
 
    const [profilePicture, setProfilePicture] = useState(
-      userData?.prefs?.profilePicture || "/blank-dp.png"
+      userData.profilePicture || "/blank-dp.png"
    );
    const dispatch = useDispatch();
 
@@ -27,25 +26,25 @@ function UpdateProfilePic() {
          const file = await appwriteService.uploadFile(data.profilePicture[0]);
 
          if (!file) {
-            throw new Error("Profile picture upload error");
+            throw new Error();
          }
 
          const filePreview = await appwriteService.getFilePrev(file.$id);
          if (!filePreview) {
-            throw new Error("Failed to get file preview.");
+            throw new Error();
          }
 
-         if (userData.prefs.profilePictureId) {
-            await appwriteService.deleteFile(userData.prefs.profilePictureId);
-         }
-
-         await authService.updateProfilePicture(filePreview.href, file.$id);
-         await appwriteUserService.updateProfilePicture(userData.$id, filePreview.href);
+         await appwriteUserService.updateProfileDetail(
+            userData.$id,
+            userData.name,
+            filePreview.href,
+            userData.bio
+         );
 
          return filePreview;
       },
-      onError: (error) => {
-         setError(error);
+      onError: () => {
+         setError("Failed to update profile picture. Try again later.");
          setLoading(false);
       },
       onSuccess: (filePreview) => {
@@ -74,7 +73,7 @@ function UpdateProfilePic() {
    };
 
    const onCancel = () => {
-      setProfilePicture(userData?.prefs.profilePicture || "/blank-dp.png");
+      setProfilePicture(userData.profilePicture);
       setEditProfilePic(false);
       setError("");
    };
@@ -84,7 +83,7 @@ function UpdateProfilePic() {
          onSubmit={handleSubmit(updateProfilePicture)}
          className="flex justify-center items-center flex-col"
       >
-         <img src={profilePicture} alt="Profile" className="w-56 h-56 rounded-full" />
+         <img src={profilePicture} alt="Profile" className="w-52 h-52 rounded-full" />
          {!editProfilePic && (
             <Pencil
                onClickAction={() => {

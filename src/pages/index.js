@@ -4,7 +4,6 @@ import Post from "./Post";
 import Login from "./Login";
 import Signup from "./Signup";
 import Profile from "./Profile";
-import MyPosts from "./MyPosts";
 import AddPost from "./AddPost";
 import EditPost from "./EditPost";
 import EditProfile from "./EditProfile";
@@ -19,7 +18,6 @@ export {
    Home,
    Login,
    Post,
-   MyPosts,
    Signup,
    Profile,
    AddPost,

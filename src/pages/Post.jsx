@@ -145,31 +145,32 @@ export default function Post() {
    if (error || imageError || savedPostError) {
       return <ErrorMessage error={error || imageError || savedPostError} />;
    }
-   return post ? (
-      <ParentContainer>
-         <Container>
-            <div className="mb-7 p-6 border rounded-2xl  shadow-lg space-y-3 bg-background-lightWhite dark:bg-background-darkBlack dark:text-text-dark">
-               <div>
-                  <UserHeader
-                     src={post.user.profilePicture}
-                     name={post.user.name}
-                     $id={post.user.$id}
-                     date={post.$createdAt}
-                  />
-                  <h1 className="text-xl font-semibold">{post.title}</h1>
-                  <div className="text-base text-gray-600 font-medium">
-                     {parse(post.content)}
-                  </div>
-               </div>
-               <div>
-                  <div className="relative flex justify-end"></div>
-                  <div className="flex justify-center">
-                     <img
-                        src={image}
-                        alt={post.title}
-                        className="rounded-2xl h-96 object-contain"
-                     />
-                  </div>
+
+   function MainContent() {
+      return (
+         <div className="flex items-start justify-center">
+            <img
+               src={image}
+               alt={post.title}
+               className="rounded-2xl object-contain sm:max-h-[40rem] sm:max-w-[35rem] lg:mr-auto"
+            />
+         </div>
+      );
+   }
+
+   function TextContents() {
+      return (
+         <div className="lg:w-2/3 space-y-1 flex flex-col justify-between">
+            <div className="space-y-2">
+               <UserHeader
+                  src={post.user.profilePicture}
+                  name={post.user.name}
+                  $id={post.user.$id}
+                  date={post.$createdAt}
+               />
+               <h1 className="text-xl font-semibold">{post.title}</h1>
+               <div className="text-base text-gray-600 font-medium">
+                  {parse(post.content)}
                </div>
                <div className="flex  justify-between items-center">
                   {authStatus &&
@@ -179,7 +180,7 @@ export default function Post() {
                         <Button
                            text={!isSaved ? "Save" : "Saved"}
                            type="button"
-                           className="rounded-lg h-12"
+                           className="rounded-lg"
                            bgNumber={!isSaved ? 0 : 1}
                            onClick={() => {
                               setSaveLoader(true);
@@ -204,6 +205,15 @@ export default function Post() {
                </div>
             </div>
             <CommentSection post={post} isAuthor={isAuthor} userData={userData} />
+         </div>
+      );
+   }
+
+   return post ? (
+      <ParentContainer>
+         <Container className="max-w-2xl lg:max-w-5xl p-5 rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack flex lg:flex-row flex-col space-x-4 space-y-4 ">
+            <MainContent />
+            <TextContents />
          </Container>
       </ParentContainer>
    ) : null;

@@ -15,20 +15,20 @@ function MySavedPosts() {
 
    const queryFn = async ({ pageParam = 0 }) =>
       await appwriteService.getSavedPosts(
-         [Query.equal("userId", userData.$id)],
+         [Query.equal("userId", userData?.$id)],
          pageParam,
          5
       );
 
-   const { allPosts, error, isFetching } = useInfinitePosts(
-      ["savedPosts", userData.$id],
-      queryFn
-   );
+   const { allPosts, error, isFetching, isFetchingNextPage, hasNextPage } =
+      useInfinitePosts(["savedPosts", userData?.$id], queryFn, {
+         enabled: !!userData?.$id,
+      });
 
    return (
       <ParentContainer>
          <Container className="max-w-7xl">
-            {!isFetching && (
+            {allPosts?.length > 0 ? (
                <>
                   <h1 className="text-center">
                      {allPosts?.length === 0 && <p>No posts available.</p>}
@@ -45,9 +45,14 @@ function MySavedPosts() {
                      ))}
                   </div>
                </>
+            ) : (
+               isFetching && <Loader />
             )}
-            <ErrorMessage error={error} />
-            {isFetching && <Loader />}
+            {error && <ErrorMessage error={error} />}
+            {isFetchingNextPage && <Loader />}
+            {!hasNextPage && allPosts?.length >= 0 && (
+               <p className="text-center mt-10">No more posts.</p>
+            )}
          </Container>
       </ParentContainer>
    );

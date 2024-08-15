@@ -1,6 +1,5 @@
 import {
    Container,
-   UpdateProfilePic,
    ErrorMessage,
    ParentContainer,
    LoadCards,
@@ -35,11 +34,10 @@ function Profile() {
    const queryFn = async ({ pageParam = 0 }) =>
       await appwriteService.getPosts([Query.equal("userId", id)], pageParam, 5);
 
-   const { allPosts, error, isFetching } = useInfinitePosts(
-      ["myPosts", id],
-      queryFn,
-      !!id
-   );
+   const { allPosts, error, isFetching, isFetchingNextPage, hasNextPage } =
+      useInfinitePosts(["myPosts", id], queryFn, { enabled: !!id });
+
+   const isAuthor = userDataFromStore?.$id === user?.$id;
 
    return (
       <ParentContainer>
@@ -50,18 +48,18 @@ function Profile() {
                {userDataLoading && !userDataError ? (
                   <Loader />
                ) : (
-                  <div className="flex lg:flex-row flex-col space-x-7">
+                  <div className="flex sm:flex-row flex-col space-x-7">
                      <img
-                        src={user.profilePicture || "/blank-dp.png"}
+                        src={user?.profilePicture || "/blank-dp.png"}
                         alt="Profile Picture"
                         className="w-56 h-56 rounded-full"
                      />
                      <div className="max-w-3xl xl:max-w-full mt-3 space-y-3">
-                        <h1 className="text-3xl font-semibold">{user.name}</h1>
-                        <p className="text-lg font-medium text-gray-700 dark:bg-gray-400">
-                           {user.bio}
+                        <h1 className="text-3xl font-semibold">{user?.name}</h1>
+                        <p className="text-lg font-medium text-gray-700 dark:text-gray-400">
+                           {user?.bio}
                         </p>
-                        {userDataFromStore?.$id === user.$id && (
+                        {isAuthor && (
                            <Button
                               text={"Edit profile"}
                               bgNumber={1}
@@ -73,10 +71,21 @@ function Profile() {
                   </div>
                )}
             </div>
-            <h1 className="text-2xl font-bold text-center">My posts</h1>
-            {!isFetching && <LoadCards posts={allPosts} />}
-            <ErrorMessage error={error} />
-            {isFetching && <Loader />}
+            <h1 className="text-2xl font-bold text-center">
+               {isAuthor ? "My" : (user === undefined ? "User" : user?.name) + "'s"} posts
+            </h1>
+            {allPosts?.length >= 0 ? (
+               <LoadCards posts={allPosts} />
+            ) : (
+               isFetching && <Loader />
+            )}
+            {error && <ErrorMessage error={error} />}
+            {isFetchingNextPage && <Loader />}
+            {!hasNextPage && allPosts?.length > 0 && (
+               <p className="text-center mt-10">
+                  No more posts. {isAuthor && "Add more posts!"}
+               </p>
+            )}
          </Container>
       </ParentContainer>
    );

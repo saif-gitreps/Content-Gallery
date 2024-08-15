@@ -1,22 +1,20 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import appwriteService from "../appwrite/config-appwrite";
+import { useQuery } from "@tanstack/react-query";
+import { LoaderMini } from "./Loader";
 
 function PostCard({ $id, title, featuredImage, className = "" }) {
-   const [imageSrc, setImageSrc] = useState("");
-
-   useEffect(() => {
-      const fetchImageSrc = async () => {
-         try {
-            const imageUrl = await appwriteService.getFilePrev(featuredImage);
-            setImageSrc(imageUrl);
-         } catch (error) {
-            console.error("Error fetching image preview:", error);
-         }
-      };
-
-      fetchImageSrc();
-   }, [featuredImage]);
+   const {
+      data: imageSrc,
+      error,
+      isLoading,
+   } = useQuery({
+      queryKey: ["postImage", featuredImage],
+      queryFn: async () => {
+         return await appwriteService.getFilePrev(featuredImage);
+      },
+      enabled: !!featuredImage,
+   });
 
    return (
       <Link to={`/post/${$id}`}>
@@ -26,6 +24,10 @@ function PostCard({ $id, title, featuredImage, className = "" }) {
             <div className="w-full flex justify-center items-centers mb-2">
                {imageSrc && <img src={imageSrc} alt={title} className="rounded-xl" />}
             </div>
+            {isLoading && <LoaderMini />}
+            {error && (
+               <p className="text-red-500 text-xs text-center">Error loading image</p>
+            )}
             <h2 className="text-xs sm:text-sm lg:text-base font-bold text-center">
                {title}
             </h2>

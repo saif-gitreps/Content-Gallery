@@ -14,7 +14,6 @@ import {
    Post,
    AddPost,
    Signup,
-   MyPosts,
    Profile,
    EditPost,
    SearchResult,
@@ -70,11 +69,7 @@ const router = createBrowserRouter([
          },
          {
             path: "/profile/:id",
-            element: (
-               <AuthLayout authentication>
-                  <Profile />
-               </AuthLayout>
-            ),
+            element: <Profile />,
          },
          {
             path: "/edit-profile",

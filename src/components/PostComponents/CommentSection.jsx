@@ -1,30 +1,29 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Comment, Loader, Button, ErrorMessage, LoaderMini } from "../../components";
-import appwriteCommentsService from "../../appwrite/config-comments";
 import { useSelector } from "react-redux";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { Comment, Button, ErrorMessage, LoaderMini } from "../../components";
+import appwriteCommentsService from "../../appwrite/config-comments";
 
 function CommentSection({ post, userData, isAuthor }) {
    const [miniLoading, setMiniLoading] = useState(false);
    const authStatus = useSelector((state) => state.auth.status);
    const [error, setError] = useState("");
    const queryClient = useQueryClient();
-
    const { register, handleSubmit, reset } = useForm({
       defaultValues: { content: "" },
    });
 
    const {
-      data: postComments,
+      data: postComments = [],
       isLoading,
       isError,
    } = useQuery({
       queryKey: ["comments", post.$id],
       queryFn: async () => {
-         const comments = await appwriteCommentsService.getComments(post.$id);
-         return comments?.documents;
+         const result = await appwriteCommentsService.getComments(post.$id);
+         return result.documents;
       },
       enabled: !!post?.$id,
       refetchOnWindowFocus: false,
@@ -36,13 +35,16 @@ function CommentSection({ post, userData, isAuthor }) {
          await appwriteCommentsService.addComment(data.content, post?.$id, userData.$id),
       onMutate: async (data) => {
          const optimisticComment = {
-            $id: Date.now(),
+            $id: Date.now().toString(),
             content: data.content,
             articles: post.$id,
-            user: userData.$id,
+            user: {
+               name: userData.name,
+               profilePicture: userData.profilePicture,
+            },
          };
          await queryClient.setQueryData(["comments", post.$id], (oldComments) => [
-            ...oldComments,
+            ...(oldComments || []),
             optimisticComment,
          ]);
          return { optimisticComment };
@@ -52,14 +54,30 @@ function CommentSection({ post, userData, isAuthor }) {
          setMiniLoading(false);
          reset({ content: "" });
       },
-      onSuccess: async () => {
+      onSuccess: () => {
          setMiniLoading(false);
          reset({ content: "" });
          setError("");
       },
-      onSettled: () => {
-         return queryClient.invalidateQueries(["comments", post.$id]);
+      onSettled: () => queryClient.invalidateQueries(["comments", post.$id]),
+   });
+
+   const deleteCommentMutation = useMutation({
+      mutationFn: (commentId) => appwriteCommentsService.deleteComment(commentId),
+      onMutate: async (commentId) => {
+         await queryClient.setQueryData(["comments", post.$id], (oldComments) =>
+            oldComments.filter((comment) => comment.$id !== commentId)
+         );
       },
+      onError: () => {
+         setError("Error deleting comment. Please try again.");
+         setMiniLoading(false);
+      },
+      onSuccess: () => {
+         setMiniLoading(false);
+         setError("");
+      },
+      onSettled: () => queryClient.invalidateQueries(["comments", post.$id]),
    });
 
    const addComment = async (data) => {
@@ -72,27 +90,6 @@ function CommentSection({ post, userData, isAuthor }) {
       }
    };
 
-   const deleteCommentMutation = useMutation({
-      mutationFn: async (commentId) =>
-         await appwriteCommentsService.deleteComment(commentId),
-      onMutate: async (commentId) => {
-         await queryClient.setQueryData(["comments", post.$id], (oldComments) =>
-            oldComments.filter((comment) => comment.$id !== commentId)
-         );
-      },
-      onError: () => {
-         setError("Error deleting comment. Please try again.");
-         setMiniLoading(false);
-      },
-      onSuccess: async () => {
-         setMiniLoading(false);
-         setError("");
-      },
-      onSettled: () => {
-         return queryClient.invalidateQueries(["comments", post.$id]);
-      },
-   });
-
    const deleteComment = async (commentId) => {
       setError("");
       setMiniLoading(true);
@@ -104,12 +101,16 @@ function CommentSection({ post, userData, isAuthor }) {
    };
 
    return (
-      <div className="p-4 relative border rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack  shadow-lg">
+      <div className="p-4 relative rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack shadow-lg">
          <h1 className="text-xl font-bold text-center">Comments</h1>
          <ErrorMessage error={error || isError} />
 
-         <ul>
-            {isLoading && <Loader />}
+         <ul
+            className={`space-y-1 ${
+               postComments.length > 4 ? "max-h-56 overflow-y-auto" : ""
+            }`}
+         >
+            {isLoading && <LoaderMini />}
             {!isError && postComments?.length === 0 ? (
                <li className="text-center">No comments yet</li>
             ) : (
@@ -120,19 +121,19 @@ function CommentSection({ post, userData, isAuthor }) {
                      isAuthor={isAuthor}
                      onDelete={deleteComment}
                      userData={userData}
-                     optimisticComment={addCommentMutation?.context?.optimisticComment}
+                     optimisticComment={addCommentMutation.context?.optimisticComment}
                   />
                ))
             )}
          </ul>
 
-         {authStatus && (
+         {authStatus ? (
             <form onSubmit={handleSubmit(addComment)}>
                <textarea
                   {...register("content", { required: true })}
-                  className="w-full h-24 p-4 mt-2 border rounded-xl dark:bg-background-darkGray dark:text-text-dark dark:border-none"
+                  className="w-full h-16 p-2 border rounded-xl dark:bg-background-darkGray dark:text-text-dark"
                   placeholder="Add a comment"
-               ></textarea>
+               />
                {miniLoading ? (
                   <div className="flex justify-center items-center mt-3">
                      <LoaderMini />
@@ -146,17 +147,16 @@ function CommentSection({ post, userData, isAuthor }) {
                   />
                )}
             </form>
-         )}
-         {!authStatus && (
-            <p className="text-center mt-4 text-base">
+         ) : (
+            <div className="mt-4 text-base flex justify-center items-center">
                <Link
                   to="/login"
                   className="font-semibold transition-all duration-200 hover:underline text-blue-700"
                >
                   <Button text="Login" type="button" bgNumber={1} />
                </Link>
-               to add a comment
-            </p>
+               <span className="ml-1">to comment.</span>
+            </div>
          )}
       </div>
    );

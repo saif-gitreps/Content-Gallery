@@ -13,12 +13,21 @@ function UpdateEmail() {
    const [loading, setLoading] = useState(false);
    const { setError } = useContext(ErrorContext);
 
-   const { register, handleSubmit, reset } = useForm({
+   const {
+      register,
+      handleSubmit,
+      reset,
+      formState: { errors: emailErrors },
+   } = useForm({
       defaultValues: {
          email: userData?.email || "",
          password: "",
       },
    });
+
+   if (emailErrors.email) {
+      setError(emailErrors.email.message);
+   }
 
    const emailVerificationMessage = useRef(null);
 

@@ -29,13 +29,10 @@ function SearchResult() {
          5
       );
 
-   const { allPosts, error, isFetching, refetch, isRefetching } = useInfinitePosts(
-      ["searchPosts", query],
-      queryFn,
-      {
+   const { allPosts, error, isFetching, isFetchingNextPage, hasNextPage, refetch } =
+      useInfinitePosts(["searchPosts", query], queryFn, {
          enabled: !!query,
-      }
-   );
+      });
 
    return (
       <ParentContainer>
@@ -43,9 +40,16 @@ function SearchResult() {
             <h1 className="text-center font-bold text-lg mb-4">
                Seach Results for "{query}"
             </h1>
-            {!isFetching && <LoadCards posts={allPosts} />}
-            <ErrorMessage error={error} />
-            {(isFetching || isRefetching) && <Loader />}
+            {allPosts?.length > 0 ? (
+               <LoadCards posts={allPosts} />
+            ) : (
+               isFetching && <Loader />
+            )}
+            {error && <ErrorMessage error={error} />}
+            {isFetchingNextPage && <Loader />}
+            {!hasNextPage && allPosts?.length >= 0 && (
+               <p className="text-center mt-10">No more posts.</p>
+            )}
          </Container>
       </ParentContainer>
    );

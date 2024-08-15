@@ -31,12 +31,6 @@ export default function getNavItems(authStatus, userData) {
          forDropDownMenu: true,
       },
       {
-         name: "My Posts",
-         slug: "/my-posts",
-         active: authStatus,
-         forDropDownMenu: true,
-      },
-      {
          name: "Add Post",
          slug: "/add-post",
          active: authStatus,

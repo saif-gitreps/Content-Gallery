@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import appwriteUserService from "../appwrite/config-user";
@@ -6,10 +6,9 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
 import { Button, Input, LoaderMini, Container, ErrorMessage } from "./index";
+import { useMutation } from "@tanstack/react-query";
 
 function Login() {
-   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState("");
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const {
@@ -18,30 +17,34 @@ function Login() {
       formState: { errors },
    } = useForm();
 
-   const login = async (data) => {
-      setError("");
-      setLoading(true);
-      try {
-         const session = await authService.login(data);
-         if (!session)
-            throw Error("Error logging in. Please check your email and password.");
+   const loginMutation = useMutation({
+      mutationFn: async (data) => {
+         const loginResult = await authService.login(data);
+         if (!loginResult) throw new Error("Login failed");
 
          const userData = await authService.getCurrentUser();
-         if (!userData) throw Error("Error getting user data. Please try again.");
+         if (!userData) throw new Error("Failed to get user data");
 
          const profileData = await appwriteUserService.getUserProfile(userData.$id);
-         if (!profileData) throw Error("Error getting user profile. Please try again.");
+         if (!profileData) throw new Error("Failed to get user profile");
 
-         userData.profilePicture = profileData.profilePicture;
-         userData.bio = profileData.bio;
-
+         return {
+            ...userData,
+            profilePicture: profileData.profilePicture,
+            bio: profileData.bio,
+         };
+      },
+      onError: (error) => {
+         console.error("Login error:", error);
+      },
+      onSuccess: (userData) => {
          dispatch(authLogin(userData));
          navigate("/");
-      } catch (error) {
-         setError(error);
-      } finally {
-         setLoading(false);
-      }
+      },
+   });
+
+   const onSubmit = (data) => {
+      loginMutation.mutate(data);
    };
 
    return (
@@ -49,29 +52,28 @@ function Login() {
          <h2 className="text-center text-lg font-bold leading-tight">
             Login to your account
          </h2>
-         <p className="text-base text-center font-medium ">
-            Don&apos;t have any account?&nbsp;
+         <p className="text-base text-center font-medium">
+            Don't have an account?&nbsp;
             <Link
                to="/signup"
-               className="font-medium transition-all duration-300 hover:underline  text-blue-600 hover:text-blue-800"
+               className="font-medium hover:underline text-blue-600 hover:text-blue-800"
             >
                Sign Up
             </Link>
          </p>
 
-         <form onSubmit={handleSubmit(login)} className="space-y-4">
+         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:w-96 w-72">
             <div>
                <Input
-                  className="text-sm md:text-base font-normal"
+                  className="text-base font-normal"
                   label="Email: "
                   placeholder="Enter your email"
                   type="email"
                   {...register("email", {
                      required: "Email is required",
-                     validate: {
-                        matchPatern: (value) =>
-                           /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                           "Email address must be a valid address",
+                     pattern: {
+                        value: /^\S+@\S+\.\S+$/,
+                        message: "Invalid email address",
                      },
                   })}
                />
@@ -80,37 +82,49 @@ function Login() {
 
             <div>
                <Input
-                  className="text-sm md:text-base font-normal"
+                  className="text-base font-normal"
                   label="Password: "
                   type="password"
                   placeholder="Enter your password"
                   {...register("password", {
                      required: "Password is required",
+                     minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters",
+                     },
                   })}
                />
                <ErrorMessage error={errors.password?.message} />
             </div>
 
-            {loading ? (
-               <div className="flex justify-center items-center">
+            {loginMutation.isPending ? (
+               <div className="flex justify-center">
                   <LoaderMini />
                </div>
             ) : (
-               <Button type="submit" className="w-full " bgNumber={1} text="Login">
-                  Sign in
-               </Button>
+               <Button
+                  type="submit"
+                  className="w-full"
+                  bgNumber={1}
+                  disabled={loginMutation.isPending}
+                  text="Login"
+               />
             )}
          </form>
-         <p className="text-sm font-medium text-center">
+
+         <p className="text-base font-medium text-center">
             Forgot password?&nbsp;
             <Link
                to="/password-recovery-step-one"
-               className="font-semibold transition-all duration-300 hover:underline text-blue-700 hover:text-blue-900"
+               className="font-semibold  hover:underline text-blue-700 hover:text-blue-900"
             >
                Click here to recover.
             </Link>
          </p>
-         <ErrorMessage error={error} />
+
+         {loginMutation.isError && (
+            <ErrorMessage error="Login failed. Please check your credentials and try again." />
+         )}
       </Container>
    );
 }

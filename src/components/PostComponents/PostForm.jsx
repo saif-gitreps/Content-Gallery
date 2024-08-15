@@ -8,20 +8,24 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 
 function PostForm({ post, pageTitle = "Create" }) {
    const [imageSrc, setImageSrc] = useState(null);
+   const [charCount, setCharCount] = useState(0);
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
-   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState("");
 
-   const { register, handleSubmit, reset } = useForm({
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm({
       defaultValues: {
          title: post?.title || "",
          content: post?.content || "",
          status: post?.status || "active",
+         featuredImage: post?.featuredImage || null,
       },
    });
 
-   const { mutate } = useMutation({
+   const updatePostMutation = useMutation({
       mutationFn: async (data) => {
          if (data.image[0] && data.image[0].size > 1024 * 1024) {
             throw new Error("Image size should be less than 1MB.");
@@ -36,48 +40,28 @@ function PostForm({ post, pageTitle = "Create" }) {
          }
 
          if (post) {
-            const dbPost = await appwriteService.updatePost(post.$id, {
+            return await appwriteService.updatePost(post.$id, {
                ...data,
                featuredImage: file ? file.$id : post.featuredImage,
             });
-
-            if (!dbPost) {
-               throw new Error("Error updating post.");
-            }
-
-            navigate(`/post/${dbPost.$id}`);
          } else {
             if (!file) {
                throw new Error("No image uploaded.");
             }
-            const dbPost = await appwriteService.createPost({
+            return await appwriteService.createPost({
                ...data,
                featuredImage: file.$id,
                userId: userData.$id,
             });
-
-            if (!dbPost) {
-               throw new Error("Error creating post.");
-            }
-
-            navigate(`/post/${dbPost.$id}`);
          }
-      },
-      onError: (error) => {
-         setError(error);
-         setLoading(false);
       },
       onSuccess: (dbPost) => {
-         if (dbPost) {
-            navigate(`/post/${dbPost.$id}`);
-         }
+         if (dbPost) navigate(`/post/${dbPost.$id}`);
       },
    });
 
    const submit = (data) => {
-      setError("");
-      setLoading(true);
-      mutate(data);
+      updatePostMutation.mutate(data);
    };
 
    const {
@@ -134,14 +118,15 @@ function PostForm({ post, pageTitle = "Create" }) {
             <Input
                label="Title:"
                className="text-lg font-normal"
-               {...register("title", { required: true })}
+               {...register("title", { required: true, maxLength: 50 })}
             />
             <Input
-               label="Content:"
+               label={`Content: (${charCount}/250)`}
                className="text-lg font-normal"
-               type="text"
-               {...register("content", { required: true })}
-            />
+               type="text-area"
+               {...register("content", { required: true, maxLength: 250 })}
+               onChange={(e) => setCharCount(e.target.value.length)}
+            ></Input>
             <Input
                label="Featured Image:"
                type="file"
@@ -166,7 +151,7 @@ function PostForm({ post, pageTitle = "Create" }) {
                {...register("status", { required: true })}
             />
 
-            {loading ? (
+            {updatePostMutation.isPending ? (
                <div className="flex items-center justify-center">
                   <LoaderMini />
                </div>
@@ -183,7 +168,16 @@ function PostForm({ post, pageTitle = "Create" }) {
                   }}
                />
             )}
-            <ErrorMessage error={error || imageError} />
+            <ErrorMessage
+               error={
+                  imageError ||
+                  updatePostMutation.isError ||
+                  errors.title ||
+                  errors.content ||
+                  errors.featuredImage ||
+                  errors.status
+               }
+            />
          </form>
       </div>
    );

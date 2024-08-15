@@ -13,12 +13,21 @@ function UpdateBio() {
    const [loading, setLoading] = useState(false);
    const dispatch = useDispatch();
    const { setError } = useContext(ErrorContext);
+   const [charCount, setCharCount] = useState(0);
 
-   const { register: registerBio, handleSubmit: handleSubmitBio } = useForm({
+   const {
+      register: registerBio,
+      handleSubmit: handleSubmitBio,
+      formState: { errors: bioErrors },
+   } = useForm({
       defaultValues: {
          bio: userData?.bio || "",
       },
    });
+
+   if (bioErrors.bio) {
+      setError(bioErrors.bio.message);
+   }
 
    const updateBioMutation = useMutation({
       mutationFn: async (bio) =>
@@ -61,11 +70,19 @@ function UpdateBio() {
                   }}
                />
             )}
+            {editBio && <h2 className="text-base font-normal">{charCount}/248</h2>}
          </div>
          <Input
             className="text-base font-normal sm:w-96 w-64"
             readOnly={!editBio}
-            {...registerBio("bio", { required: true, maxLength: 248 })}
+            {...registerBio("bio", {
+               required: true,
+               maxLength: {
+                  value: 248,
+                  message: "Please keep it under 150 Chars.",
+               },
+            })}
+            onChange={(e) => setCharCount(e.target.value.length)}
          />
          {editBio &&
             (loading ? (
