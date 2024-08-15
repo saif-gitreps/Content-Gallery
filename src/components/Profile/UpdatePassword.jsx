@@ -1,9 +1,7 @@
 import { useState, useContext } from "react";
 import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
-import { ErrorContext } from "../../context/ErrorContext";
+import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 
 function UpdatePassword() {
    const [editPassword, setEditPassword] = useState(false);
@@ -17,27 +15,25 @@ function UpdatePassword() {
       },
    });
 
-   const updatePasswordMutation = useMutation({
-      mutationFn: async (data) =>
-         await authService.updatePassword(data.newPassword, data.oldPassword),
-      onError: () => {
-         setError("Failed to update password. Try again later.");
-         setLoading(false);
-      },
-      onSuccess: () => {
-         setEditPassword(false);
-         setError("");
-         setLoading(false);
-         reset({ oldPassword: "", newPassword: "" });
-      },
-   });
-
-   const updatePassword = async (data) => {
+   const onPasswordUpdate = async (data) => {
       setError("");
       setLoading(true);
-      updatePasswordMutation.mutate(data);
-   };
+      try {
+         const result = await authService.updatePassword(
+            data.OldPassword,
+            data.newPassword
+         );
 
+         if (!result) {
+            throw new Error();
+         }
+         setEditPassword(false);
+      } catch (error) {
+         setError("Password update error.");
+      } finally {
+         setLoading(false);
+      }
+   };
    return (
       <form
          onSubmit={handleSubmit(updatePassword)}
