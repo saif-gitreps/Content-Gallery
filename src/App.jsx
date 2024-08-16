@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Header, Footer, Loader } from "./components/index";
+import { Header, Footer, Loader, ParentContainer } from "./components/index";
 import appwriteUserService from "./appwrite/config-user";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "./store/authSlice";
@@ -64,10 +64,9 @@ function App() {
          ) : (
             <div className="w-full">
                <Header />
-               <main className="min-h-screen ">
+               <ParentContainer>
                   <Outlet />
-               </main>
-               <Footer />
+               </ParentContainer>
             </div>
          )}
       </div>

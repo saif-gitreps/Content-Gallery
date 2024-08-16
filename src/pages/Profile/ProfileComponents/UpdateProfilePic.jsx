@@ -1,12 +1,14 @@
 import { useSelector, useDispatch } from "react-redux";
-import { update } from "../../store/authSlice";
 import { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
-import appwriteService from "../../appwrite/config-appwrite";
-import appwriteUserService from "../../appwrite/config-user";
+import appwriteService from "../../../appwrite/config-appwrite";
 import { useMutation } from "@tanstack/react-query";
-import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
-import { ErrorContext } from "../../context/ErrorContext";
+import appwriteUserService from "../../../appwrite/config-user";
+import { update } from "../../../store/authSlice";
+import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
+import Pencil from "./Pencil";
+
+import { ErrorContext } from "../../../context/ErrorContext";
 
 function UpdateProfilePic() {
    const [editProfilePic, setEditProfilePic] = useState(false);
@@ -15,7 +17,7 @@ function UpdateProfilePic() {
    const { setError } = useContext(ErrorContext);
 
    const [profilePicture, setProfilePicture] = useState(
-      userData.profilePicture || "/blank-dp.png"
+      userData?.profilePicture || "/blank-dp.png"
    );
    const dispatch = useDispatch();
 
@@ -35,10 +37,10 @@ function UpdateProfilePic() {
          }
 
          await appwriteUserService.updateProfileDetail(
-            userData.$id,
-            userData.name,
-            filePreview.href,
-            userData.bio
+            userData?.$id,
+            userData?.name,
+            filePreview?.href,
+            userData?.bio
          );
 
          return filePreview;
@@ -73,7 +75,7 @@ function UpdateProfilePic() {
    };
 
    const onCancel = () => {
-      setProfilePicture(userData.profilePicture);
+      setProfilePicture(userData?.profilePicture);
       setEditProfilePic(false);
       setError("");
    };

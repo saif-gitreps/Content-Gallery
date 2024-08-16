@@ -1,12 +1,13 @@
 import { useSelector, useDispatch } from "react-redux";
-import { update } from "../../store/authSlice";
-import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 import { useState, useContext } from "react";
-import authService from "../../appwrite/auth";
-import appwriteUserService from "../../appwrite/config-user";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorContext } from "../../context/ErrorContext";
+import appwriteUserService from "../../../appwrite/config-user";
+import { update } from "../../../store/authSlice";
+import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
+import authService from "../../../appwrite/auth";
+import { ErrorContext } from "../../../context/ErrorContext";
+import Pencil from "./Pencil";
 
 function UpdateName() {
    const [editName, setEditName] = useState(false);
@@ -24,10 +25,10 @@ function UpdateName() {
    const updateNameMutation = useMutation({
       mutationFn: async (name) => {
          await appwriteUserService.updateProfileDetail(
-            userData.$id,
+            userData?.$id,
             name,
-            userData.profilePicture,
-            userData.bio
+            userData?.profilePicture,
+            userData?.bio
          );
          return await authService.updateName(name);
       },

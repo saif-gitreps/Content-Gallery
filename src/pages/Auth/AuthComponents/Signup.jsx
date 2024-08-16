@@ -1,12 +1,11 @@
-import React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import authService from "../appwrite/auth";
-import appwriteUserService from "../appwrite/config-user";
-import { login } from "../store/authSlice";
-import { Button, Input, LoaderMini, Container, ErrorMessage } from "./index";
+import authService from "../../../appwrite/auth";
+import appwriteUserService from "../../../appwrite/config-user";
+import { login } from "../../../store/authSlice";
+import { Button, Input, LoaderMini, Container, ErrorMessage } from "../../../components";
 
 function Signup() {
    const navigate = useNavigate();

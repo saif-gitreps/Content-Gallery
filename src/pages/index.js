@@ -1,14 +1,18 @@
 import _404 from "./_404";
 import Home from "./Home";
-import Post from "./Post";
-import Login from "./Login";
-import Signup from "./Signup";
-import Profile from "./Profile";
-import AddPost from "./AddPost";
-import EditPost from "./EditPost";
-import EditProfile from "./EditProfile";
 import SearchResult from "./SearchResult";
 import MySavedPosts from "./MySavedPosts";
+
+import Post from "./Post/Post";
+import AddPost from "./Post/AddPost";
+import EditPost from "./Post/EditPost";
+
+import Login from "./Auth/Login";
+import Signup from "./Auth/Signup";
+
+import Profile from "./Profile/Profile";
+import EditProfile from "./Profile/EditProfile";
+
 import EmailConfirmation from "./EmailConfirmation";
 import PasswordRecoveryStepOne from "./PasswordRecoveryStepOne";
 import PasswordRecoveryStepTwo from "./PasswordRecoveryStepTwo";

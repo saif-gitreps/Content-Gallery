@@ -1,11 +1,12 @@
 import { useSelector } from "react-redux";
 import { useState, useRef, useContext } from "react";
 import { useForm } from "react-hook-form";
-import authService from "../../appwrite/auth";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorContext } from "../../context/ErrorContext";
-import { Input, SaveAndCancelDiv, Pencil, LoaderMini, ErrorMessage } from "../index";
+import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
+import authService from "../../../appwrite/auth";
+import { ErrorContext } from "../../../context/ErrorContext";
+import Pencil from "./Pencil";
 
 function UpdatePhone() {
    const [editPhone, setEditPhone] = useState(false);
@@ -60,7 +61,7 @@ function UpdatePhone() {
 
    const confirmPhoneVerificationMutation = useMutation({
       mutationFn: async (code) =>
-         await authService.confirmPhoneVerification(userData.$id, code),
+         await authService.confirmPhoneVerification(userData?.$id, code),
       onError: () => {
          phoneVerificationDiv.current.classList.remove("hidden");
          phoneVerificationDiv.current.querySelector("h2").textContent =

@@ -1,11 +1,12 @@
 import { useSelector, useDispatch } from "react-redux";
-import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
 import { useState, useContext } from "react";
-import appwriteUserService from "../../appwrite/config-user";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorContext } from "../../context/ErrorContext";
-import { update } from "../../store/authSlice";
+import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
+import { ErrorContext } from "../../../context/ErrorContext";
+import appwriteUserService from "../../../appwrite/config-user";
+import { update } from "../../../store/authSlice";
+import Pencil from "./Pencil";
 
 function UpdateBio() {
    const [editBio, setEditBio] = useState(false);
@@ -32,9 +33,9 @@ function UpdateBio() {
    const updateBioMutation = useMutation({
       mutationFn: async (bio) =>
          await appwriteUserService.updateProfileDetail(
-            userData.$id,
-            userData.name,
-            userData.profilePicture,
+            userData?.$id,
+            userData?.name,
+            userData?.profilePicture,
             bio
          ),
       onError: () => {

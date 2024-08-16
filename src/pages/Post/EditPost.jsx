@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { ParentContainer, PostForm } from "../components";
-import appwriteService from "../appwrite/config-appwrite";
+import PostForm from "./PostComponents/PostForm";
+import appwriteService from "../../appwrite/config-appwrite";
 import { useParams, useNavigate } from "react-router-dom";
 
 function EditPost() {
@@ -20,11 +20,7 @@ function EditPost() {
       }
    }, [id, navigate]);
 
-   return post ? (
-      <ParentContainer>
-         <PostForm post={post} pageTitle="Update" />
-      </ParentContainer>
-   ) : null;
+   return post ? <PostForm post={post} pageTitle="Update" /> : null;
 }
 
 export default EditPost;

@@ -1,16 +1,9 @@
-import {
-   Container,
-   ErrorMessage,
-   ParentContainer,
-   LoadCards,
-   Loader,
-   Button,
-} from "../components";
+import { ErrorMessage, Container, LoadCards, Loader, Button } from "../../components";
 import { Query } from "appwrite";
-import appwriteService from "../appwrite/config-appwrite";
-import appwriteUserService from "../appwrite/config-user";
+import appwriteService from "../../appwrite/config-appwrite";
+import appwriteUserService from "../../appwrite/config-user";
 import { useSelector } from "react-redux";
-import useInfinitePosts from "../hooks/useInfinityPost";
+import useInfinitePosts from "../../hooks/useInfinityPost";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -96,12 +89,10 @@ function Profile() {
    };
 
    return (
-      <ParentContainer>
-         <Container className="space-y-5 max-w-7xl">
-            <ProfileHeader />
-            <UserPosts />
-         </Container>
-      </ParentContainer>
+      <Container className="space-y-5 max-w-7xl">
+         <ProfileHeader />
+         <UserPosts />
+      </Container>
    );
 }
 

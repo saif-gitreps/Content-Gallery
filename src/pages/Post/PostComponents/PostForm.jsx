@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Input, Select, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "../index";
-import appwriteService from "../../appwrite/config-appwrite";
+import {
+   Input,
+   Select,
+   SaveAndCancelDiv,
+   LoaderMini,
+   ErrorMessage,
+} from "../../../components";
+import appwriteService from "../../../appwrite/config-appwrite";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 function PostForm({ post, pageTitle = "Create" }) {
@@ -120,6 +126,9 @@ function PostForm({ post, pageTitle = "Create" }) {
                className="text-lg font-normal"
                {...register("title", { required: true, maxLength: 50 })}
             />
+            {errors.title && (
+               <ErrorMessage error="Title is required and should be less than 50 characters." />
+            )}
             <Input
                label={`Content: (${charCount}/250)`}
                className="text-lg font-normal"
@@ -127,6 +136,9 @@ function PostForm({ post, pageTitle = "Create" }) {
                {...register("content", { required: true, maxLength: 250 })}
                onChange={(e) => setCharCount(e.target.value.length)}
             ></Input>
+            {errors.content && (
+               <ErrorMessage error="Content is required and should be less than 250 characters." />
+            )}
             <Input
                label="Featured Image:"
                type="file"
@@ -134,6 +146,7 @@ function PostForm({ post, pageTitle = "Create" }) {
                {...register("image")}
                onChange={imagePreview}
             />
+            {errors.image && <ErrorMessage error="Image is required." />}
             {isImageLoading && (
                <div className="flex items-center justify-center">
                   <LoaderMini />
@@ -168,16 +181,9 @@ function PostForm({ post, pageTitle = "Create" }) {
                   }}
                />
             )}
-            <ErrorMessage
-               error={
-                  imageError ||
-                  updatePostMutation.isError ||
-                  errors.title ||
-                  errors.content ||
-                  errors.featuredImage ||
-                  errors.status
-               }
-            />
+            {updatePostMutation.isError && (
+               <ErrorMessage error={updatePostMutation.error.message} />
+            )}
          </form>
       </div>
    );

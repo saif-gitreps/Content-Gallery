@@ -1,6 +1,6 @@
 import authService from "../appwrite/auth";
 import { useRef, useState } from "react";
-import { Button, Input, Container, LoaderMini, ParentContainer } from "../components";
+import { Button, Input, Container, LoaderMini } from "../components";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
@@ -37,59 +37,57 @@ function PasswordRecoveryStepTwo() {
       }
    };
    return (
-      <ParentContainer>
-         <Container className="flex flex-col items-center justify-center bg-white dark:bg-background-darkBlack dark:text-text-dark p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
-            <h2 className="text-center text-base font-bold leading-tight">
-               Enter your new password:
-            </h2>
+      <Container className="flex flex-col items-center justify-center bg-white dark:bg-background-darkBlack dark:text-text-dark p-4 max-w-lg m-auto rounded-xl shadow-md space-y-3">
+         <h2 className="text-center text-base font-bold leading-tight">
+            Enter your new password:
+         </h2>
 
-            <form onSubmit={handleSubmit(confirmRecovery)} className="space-y-4">
-               <Input
-                  className="text-sm md:text-base font-normal"
-                  type="password"
-                  label="Password:"
-                  {...register("password", {
-                     required: true,
-                  })}
+         <form onSubmit={handleSubmit(confirmRecovery)} className="space-y-4">
+            <Input
+               className="text-sm md:text-base font-normal"
+               type="password"
+               label="Password:"
+               {...register("password", {
+                  required: true,
+               })}
+            />
+            <Input
+               className="text-sm md:text-base font-normal"
+               type="password"
+               label="Confirm password:"
+               {...register("confirmPassword", {
+                  required: true,
+               })}
+            />
+            {loading ? (
+               <div className="flex justify-center items-center mt-2">
+                  <LoaderMini />
+               </div>
+            ) : (
+               <Button type="submit" className="w-full" bgNumber={1} text="Confirm" />
+            )}
+         </form>
+         <Link
+            to="/password-recovery-step-one"
+            className="text-sm font-semibold transition-all duration-300 hover:underline text-blue-700 hover:text-blue-900"
+         >
+            Back
+         </Link>
+         <h2
+            className="text-base font-medium mt-2 hidden"
+            ref={passwordRecoveryVerificationMessage}
+         >
+            Your password has been recoverd.{" "}
+            <Link className="hover:underline text-gray-500" to="/login">
+               <Button
+                  type="button"
+                  className="bg-blue-700 hover:bg-blue-900"
+                  text="Login"
+                  bgNumber={1}
                />
-               <Input
-                  className="text-sm md:text-base font-normal"
-                  type="password"
-                  label="Confirm password:"
-                  {...register("confirmPassword", {
-                     required: true,
-                  })}
-               />
-               {loading ? (
-                  <div className="flex justify-center items-center mt-2">
-                     <LoaderMini />
-                  </div>
-               ) : (
-                  <Button type="submit" className="w-full" bgNumber={1} text="Confirm" />
-               )}
-            </form>
-            <Link
-               to="/password-recovery-step-one"
-               className="text-sm font-semibold transition-all duration-300 hover:underline text-blue-700 hover:text-blue-900"
-            >
-               Back
             </Link>
-            <h2
-               className="text-base font-medium mt-2 hidden"
-               ref={passwordRecoveryVerificationMessage}
-            >
-               Your password has been recoverd.{" "}
-               <Link className="hover:underline text-gray-500" to="/login">
-                  <Button
-                     type="button"
-                     className="bg-blue-700 hover:bg-blue-900"
-                     text="Login"
-                     bgNumber={1}
-                  />
-               </Link>
-            </h2>
-         </Container>
-      </ParentContainer>
+         </h2>
+      </Container>
    );
 }
 

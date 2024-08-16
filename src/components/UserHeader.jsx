@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import formatDate from "../../utils/formatDate";
+import formatDate from "../utils/formatDate";
 
 function UserHeader({ src, name, $id, date }) {
    return (

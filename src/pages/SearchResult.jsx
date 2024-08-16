@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-   Container,
-   Loader,
-   LoadCards,
-   ErrorMessage,
-   ParentContainer,
-} from "../components";
+import { Loader, LoadCards, ErrorMessage, Container } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { Query } from "appwrite";
 import useInfinitePosts from "../hooks/useInfinityPost";
@@ -35,23 +29,21 @@ function SearchResult() {
       });
 
    return (
-      <ParentContainer>
-         <Container className="max-w-full">
-            <h1 className="text-center font-bold text-lg mb-4">
-               Seach Results for "{query}"
-            </h1>
-            {allPosts?.length > 0 ? (
-               <LoadCards posts={allPosts} />
-            ) : (
-               isFetching && <Loader />
-            )}
-            {error && <ErrorMessage error={error} />}
-            {isFetchingNextPage && <Loader />}
-            {!hasNextPage && allPosts?.length >= 0 && (
-               <p className="text-center mt-10">No more posts.</p>
-            )}
-         </Container>
-      </ParentContainer>
+      <Container className="max-w-full">
+         <h1 className="text-center font-bold text-lg mb-4">
+            Seach Results for "{query}"
+         </h1>
+         {allPosts?.length > 0 ? (
+            <LoadCards posts={allPosts} />
+         ) : (
+            isFetching && <Loader />
+         )}
+         {error && <ErrorMessage error={error} />}
+         {isFetchingNextPage && <Loader />}
+         {!hasNextPage && allPosts?.length >= 0 && (
+            <p className="text-center mt-10">No more posts.</p>
+         )}
+      </Container>
    );
 }
 

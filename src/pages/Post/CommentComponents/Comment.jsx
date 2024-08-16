@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { Button, UserHeader } from "../../components";
+import { Button, UserHeader } from "../../../components";
 
 function Comment({ comment, isAuthor, onDelete, userData, optimisticComment = false }) {
    const authStatus = useSelector((state) => state.auth.status);

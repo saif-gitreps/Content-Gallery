@@ -3,8 +3,9 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Comment, Button, ErrorMessage, LoaderMini } from "../../components";
-import appwriteCommentsService from "../../appwrite/config-comments";
+import { Button, ErrorMessage, LoaderMini } from "../../../components";
+import appwriteCommentsService from "../../../appwrite/config-comments";
+import Comment from "./Comment";
 
 function CommentSection({ post, userData, isAuthor }) {
    const [miniLoading, setMiniLoading] = useState(false);

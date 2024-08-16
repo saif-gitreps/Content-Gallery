@@ -1,4 +1,4 @@
-import { Container, LoadCards, ParentContainer } from "../components";
+import { Container, LoadCards } from "../components";
 import { Query } from "appwrite";
 import appwriteService from "../appwrite/config-appwrite";
 import { Loader, ErrorMessage } from "../components";
@@ -12,20 +12,18 @@ function Home() {
       useInfinitePosts(["posts"], queryFn);
 
    return (
-      <ParentContainer>
-         <Container className="max-w-7xl">
-            {allPosts?.length > 0 ? (
-               <LoadCards posts={allPosts} />
-            ) : (
-               isFetching && <Loader />
-            )}
-            {error && <ErrorMessage error={error} />}
-            {isFetchingNextPage && <Loader />} {/* Show loader when fetching next page */}
-            {!hasNextPage && allPosts?.length >= 0 && (
-               <p className="text-center mt-10">No more posts.</p>
-            )}
-         </Container>
-      </ParentContainer>
+      <Container className="max-w-7xl">
+         {allPosts?.length > 0 ? (
+            <LoadCards posts={allPosts} />
+         ) : (
+            isFetching && <Loader />
+         )}
+         {error && <ErrorMessage error={error} />}
+         {isFetchingNextPage && <Loader />} {/* Show loader when fetching next page */}
+         {!hasNextPage && allPosts?.length >= 0 && (
+            <p className="text-center mt-10">No more posts.</p>
+         )}
+      </Container>
    );
 }
 

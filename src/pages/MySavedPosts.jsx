@@ -1,10 +1,4 @@
-import {
-   Container,
-   PostCard,
-   ParentContainer,
-   ErrorMessage,
-   Loader,
-} from "../components";
+import { Container, PostCard, ErrorMessage, Loader } from "../components";
 import appwriteService from "../appwrite/config-appwrite";
 import { useSelector } from "react-redux";
 import { Query } from "appwrite";
@@ -26,35 +20,33 @@ function MySavedPosts() {
       });
 
    return (
-      <ParentContainer>
-         <Container className="max-w-7xl">
-            {allPosts?.length > 0 ? (
-               <>
-                  <h1 className="text-center">
-                     {allPosts?.length === 0 && <p>No posts available.</p>}
-                  </h1>
-                  <div className="masonry-grid">
-                     {allPosts?.map((saved) => (
-                        <div key={saved.articles.$id} className="masonry-item">
-                           <PostCard
-                              $id={saved.articles.$id}
-                              title={saved.articles.title}
-                              featuredImage={saved.articles.featuredImage}
-                           />
-                        </div>
-                     ))}
-                  </div>
-               </>
-            ) : (
-               isFetching && <Loader />
-            )}
-            {error && <ErrorMessage error={error} />}
-            {isFetchingNextPage && <Loader />}
-            {!hasNextPage && allPosts?.length >= 0 && (
-               <p className="text-center mt-10">No more posts.</p>
-            )}
-         </Container>
-      </ParentContainer>
+      <Container className="max-w-7xl">
+         {allPosts?.length > 0 ? (
+            <>
+               <h1 className="text-center">
+                  {allPosts?.length === 0 && <p>No posts available.</p>}
+               </h1>
+               <div className="masonry-grid">
+                  {allPosts?.map((saved) => (
+                     <div key={saved.articles.$id} className="masonry-item">
+                        <PostCard
+                           $id={saved.articles.$id}
+                           title={saved.articles.title}
+                           featuredImage={saved.articles.featuredImage}
+                        />
+                     </div>
+                  ))}
+               </div>
+            </>
+         ) : (
+            isFetching && <Loader />
+         )}
+         {error && <ErrorMessage error={error} />}
+         {isFetchingNextPage && <Loader />}
+         {!hasNextPage && allPosts?.length >= 0 && (
+            <p className="text-center mt-10">No more posts.</p>
+         )}
+      </Container>
    );
 }
 

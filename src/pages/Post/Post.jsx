@@ -1,25 +1,22 @@
-import {
-   Container,
-   Loader,
-   CommentSection,
-   Button,
-   LoaderMini,
-   ErrorMessage,
-   ParentContainer,
-   UserHeader,
-} from "../components";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Query } from "appwrite";
 import parse from "html-react-parser";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import appwriteService from "../appwrite/config-appwrite";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+   Container,
+   Loader,
+   Button,
+   LoaderMini,
+   ErrorMessage,
+   UserHeader,
+} from "../../components";
+import CommentSection from "./CommentComponents/CommentSection";
+import appwriteService from "../../appwrite/config-appwrite";
 
 export default function Post() {
-   const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
-   const [saveLoader, setSaveLoader] = useState(false);
    const queryClient = useQueryClient();
    const { id } = useParams();
    const navigate = useNavigate();
@@ -29,24 +26,20 @@ export default function Post() {
    const {
       data: post,
       error: postError,
-      isLoading,
+      isLoading: postLoading,
    } = useQuery({
       queryKey: ["post", id],
-      queryFn: async () => {
-         const fetchedPost = await appwriteService.getPost(id);
-         if (!fetchedPost) {
-            throw new Error("Error fetching post");
-         }
-         return fetchedPost;
-      },
+      queryFn: async () => await appwriteService.getPost(id),
       enabled: !!id,
    });
 
-   const { data: image, error: imageError } = useQuery({
+   const {
+      data: image,
+      error: imageError,
+      isLoading: imageLoading,
+   } = useQuery({
       queryKey: ["image", post?.featuredImage],
-      queryFn: async () => {
-         return await appwriteService.getFilePrev(post.featuredImage);
-      },
+      queryFn: async () => await appwriteService.getFilePrev(post.featuredImage),
       enabled: !!post,
    });
 
@@ -62,22 +55,15 @@ export default function Post() {
             0,
             5000
          );
-
          for (const savedPost of userSavedPosts.documents) {
             if (savedPost.articles.$id === post?.$id) {
                return savedPost;
             }
          }
-
          return null;
       },
-      enabled: userData?.$id && !!post?.$id,
+      enabled: !!userData?.$id && !!post?.$id,
    });
-
-   if (postError) {
-      setError("Error fetching post. Redirecting to home page.");
-      setTimeout(() => navigate("/"), 2000);
-   }
 
    const deleteMutation = useMutation({
       mutationFn: async () => {
@@ -88,25 +74,15 @@ export default function Post() {
          setError("Error deleting post. Please try again later.");
       },
       onSuccess: () => {
-         setLoading(false);
          navigate("/");
       },
    });
 
-   const deletePost = async () => {
-      setLoading(true);
-      deleteMutation.mutate();
-   };
-
    const toggleSaveMutation = useMutation({
-      mutationFn: async () => {
-         if (isSaved) {
-            await appwriteService.unsavePost(isSaved.$id);
-            return null;
-         } else {
-            return await appwriteService.savePost(userData.$id, post.$id);
-         }
-      },
+      mutationFn: async () =>
+         isSaved
+            ? await appwriteService.unsavePost(isSaved.$id)
+            : await appwriteService.savePost(userData.$id, post.$id),
       onMutate: async () => {
          // Cancel any outgoing refetches
          await queryClient.cancelQueries(["saved", userData.$id, post.$id]);
@@ -133,88 +109,81 @@ export default function Post() {
       },
       onSuccess: () => {
          setError("");
-         setSaveLoader(false);
       },
    });
 
-   const isAuthor = post && userData ? post.user.$id === userData.$id : false;
+   useEffect(() => {
+      if (postError || imageError || savedPostError) {
+         setError("Error fetching post. Please try again later.");
+         const timer = setTimeout(() => navigate("/"), 2000);
+         return () => clearTimeout(timer);
+      }
+   }, [postError, imageError, savedPostError, navigate]);
 
-   if (loading || isLoading) {
-      return <Loader />;
-   }
-   if (error || imageError || savedPostError) {
-      return <ErrorMessage error={error || imageError || savedPostError} />;
-   }
+   if (postLoading || imageLoading) return <Loader />;
+   if (error) return <ErrorMessage error={error} />;
 
-   function MainContent() {
-      return (
+   const isAuthor = post.user.$id === userData?.$id;
+
+   return (
+      <Container className="max-w-2xl lg:max-w-5xl flex lg:flex-row flex-col lg:space-x-4 space-y-4 p-2 bg-background-lightWhite dark:bg-background-darkBlack">
          <div className="flex items-start justify-center">
             <img
                src={image}
-               alt={post.title}
+               alt={post?.title}
                className="rounded-2xl object-contain sm:max-h-[40rem] sm:max-w-[35rem] lg:mr-auto"
             />
          </div>
-      );
-   }
-
-   function TextContents() {
-      return (
          <div className="lg:w-2/3 space-y-1 flex flex-col justify-between">
             <div className="space-y-2">
                <UserHeader
-                  src={post.user.profilePicture}
-                  name={post.user.name}
-                  $id={post.user.$id}
-                  date={post.$createdAt}
+                  src={post?.user.profilePicture}
+                  name={post?.user.name}
+                  $id={post?.user.$id}
+                  date={post?.$createdAt}
                />
-               <h1 className="text-xl font-semibold">{post.title}</h1>
-               <div className="text-base text-gray-600 font-medium">
-                  {parse(post.content)}
+               <h1 className="text-base font-bold">{post?.title}</h1>
+               <div className="text-sm text-gray-700 dark:text-gray-400 font-semibold">
+                  {parse(post?.content)}
                </div>
-               <div className="flex  justify-between items-center">
+               <div className="flex justify-between items-center">
                   {authStatus &&
-                     (saveLoader || isSavedPostLoading ? (
+                     (toggleSaveMutation.isPending || isSavedPostLoading ? (
                         <LoaderMini />
                      ) : (
                         <Button
-                           text={!isSaved ? "Save" : "Saved"}
+                           text={isSaved ? "Saved" : "Save"}
                            type="button"
-                           className="rounded-lg"
-                           bgNumber={!isSaved ? 0 : 1}
-                           onClick={() => {
-                              setSaveLoader(true);
-                              toggleSaveMutation.mutate();
-                           }}
+                           bgNumber={isSaved ? 1 : 0}
+                           onClick={() => toggleSaveMutation.mutate()}
+                           disabled={toggleSaveMutation.isPending || isSavedPostLoading}
                         />
                      ))}
-
                   {isAuthor && (
                      <div className="flex">
-                        <Link to={`/edit-post/${post.$id}`}>
+                        <Link to={`/edit-post/${post?.$id}`}>
                            <Button text="Edit" type="button" bgNumber={0} />
                         </Link>
                         <Button
                            text="Delete"
                            type="button"
                            bgNumber={2}
-                           onClick={deletePost}
+                           onClick={() => deleteMutation.mutate()}
+                           disabled={deleteMutation.isLoading}
                         />
                      </div>
                   )}
                </div>
+               {toggleSaveMutation.isError && (
+                  <ErrorMessage error={"Error saving/unsaving post."} />
+               )}
+               {deleteMutation.isError && (
+                  <ErrorMessage error={"Error deleting post. Try again later."} />
+               )}
             </div>
             <CommentSection post={post} isAuthor={isAuthor} userData={userData} />
          </div>
-      );
-   }
-
-   return post ? (
-      <ParentContainer>
-         <Container className="max-w-2xl lg:max-w-5xl p-5 rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack flex lg:flex-row flex-col space-x-4 space-y-4 ">
-            <MainContent />
-            <TextContents />
-         </Container>
-      </ParentContainer>
-   ) : null;
+         <ErrorMessage error={error} />
+      </Container>
+   );
 }

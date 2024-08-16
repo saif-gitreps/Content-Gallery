@@ -1,11 +1,12 @@
 import { useSelector } from "react-redux";
 import { useState, useRef, useContext } from "react";
-import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorContext } from "../../context/ErrorContext";
-import { Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
+import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
+import authService from "../../../appwrite/auth";
+import { ErrorContext } from "../../../context/ErrorContext";
+import Pencil from "./Pencil";
 
 function UpdateEmail() {
    const [editEmail, setEditEmail] = useState(false);

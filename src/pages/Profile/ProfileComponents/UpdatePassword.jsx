@@ -1,7 +1,9 @@
 import { useState, useContext } from "react";
-import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
-import { ErrorMessage, Input, Pencil, SaveAndCancelDiv, LoaderMini } from "../index";
+import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
+import authService from "../../../appwrite/auth";
+import { ErrorContext } from "../../../context/ErrorContext";
+import Pencil from "./Pencil";
 
 function UpdatePassword() {
    const [editPassword, setEditPassword] = useState(false);
@@ -20,7 +22,7 @@ function UpdatePassword() {
       setLoading(true);
       try {
          const result = await authService.updatePassword(
-            data.OldPassword,
+            data.oldPassword,
             data.newPassword
          );
 
@@ -32,11 +34,12 @@ function UpdatePassword() {
          setError("Password update error.");
       } finally {
          setLoading(false);
+         reset({ oldPassword: "", newPassword: "" });
       }
    };
    return (
       <form
-         onSubmit={handleSubmit(updatePassword)}
+         onSubmit={handleSubmit(onPasswordUpdate)}
          className={`p-2 ${editPassword && "shadow-lg rounded-lg"}`}
       >
          <div className="flex items-center justify-between">

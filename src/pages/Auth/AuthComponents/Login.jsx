@@ -1,11 +1,10 @@
-import React from "react";
 import { useDispatch } from "react-redux";
-import authService from "../appwrite/auth";
-import appwriteUserService from "../appwrite/config-user";
+import authService from "../../../appwrite/auth";
+import appwriteUserService from "../../../appwrite/config-user";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { login as authLogin } from "../store/authSlice";
-import { Button, Input, LoaderMini, Container, ErrorMessage } from "./index";
+import { login as authLogin } from "../../../store/authSlice";
+import { Button, Input, LoaderMini, Container, ErrorMessage } from "../../../components";
 import { useMutation } from "@tanstack/react-query";
 
 function Login() {
