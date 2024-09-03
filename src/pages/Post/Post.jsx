@@ -12,6 +12,7 @@ import {
    ErrorMessage,
    UserHeader,
 } from "../../components";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import CommentSection from "./CommentComponents/CommentSection";
 import appwriteService from "../../appwrite/config-appwrite";
 
@@ -128,10 +129,11 @@ export default function Post() {
    return (
       <Container className="max-w-2xl lg:max-w-5xl flex lg:flex-row flex-col lg:space-x-4 space-y-4 p-2 bg-background-lightWhite dark:bg-background-darkBlack">
          <div className="flex items-start justify-center">
-            <img
+            <LazyLoadImage
                src={image}
                alt={post?.title}
                className="rounded-2xl object-contain sm:max-h-[40rem] sm:max-w-[35rem] lg:mr-auto"
+               effect="blur"
             />
          </div>
          <div className="lg:w-2/3 space-y-1 flex flex-col justify-between">

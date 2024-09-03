@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import useInfinitePosts from "../../hooks/useInfinityPost";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 function Profile() {
    const userDataFromStore = useSelector((state) => state.auth.userData);
@@ -41,10 +42,12 @@ function Profile() {
                <Loader />
             ) : (
                <div className="flex sm:flex-row flex-col space-x-7">
-                  <img
+                  <LazyLoadImage
                      src={user?.profilePicture || "/blank-dp.png"}
                      alt="Profile Picture"
                      className="w-56 h-56 rounded-full"
+                     effect="blur"
+                     onError={(e) => (e.target.src = "/blank-dp.png.jpg")}
                   />
                   <div className="max-w-3xl xl:max-w-full mt-3 space-y-3">
                      <h1 className="text-3xl font-semibold">{user?.name}</h1>

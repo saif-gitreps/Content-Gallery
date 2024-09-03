@@ -21,6 +21,7 @@ function MySavedPosts() {
 
    return (
       <Container className="max-w-7xl">
+         <h1 className="text-center font-bold text-lg mb-4">My Saved Posts</h1>
          {allPosts?.length > 0 ? (
             <>
                <h1 className="text-center">

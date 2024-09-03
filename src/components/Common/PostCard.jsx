@@ -1,14 +1,11 @@
 import { Link } from "react-router-dom";
 import appwriteService from "../../appwrite/config-appwrite";
 import { useQuery } from "@tanstack/react-query";
-import { LoaderMini } from "./Loader";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 function PostCard({ $id, title, featuredImage, className = "" }) {
-   const {
-      data: imageSrc,
-      error,
-      isLoading,
-   } = useQuery({
+   const { data: imageSrc, error } = useQuery({
       queryKey: ["postImage", featuredImage],
       queryFn: async () => {
          return await appwriteService.getFilePrev(featuredImage);
@@ -22,9 +19,16 @@ function PostCard({ $id, title, featuredImage, className = "" }) {
             className={`w-full bg-white dark:bg-background-darkBlack dark:text-text-dark rounded-2xl p-3 duration-300 hover:shadow-md dark:hover:shadow-gray-700 ${className}`}
          >
             <div className="w-full flex justify-center items-centers mb-2">
-               {imageSrc && <img src={imageSrc} alt={title} className="rounded-xl" />}
+               {imageSrc && (
+                  <LazyLoadImage
+                     src={imageSrc}
+                     alt={title}
+                     className="rounded-xl"
+                     effect="blur"
+                     onError={(e) => (e.target.src = "/fallback-mountain.jpg")}
+                  />
+               )}
             </div>
-            {isLoading && <LoaderMini />}
             {error && (
                <p className="text-red-500 text-xs text-center">Error loading image</p>
             )}

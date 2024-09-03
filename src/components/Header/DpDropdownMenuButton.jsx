@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { DarkModeToggle, ListItem, LogoutButton } from "../index";
 import useClickOutSide from "../../hooks/useClickOutside";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 function DpDropdownMenuButton({ src, authStatus, navItems }) {
    const [open, setOpen] = useState(false);
@@ -18,10 +19,12 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
             onClick={() => setOpen(!open)}
             ref={dpRef}
          >
-            <img
+            <LazyLoadImage
                src={src}
-               alt="profile"
+               alt="Dp"
                className="w-11 h-11 lg:w-12 lg:h-12 rounded-full"
+               effect="blur"
+               onError={(e) => (e.target.src = "/blank-dp.png.jpg")}
             />
             {open ? (
                <p className="ml-1 flex items-center dark:invert">▲</p>

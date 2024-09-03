@@ -7,6 +7,7 @@ import appwriteUserService from "../../../appwrite/config-user";
 import { update } from "../../../store/authSlice";
 import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
 import Pencil from "./Pencil";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import { ErrorContext } from "../../../context/ErrorContext";
 
@@ -86,10 +87,12 @@ function UpdateProfilePic() {
          className="flex justify-center items-center flex-col space-y-4 p-4dark:bg-gray-800 rounded-lg"
       >
          <div className="relative">
-            <img
+            <LazyLoadImage
                src={profilePicture}
-               alt="Profile"
-               className="w-52 h-52 rounded-full object-cover shadow-2xl"
+               alt="Profile Picture"
+               className="w-56 h-56 rounded-full object-cover shadow-2xl"
+               effect="blur"
+               onError={(e) => (e.target.src = "/blank-dp.png.jpg")}
             />
             {!editProfilePic && (
                <Pencil
