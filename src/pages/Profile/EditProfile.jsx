@@ -8,15 +8,17 @@ import {
    UpdateProfilePic,
    UpdateBio,
 } from "./ProfileComponents";
-import { Container, ErrorMessage } from "../../components";
+import { ErrorMessage, ParentContainer } from "../../components";
 function UserUpdateFields() {
    const { error } = useContext(ErrorContext);
    return (
-      <Container className="bg-white dark:bg-background-darkBlack dark:text-text-dark max-w-5xl py-3 m-auto rounded-xl shadow-md space-y-3">
-         <h1 className="text-2xl font-semibold text-center">Edit Profile</h1>
-         <div className="flex flex-col lg:flex-row space-x-3 justify-evenly items-center">
-            <UpdateProfilePic />
-            <div className="flex flex-wrap justify-center items-center max-w-2xl">
+      <ParentContainer className="bg-white dark:bg-black rounded-lg shadow-lg p-8 max-w-7xl mx-auto">
+         <h1 className="text-3xl font-bold text-center mb-6">Edit Profile</h1>
+         <div className="flex flex-col lg:flex-row lg:space-x-8">
+            <div className="w-full lg:w-1/3 mb-6 lg:mb-0 mt-3">
+               <UpdateProfilePic />
+            </div>
+            <div className="w-full lg:w-2/3">
                <UpdateName />
                <UpdateEmail />
                <UpdatePhone />
@@ -24,8 +26,10 @@ function UserUpdateFields() {
                <UpdateBio />
             </div>
          </div>
-         <ErrorMessage error={error} />
-      </Container>
+         {error && (
+            <ErrorMessage error={error} className="mt-6 text-center text-red-500" />
+         )}
+      </ParentContainer>
    );
 }
 

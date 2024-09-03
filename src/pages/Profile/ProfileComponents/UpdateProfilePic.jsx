@@ -83,23 +83,28 @@ function UpdateProfilePic() {
    return (
       <form
          onSubmit={handleSubmit(updateProfilePicture)}
-         className="flex justify-center items-center flex-col"
+         className="flex justify-center items-center flex-col space-y-4 p-4dark:bg-gray-800 rounded-lg"
       >
-         <img src={profilePicture} alt="Profile" className="w-52 h-52 rounded-full" />
-         {!editProfilePic && (
-            <Pencil
-               onClickAction={() => {
-                  setEditProfilePic(true);
-               }}
-               className="relative bottom-56 left-20"
+         <div className="relative">
+            <img
+               src={profilePicture}
+               alt="Profile"
+               className="w-52 h-52 rounded-full object-cover shadow-2xl"
             />
-         )}
+            {!editProfilePic && (
+               <Pencil
+                  onClickAction={() => setEditProfilePic(true)}
+                  className="absolute bottom-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer"
+               />
+            )}
+         </div>
          {editProfilePic && (
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center space-y-3">
                <Input
                   type="file"
                   {...register("profilePicture")}
                   onChange={handleProfilePicPreview}
+                  className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                />
                {loading ? (
                   <LoaderMini />
@@ -109,6 +114,7 @@ function UpdateProfilePic() {
                      saveText="Upload"
                      cancelText="Close"
                      cancel={onCancel}
+                     className="flex justify-end space-x-4"
                   />
                )}
             </div>

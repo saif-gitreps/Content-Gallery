@@ -21,7 +21,7 @@ const useInfinitePosts = (queryKey, queryFn, options = {}) => {
       },
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 3,
+      staleTime: 1000 * 60 * 5,
       ...options,
    });
 

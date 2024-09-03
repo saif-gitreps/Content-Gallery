@@ -82,39 +82,55 @@ function UpdatePhone() {
    return (
       <form
          onSubmit={handleSubmit(updatePhone)}
-         className={`p-2 ${editPhone ? "shadow-lg rounded-lg" : ""}`}
+         className={`p-4 dark:bg-gray-800 rounded-lg`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold ml-2">
+            <h2 className="text-lg font-medium">
                Phone :{" "}
                {!userData?.phoneVerification && (
-                  <Link className="text-green-600 hover:underline" onClick={verifyPhone}>
+                  <Link
+                     className="text-green-600 hover:underline ml-1"
+                     onClick={verifyPhone}
+                  >
                      Verify
                   </Link>
                )}
             </h2>
-            {!editPhone && <Pencil onClickAction={() => setEditPhone(true)} />}
+            {!editPhone && (
+               <Pencil
+                  onClickAction={() => setEditPhone(true)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer"
+               />
+            )}
          </div>
+
          <Input
-            className="text-base font-normal w-64"
+            className={`text-base font-normal w-full ${
+               editPhone ? "bg-white dark:bg-gray-700" : "bg-transparent"
+            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             readOnly={!editPhone}
             {...register("phone", { required: true })}
          />
-         <div ref={phoneVerificationDiv} className="hidden">
-            <h2 className="text-base text-center text-red-600 font-medium  w-48">
+
+         <div ref={phoneVerificationDiv} className="hidden space-y-2">
+            <h2 className="text-base text-center text-red-600 font-medium w-full sm:w-48">
                Check the verification SMS on your Phone.
             </h2>
-            <Input className="text-base font-normal w-64" type="number" />
+            <Input
+               className="text-base font-normal w-full  bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
+               type="number"
+            />
             <SaveAndCancelDiv
                save={confirmPhoneVerification}
                cancel={() => phoneVerificationDiv.current.classList.add("hidden")}
             />
          </div>
+
          {editPhone && (
-            <div>
-               <h2 className="text-base font-semibold ml-2">Password:</h2>
+            <div className="">
+               <h2 className="text-lg font-medium">Password:</h2>
                <Input
-                  className="text-base font-normal w-64"
+                  className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                   type="password"
                   {...register("password", { required: true })}
                />
@@ -123,14 +139,16 @@ function UpdatePhone() {
                      <LoaderMini />
                   </div>
                ) : (
-                  <SaveAndCancelDiv
-                     save={() => handleSubmit(onPhoneUpdate)}
-                     cancel={() => {
-                        setEditPhone(false);
-                        setError("");
-                        reset();
-                     }}
-                  />
+                  <div className="flex justify-end space-x-4">
+                     <SaveAndCancelDiv
+                        save={() => handleSubmit(onPhoneUpdate)}
+                        cancel={() => {
+                           setEditPhone(false);
+                           setError("");
+                           reset();
+                        }}
+                     />
+                  </div>
                )}
             </div>
          )}

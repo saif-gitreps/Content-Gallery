@@ -72,18 +72,13 @@ function Profile() {
             <h1 className="text-2xl font-bold text-center">
                {isAuthor ? "My" : `${user?.name ?? "User"}'s`} posts
             </h1>
-            {allPosts?.length >= 0 ? (
-               <LoadCards posts={allPosts} />
-            ) : (
-               isFetching && <Loader />
-            )}
-            {error && <ErrorMessage error={error} />}
-            {isFetchingNextPage && <Loader />}
-            {!hasNextPage && allPosts?.length > 0 && (
-               <p className="text-center mt-10">
-                  No more posts. {isAuthor && "Add more posts!"}
-               </p>
-            )}
+            <LoadCards
+               posts={allPosts}
+               isFetching={isFetching}
+               error={error}
+               isFetchingNextPage={isFetchingNextPage}
+               hasNextPage={hasNextPage}
+            />
          </>
       );
    };

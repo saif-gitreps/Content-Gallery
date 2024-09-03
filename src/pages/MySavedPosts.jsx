@@ -43,7 +43,7 @@ function MySavedPosts() {
          )}
          {error && <ErrorMessage error={error} />}
          {isFetchingNextPage && <Loader />}
-         {!hasNextPage && allPosts?.length >= 0 && (
+         {!hasNextPage && !isFetching && (
             <p className="text-center mt-10">No more posts.</p>
          )}
       </Container>

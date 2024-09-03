@@ -13,16 +13,13 @@ function Home() {
 
    return (
       <Container className="max-w-7xl">
-         {allPosts?.length > 0 ? (
-            <LoadCards posts={allPosts} />
-         ) : (
-            isFetching && <Loader />
-         )}
-         {error && <ErrorMessage error={error} />}
-         {isFetchingNextPage && <Loader />} {/* Show loader when fetching next page */}
-         {!hasNextPage && allPosts?.length >= 0 && (
-            <p className="text-center mt-10">No more posts.</p>
-         )}
+         <LoadCards
+            posts={allPosts}
+            isFetching={isFetching}
+            error={error}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage}
+         />
       </Container>
    );
 }

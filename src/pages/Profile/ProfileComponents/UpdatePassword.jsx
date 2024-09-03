@@ -40,10 +40,10 @@ function UpdatePassword() {
    return (
       <form
          onSubmit={handleSubmit(onPasswordUpdate)}
-         className={`p-2 ${editPassword && "shadow-lg rounded-lg"}`}
+         className="p-4 dark:bg-gray-800 rounded-lg"
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold ml-2">
+            <h2 className="text-lg font-medium">
                {editPassword ? "Old Password :" : "Password :"}
             </h2>
             {!editPassword && (
@@ -51,20 +51,25 @@ function UpdatePassword() {
                   onClickAction={() => {
                      setEditPassword(true);
                   }}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer"
                />
             )}
          </div>
+
          <Input
-            className="text-base font-normal w-64"
+            className={`text-base font-normal w-full ${
+               editPassword ? "bg-white dark:bg-gray-700" : "bg-transparent"
+            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             type="password"
             readOnly={!editPassword}
             {...register("oldPassword", { required: true })}
          />
+
          {editPassword && (
-            <div>
-               <h2 className="text-base font-semibold ml-2">New Password:</h2>
+            <div className="">
+               <h2 className="text-lg font-medium">New Password:</h2>
                <Input
-                  className="text-base font-normal w-64"
+                  className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                   type="password"
                   {...register("newPassword", { required: true })}
                />
@@ -73,13 +78,15 @@ function UpdatePassword() {
                      <LoaderMini />
                   </div>
                ) : (
-                  <SaveAndCancelDiv
-                     cancel={() => {
-                        setEditPassword(false);
-                        setError("");
-                        reset({ oldPassword: "", newPassword: "" });
-                     }}
-                  />
+                  <div className="flex justify-end space-x-4">
+                     <SaveAndCancelDiv
+                        cancel={() => {
+                           setEditPassword(false);
+                           setError("");
+                           reset({ oldPassword: "", newPassword: "" });
+                        }}
+                     />
+                  </div>
                )}
             </div>
          )}

@@ -29,20 +29,17 @@ function SearchResult() {
       });
 
    return (
-      <Container className="max-w-full">
+      <Container className="max-w-7xl">
          <h1 className="text-center font-bold text-lg mb-4">
             Seach Results for "{query}"
          </h1>
-         {allPosts?.length > 0 ? (
-            <LoadCards posts={allPosts} />
-         ) : (
-            isFetching && <Loader />
-         )}
-         {error && <ErrorMessage error={error} />}
-         {isFetchingNextPage && <Loader />}
-         {!hasNextPage && allPosts?.length >= 0 && (
-            <p className="text-center mt-10">No more posts.</p>
-         )}
+         <LoadCards
+            posts={allPosts}
+            isFetching={isFetching}
+            error={error}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage}
+         />
       </Container>
    );
 }

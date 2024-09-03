@@ -71,16 +71,19 @@ function UpdateEmail() {
    return (
       <form
          onSubmit={handleSubmit(updateEmail)}
-         className={`p-2 ${editEmail && "shadow-lg rounded-lg"}`}
+         className={`p-4 dark:bg-gray-800 rounded-lg `}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold ml-2">
-               Email :{" "}
+            <h2 className="text-lg font-medium flex items-center">
+               Email:{" "}
                {!userData?.emailVerification && (
-                  <Link onClick={verifyEmail} className="text-green-600 hover:underline">
+                  <Link
+                     onClick={verifyEmail}
+                     className="ml-2 text-green-600 hover:underline"
+                  >
                      Verify
                   </Link>
-               )}{" "}
+               )}
             </h2>
             {!editEmail && (
                <Pencil
@@ -88,46 +91,57 @@ function UpdateEmail() {
                      setEditEmail(true);
                      emailVerificationMessage.current.classList.add("hidden");
                   }}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer"
                />
             )}
          </div>
+
          <Input
-            className="text-base font-normal w-64"
+            className={`text-base font-normal w-full ${
+               editEmail ? "bg-white dark:bg-gray-700" : "bg-transparent"
+            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             readOnly={!editEmail}
             {...register("email", {
                required: true,
                validate: {
-                  matchPatern: (value) =>
-                     /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                  matchPattern: (value) =>
+                     /^\w+([.-]?\w+)*@\w+([.-]?\w{2,3})+$/.test(value) ||
                      "Email address must be a valid address",
                },
             })}
          />
+
          <h2
-            className="text-base text-center hidden text-red-600 font-medium w-48"
+            className="text-base text-center text-red-600 font-medium hidden"
             ref={emailVerificationMessage}
          >
-            Check your email for Email verification.
+            Check your email for verification.
          </h2>
+
          {editEmail && (
-            <div>
-               <h2 className="text-base font-semibold ml-2">Password:</h2>
-               <Input
-                  className="text-base font-normal w-64"
-                  type="password"
-                  {...register("password", { required: true })}
-               />
+            <div className="space-y-4">
+               <div>
+                  <h2 className="text-lg font-medium">Password:</h2>
+                  <Input
+                     className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
+                     type="password"
+                     {...register("password", { required: true })}
+                  />
+               </div>
                {loading ? (
-                  <div className="flex justify-center items-center mt-2">
+                  <div className="flex justify-center items-center">
                      <LoaderMini />
                   </div>
                ) : (
-                  <SaveAndCancelDiv
-                     cancel={() => {
-                        setEditEmail(false);
-                        setError("");
-                     }}
-                  />
+                  <div className="flex justify-end space-x-4">
+                     <SaveAndCancelDiv
+                        cancel={() => {
+                           setEditEmail(false);
+                           setError("");
+                        }}
+                        className="flex justify-end space-x-2"
+                     />
+                  </div>
                )}
             </div>
          )}

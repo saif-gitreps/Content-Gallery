@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import appwriteService from "../appwrite/config-appwrite";
+import appwriteService from "../../appwrite/config-appwrite";
 import { useQuery } from "@tanstack/react-query";
 import { LoaderMini } from "./Loader";
 

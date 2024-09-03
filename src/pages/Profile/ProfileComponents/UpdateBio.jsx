@@ -60,45 +60,60 @@ function UpdateBio() {
    return (
       <form
          onSubmit={handleSubmitBio(updateBio)}
-         className={`p-2 ${editBio && "shadow-lg rounded-lg"}`}
+         className={`p-4 dark:bg-gray-800 rounded-lg`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold ml-2">Bio:</h2>
+            <h2 className="text-lg font-medium">Bio:</h2>
             {!editBio && (
                <Pencil
                   onClickAction={() => {
                      setEditBio(true);
                   }}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer"
                />
             )}
-            {editBio && <h2 className="text-base font-normal">{charCount}/248</h2>}
+            {editBio && (
+               <h2 className="text-base font-normal text-gray-600 dark:text-gray-300">
+                  {charCount}/248
+               </h2>
+            )}
          </div>
+
          <Input
-            className="text-base font-normal sm:w-96 w-64"
+            className={`text-base font-normal w-full ${
+               editBio ? "bg-white dark:bg-gray-700" : "bg-transparent"
+            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             readOnly={!editBio}
             {...registerBio("bio", {
                required: true,
                maxLength: {
                   value: 248,
-                  message: "Please keep it under 150 Chars.",
+                  message: "Please keep it under 248 characters.",
                },
             })}
             onChange={(e) => setCharCount(e.target.value.length)}
          />
-         {editBio &&
-            (loading ? (
-               <div className="flex justify-center items-center mt-2">
-                  <LoaderMini />
-               </div>
-            ) : (
-               <SaveAndCancelDiv
-                  type="submit"
-                  cancel={() => {
-                     setEditBio(false);
-                     setError("");
-                  }}
-               />
-            ))}
+
+         {editBio && (
+            <div className="flex justify-end space-x-4">
+               {loading ? (
+                  <div className="flex justify-center items-center">
+                     <LoaderMini />
+                  </div>
+               ) : (
+                  <div className="flex justify-end space-x-4">
+                     <SaveAndCancelDiv
+                        type="submit"
+                        cancel={() => {
+                           setEditBio(false);
+                           setError("");
+                        }}
+                        className="flex space-x-2"
+                     />
+                  </div>
+               )}
+            </div>
+         )}
       </form>
    );
 }

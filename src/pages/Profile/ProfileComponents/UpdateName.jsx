@@ -53,37 +53,46 @@ function UpdateName() {
    return (
       <form
          onSubmit={handleSubmitName(updateName)}
-         className={`p-2 ${editName && "shadow-lg rounded-lg"}`}
+         className={`p-4 dark:bg-gray-800 rounded-lg`}
       >
          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold ml-2">Name:</h2>
+            <h2 className="text-lg font-medium">Name:</h2>
             {!editName && (
                <Pencil
                   onClickAction={() => {
                      setEditName(true);
                   }}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer"
                />
             )}
          </div>
          <Input
-            className="text-base font-normal w-64"
+            className={`text-base font-normal w-full ${
+               editName ? "bg-white dark:bg-gray-700" : "bg-transparent"
+            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             readOnly={!editName}
             {...registerName("name", { required: true })}
          />
-         {editName &&
-            (loading ? (
-               <div className="flex justify-center items-center mt-2">
-                  <LoaderMini />
-               </div>
-            ) : (
-               <SaveAndCancelDiv
-                  type="submit"
-                  cancel={() => {
-                     setEditName(false);
-                     setError("");
-                  }}
-               />
-            ))}
+         {editName && (
+            <div className="flex justify-end space-x-2">
+               {loading ? (
+                  <div className="flex justify-center items-center">
+                     <LoaderMini />
+                  </div>
+               ) : (
+                  <div className="flex justify-end space-x-4">
+                     <SaveAndCancelDiv
+                        type="submit"
+                        cancel={() => {
+                           setEditName(false);
+                           setError("");
+                        }}
+                        className="flex space-x-2"
+                     />
+                  </div>
+               )}
+            </div>
+         )}
       </form>
    );
 }

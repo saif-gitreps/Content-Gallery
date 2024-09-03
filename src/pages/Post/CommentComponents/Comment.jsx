@@ -7,7 +7,11 @@ function Comment({ comment, isAuthor, onDelete, userData, optimisticComment = fa
    const isOptimistic = comment?.$id === optimisticComment?.$id;
 
    return (
-      <li className={`flex justify-between  ${isOptimistic ? "opacity-50" : ""}`}>
+      <li
+         className={`border dark:border-gray-600 rounded-lg p-2 flex justify-between  ${
+            isOptimistic ? "opacity-50" : ""
+         }`}
+      >
          <div className="items-center w-10/12">
             <UserHeader
                src={comment.user.profilePicture}
@@ -25,7 +29,7 @@ function Comment({ comment, isAuthor, onDelete, userData, optimisticComment = fa
                <Button
                   text="Delete"
                   type="button"
-                  className="h-7 p-1 text-xs"
+                  className="h-8 p-1 text-xs"
                   bgNumber={2}
                   onClick={() => onDelete(comment.$id)}
                />

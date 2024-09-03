@@ -10,13 +10,14 @@ import {
    ErrorMessage,
 } from "../../../components";
 import appwriteService from "../../../appwrite/config-appwrite";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 function PostForm({ post, pageTitle = "Create" }) {
    const [imageSrc, setImageSrc] = useState(null);
    const [charCount, setCharCount] = useState(0);
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
+   const queryClient = useQueryClient();
 
    const {
       register,
@@ -63,6 +64,8 @@ function PostForm({ post, pageTitle = "Create" }) {
       },
       onSuccess: (dbPost) => {
          if (dbPost) navigate(`/post/${dbPost.$id}`);
+         queryClient.invalidateQueries("posts");
+         queryClient.invalidateQueries(["myPosts", userData.$id]);
       },
    });
 
@@ -146,7 +149,9 @@ function PostForm({ post, pageTitle = "Create" }) {
                {...register("image")}
                onChange={imagePreview}
             />
-            {errors.image && <ErrorMessage error="Image is required." />}
+            {(errors.image || imageError) && (
+               <ErrorMessage error="Error loading image, try again." />
+            )}
             {isImageLoading && (
                <div className="flex items-center justify-center">
                   <LoaderMini />

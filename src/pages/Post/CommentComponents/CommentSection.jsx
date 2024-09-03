@@ -107,11 +107,15 @@ function CommentSection({ post, userData, isAuthor }) {
          <ErrorMessage error={error || isError} />
 
          <ul
-            className={`space-y-1 ${
+            className={`space-y-1 mb-1 ${
                postComments.length > 4 ? "max-h-56 overflow-y-auto" : ""
             }`}
          >
-            {isLoading && <LoaderMini />}
+            {isLoading && (
+               <div className="flex justify-center items-center mt-3">
+                  <LoaderMini />
+               </div>
+            )}
             {!isError && postComments?.length === 0 ? (
                <li className="text-center">No comments yet</li>
             ) : (
@@ -132,7 +136,7 @@ function CommentSection({ post, userData, isAuthor }) {
             <form onSubmit={handleSubmit(addComment)}>
                <textarea
                   {...register("content", { required: true })}
-                  className="w-full h-16 p-2 border rounded-xl dark:bg-background-darkGray dark:text-text-dark"
+                  className="w-full p-2 border dark:border-gray-600 rounded-lg dark:bg-background-darkGray dark:text-text-dark"
                   placeholder="Add a comment"
                />
                {miniLoading ? (
