@@ -1,46 +1,50 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
-import authService from "../../../appwrite/auth";
-import { ErrorContext } from "../../../context/ErrorContext";
+import { Input, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "..";
+import authService from "../../appwrite/auth";
+import { useMutation } from "@tanstack/react-query";
 import Pencil from "./Pencil";
 
 function UpdatePassword() {
    const [editPassword, setEditPassword] = useState(false);
-   const [loading, setLoading] = useState(false);
-   const { setError } = useContext(ErrorContext);
 
-   const { register, handleSubmit, reset } = useForm({
+   const {
+      register,
+      handleSubmit,
+      reset,
+      setError,
+      formState: { errors },
+   } = useForm({
       defaultValues: {
          oldPassword: "",
          newPassword: "",
       },
    });
 
-   const onPasswordUpdate = async (data) => {
-      setError("");
-      setLoading(true);
-      try {
-         const result = await authService.updatePassword(
-            data.oldPassword,
-            data.newPassword
-         );
-
-         if (!result) {
-            throw new Error();
-         }
+   const updatePasswordMutation = useMutation({
+      mutationFn: async (data) =>
+         await authService.updatePassword(data.oldPassword, data.newPassword),
+      onSuccess: () => {
          setEditPassword(false);
-      } catch (error) {
-         setError("Password update error.");
-      } finally {
-         setLoading(false);
          reset({ oldPassword: "", newPassword: "" });
-      }
+      },
+      onError: (error) => {
+         setError("oldPassword", {
+            type: "manual",
+            message: error.message || "Incorrect old password. Please try again.",
+         });
+      },
+   });
+
+   const updatePassword = (data) => {
+      setError("");
+      updatePasswordMutation.mutate(data);
    };
+
    return (
       <form
-         onSubmit={handleSubmit(onPasswordUpdate)}
-         className="p-4 dark:bg-gray-800 rounded-lg"
+         onSubmit={handleSubmit(updatePassword)}
+         className="p-2 dark:bg-gray-800 rounded-lg"
       >
          <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium">
@@ -62,8 +66,9 @@ function UpdatePassword() {
             } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             type="password"
             readOnly={!editPassword}
-            {...register("oldPassword", { required: true })}
+            {...register("oldPassword", { required: "Old password is required." })}
          />
+         {errors.oldPassword && <ErrorMessage error={errors.oldPassword.message} />}
 
          {editPassword && (
             <div className="">
@@ -71,9 +76,11 @@ function UpdatePassword() {
                <Input
                   className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                   type="password"
-                  {...register("newPassword", { required: true })}
+                  {...register("newPassword", { required: "New password is required." })}
                />
-               {loading ? (
+               {errors.newPassword && <ErrorMessage error={errors.newPassword.message} />}
+
+               {updatePasswordMutation?.isPending ? (
                   <div className="flex justify-center items-center mt-2">
                      <LoaderMini />
                   </div>
@@ -82,13 +89,16 @@ function UpdatePassword() {
                      <SaveAndCancelDiv
                         cancel={() => {
                            setEditPassword(false);
-                           setError("");
                            reset({ oldPassword: "", newPassword: "" });
                         }}
                      />
                   </div>
                )}
             </div>
+         )}
+
+         {updatePasswordMutation?.isError && (
+            <ErrorMessage error="Error updating password, please try again." />
          )}
       </form>
    );

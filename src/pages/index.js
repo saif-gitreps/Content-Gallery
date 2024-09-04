@@ -14,8 +14,8 @@ import Profile from "./Profile/Profile";
 import EditProfile from "./Profile/EditProfile";
 
 import EmailConfirmation from "./EmailConfirmation";
-import PasswordRecoveryStepOne from "./PasswordRecoveryStepOne";
-import PasswordRecoveryStepTwo from "./PasswordRecoveryStepTwo";
+import PasswordRecoveryStepOne from "./PasswordRecovery/StepOne";
+import PasswordRecoveryStepTwo from "./PasswordRecovery/StepTwo";
 
 export {
    _404,

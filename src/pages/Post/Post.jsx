@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Query } from "appwrite";
 import parse from "html-react-parser";
@@ -11,9 +11,9 @@ import {
    LoaderMini,
    ErrorMessage,
    UserHeader,
+   CommentSection,
 } from "../../components";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import CommentSection from "./CommentComponents/CommentSection";
 import appwriteService from "../../appwrite/config-appwrite";
 
 export default function Post() {

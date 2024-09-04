@@ -1,4 +1,4 @@
-import { Signup as SignupComp } from "./AuthComponents";
+import { Signup as SignupComp } from "../../components";
 
 function Signup() {
    return <SignupComp />;

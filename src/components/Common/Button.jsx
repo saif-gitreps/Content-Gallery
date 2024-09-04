@@ -7,7 +7,7 @@ function Button({ text, type = "button", className = "", bgNumber = 0, ...props 
    return (
       <button
          type={type}
-         className={`text-sm py-3 w-16 font-medium text-white flex items-center justify-center duration-300  rounded-lg ${bgColor[bgNumber]} ${className} `}
+         className={`text-sm p-2 font-medium text-white flex items-center justify-center duration-300  rounded-md ${bgColor[bgNumber]} ${className} `}
          {...props}
       >
          {text}

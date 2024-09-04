@@ -28,7 +28,6 @@ function SearchBar() {
             onClick={() => {
                navigate(`/search?q=${searchQuery.trim()}`);
             }}
-            className="h-9 w-10 flex text-sm"
             bgNumber={1}
             text={"Search"}
          />

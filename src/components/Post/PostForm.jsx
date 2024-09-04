@@ -2,19 +2,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {
-   Input,
-   Select,
-   SaveAndCancelDiv,
-   LoaderMini,
-   ErrorMessage,
-} from "../../../components";
-import appwriteService from "../../../appwrite/config-appwrite";
+import { Input, Select, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "../index";
+import appwriteService from "../../appwrite/config-appwrite";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 function PostForm({ post, pageTitle = "Create" }) {
    const [imageSrc, setImageSrc] = useState(null);
-   const [charCount, setCharCount] = useState(0);
+   const [charCount, setCharCount] = useState(post?.content.length || 0);
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
    const queryClient = useQueryClient();
@@ -135,10 +129,10 @@ function PostForm({ post, pageTitle = "Create" }) {
             <Input
                label={`Content: (${charCount}/250)`}
                className="text-lg font-normal"
-               type="text-area"
+               type="textarea"
                {...register("content", { required: true, maxLength: 250 })}
                onChange={(e) => setCharCount(e.target.value.length)}
-            ></Input>
+            />
             {errors.content && (
                <ErrorMessage error="Content is required and should be less than 250 characters." />
             )}

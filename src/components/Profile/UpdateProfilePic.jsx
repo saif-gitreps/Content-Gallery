@@ -1,40 +1,41 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import appwriteService from "../../../appwrite/config-appwrite";
+import appwriteService from "../../appwrite/config-appwrite";
 import { useMutation } from "@tanstack/react-query";
-import appwriteUserService from "../../../appwrite/config-user";
-import { update } from "../../../store/authSlice";
-import { Input, SaveAndCancelDiv, LoaderMini } from "../../../components";
+import appwriteUserService from "../../appwrite/config-user";
+import { update } from "../../store/authSlice";
+import { Input, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "..";
 import Pencil from "./Pencil";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-
-import { ErrorContext } from "../../../context/ErrorContext";
 
 function UpdateProfilePic() {
    const [editProfilePic, setEditProfilePic] = useState(false);
    const userData = useSelector((state) => state.auth.userData);
-   const [loading, setLoading] = useState(false);
-   const { setError } = useContext(ErrorContext);
 
    const [profilePicture, setProfilePicture] = useState(
       userData?.profilePicture || "/blank-dp.png"
    );
    const dispatch = useDispatch();
 
-   const { register, handleSubmit } = useForm();
+   const {
+      register,
+      handleSubmit,
+      setError,
+      formState: { errors },
+   } = useForm();
 
    const updateProfilePictureMutation = useMutation({
       mutationFn: async (data) => {
          const file = await appwriteService.uploadFile(data.profilePicture[0]);
 
          if (!file) {
-            throw new Error();
+            throw new Error("Failed to upload file");
          }
 
          const filePreview = await appwriteService.getFilePrev(file.$id);
          if (!filePreview) {
-            throw new Error();
+            throw new Error("Failed to get file preview");
          }
 
          await appwriteUserService.updateProfileDetail(
@@ -46,21 +47,21 @@ function UpdateProfilePic() {
 
          return filePreview;
       },
-      onError: () => {
-         setError("Failed to update profile picture. Try again later.");
-         setLoading(false);
-      },
       onSuccess: (filePreview) => {
          dispatch(update({ ...userData, profilePicture: filePreview.href }));
          setEditProfilePic(false);
-         setLoading(false);
-         setProfilePicture(filePreview);
+         setProfilePicture(filePreview.href);
+      },
+      onError: (error) => {
+         setError("profilePicture", {
+            type: "manual",
+            message:
+               error.message || "Failed to update profile picture. Please try again.",
+         });
       },
    });
 
    const updateProfilePicture = (data) => {
-      setError("");
-      setLoading(true);
       updateProfilePictureMutation.mutate(data);
    };
 
@@ -78,13 +79,12 @@ function UpdateProfilePic() {
    const onCancel = () => {
       setProfilePicture(userData?.profilePicture);
       setEditProfilePic(false);
-      setError("");
    };
 
    return (
       <form
          onSubmit={handleSubmit(updateProfilePicture)}
-         className="flex justify-center items-center flex-col space-y-4 p-4dark:bg-gray-800 rounded-lg"
+         className="flex justify-center items-center flex-col space-y-4 p-2 dark:bg-gray-800 rounded-lg"
       >
          <div className="relative">
             <LazyLoadImage
@@ -105,12 +105,19 @@ function UpdateProfilePic() {
             <div className="flex flex-col items-center space-y-3">
                <Input
                   type="file"
-                  {...register("profilePicture")}
+                  {...register("profilePicture", {
+                     required: "Please select a file to upload.",
+                  })}
                   onChange={handleProfilePicPreview}
                   className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                />
-               {loading ? (
-                  <LoaderMini />
+               {errors.profilePicture && (
+                  <ErrorMessage error={errors.profilePicture.message} />
+               )}
+               {updateProfilePictureMutation?.isLoading ? (
+                  <div className="flex justify-center items-center mt-2">
+                     <LoaderMini />
+                  </div>
                ) : (
                   <SaveAndCancelDiv
                      type="submit"
@@ -121,6 +128,9 @@ function UpdateProfilePic() {
                   />
                )}
             </div>
+         )}
+         {updateProfilePictureMutation?.isError && (
+            <ErrorMessage error="Error updating profile picture, please try again." />
          )}
       </form>
    );

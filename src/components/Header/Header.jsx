@@ -1,4 +1,11 @@
-import { Container, Logo, Hamburger, DpDropdownMenuButton, SearchBar } from "../index";
+import {
+   Container,
+   Logo,
+   Hamburger,
+   DpDropdownMenuButton,
+   SearchBar,
+   ListItem,
+} from "../index";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -26,18 +33,19 @@ function Header() {
 
                <SearchBar />
 
-               <ul className={`ml-auto hidden sm:flex`}>
-                  {navItems.map((item) =>
-                     item.active && !item.forDropDownMenu ? (
-                        <li key={item.name} className="flex items-center">
-                           <button
+               <ul className="ml-auto hidden sm:flex space-x-2">
+                  {navItems.map(
+                     (item) =>
+                        item.active &&
+                        !item.forDropDownMenu && (
+                           <ListItem
+                              key={item.name}
+                              className="flex items-center text-nowrap"
                               onClick={() => navigate(item.slug)}
-                              className="text-sm md:text-base xl:text-lg inline-bock p-2 duration-300 hover:shadow-md rounded-lg dark:hover:bg-background-darkHover dark:hover:text-text-dark dark:text-text-dark"
                            >
                               {item.name}
-                           </button>
-                        </li>
-                     ) : null
+                           </ListItem>
+                        )
                   )}
                </ul>
                <div className="mx-2 flex justify-center items-center">

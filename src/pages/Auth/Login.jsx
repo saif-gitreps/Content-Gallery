@@ -1,4 +1,4 @@
-import { Login as LoginComp } from "./AuthComponents";
+import { Login as LoginComp } from "../../components";
 
 function Login() {
    return <LoginComp />;

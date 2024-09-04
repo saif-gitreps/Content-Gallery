@@ -16,14 +16,14 @@ function PostCard({ $id, title, featuredImage, className = "" }) {
    return (
       <Link to={`/post/${$id}`}>
          <div
-            className={`w-full bg-white dark:bg-background-darkBlack dark:text-text-dark rounded-2xl p-3 duration-300 hover:shadow-md dark:hover:shadow-gray-700 ${className}`}
+            className={`w-full bg-white dark:bg-background-darkBlack dark:text-text-dark duration-300 hover:shadow-md dark:hover:shadow-gray-700 ${className} rounded-2xl overflow-hidden`}
          >
-            <div className="w-full flex justify-center items-centers mb-2">
+            <div className="w-full flex justify-center items-centers">
                {imageSrc && (
                   <LazyLoadImage
                      src={imageSrc}
                      alt={title}
-                     className="rounded-xl"
+                     className="rounded-t-2xl"
                      effect="blur"
                      onError={(e) => (e.target.src = "/fallback-mountain.jpg")}
                   />
@@ -32,7 +32,7 @@ function PostCard({ $id, title, featuredImage, className = "" }) {
             {error && (
                <p className="text-red-500 text-xs text-center">Error loading image</p>
             )}
-            <h2 className="text-xs sm:text-sm lg:text-base font-bold text-center">
+            <h2 className="text-xs sm:text-sm lg:text-base font-bold text-center my-2">
                {title}
             </h2>
          </div>

@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Button, ErrorMessage, LoaderMini } from "../../../components";
-import appwriteCommentsService from "../../../appwrite/config-comments";
+import { Button, ErrorMessage, LoaderMini } from "..";
+import appwriteCommentsService from "../../appwrite/config-comments";
 import Comment from "./Comment";
 
 function CommentSection({ post, userData, isAuthor }) {
@@ -102,7 +102,7 @@ function CommentSection({ post, userData, isAuthor }) {
    };
 
    return (
-      <div className="p-4 relative rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack shadow-lg">
+      <div className="py-2 px-1 relative rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack shadow-lg">
          <h1 className="text-xl font-bold text-center">Comments</h1>
          <ErrorMessage error={error || isError} />
 

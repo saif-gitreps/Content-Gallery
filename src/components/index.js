@@ -20,6 +20,11 @@ import Button from "./Common/Button";
 import Select from "./Common/Select";
 import Loader from "./Common/Loader";
 import Input from "./Common/Input";
+import Login from "./Auth/Login";
+import Signup from "./Auth/Signup";
+import PostForm from "./Post/PostForm";
+import Comment from "./Post/Comment";
+import CommentSection from "./Post/CommentSection";
 
 export {
    DpDropdownMenuButton,
@@ -44,4 +49,9 @@ export {
    Button,
    Input,
    Loader,
+   Login,
+   Signup,
+   PostForm,
+   Comment,
+   CommentSection,
 };
