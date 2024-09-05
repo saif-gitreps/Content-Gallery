@@ -42,7 +42,7 @@ function MySavedPosts() {
          ) : (
             isFetching && <Loader />
          )}
-         {error && <ErrorMessage error={error} />}
+         {error && <ErrorMessage error={error.messages} />}
          {isFetchingNextPage && <Loader />}
          {!hasNextPage && !isFetching && (
             <p className="text-center mt-10">No more posts.</p>

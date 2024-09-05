@@ -163,7 +163,7 @@ function PostForm({ post, pageTitle = "Create" }) {
                {...register("status", { required: true })}
             />
 
-            {updatePostMutation.isPending ? (
+            {updatePostMutation?.isPending ? (
                <div className="flex items-center justify-center">
                   <LoaderMini />
                </div>
@@ -180,8 +180,9 @@ function PostForm({ post, pageTitle = "Create" }) {
                   }}
                />
             )}
-            {updatePostMutation.isError && (
-               <ErrorMessage error={updatePostMutation.error.message} />
+
+            {updatePostMutation?.isError && (
+               <ErrorMessage error={updatePostMutation?.error?.message} />
             )}
          </form>
       </div>

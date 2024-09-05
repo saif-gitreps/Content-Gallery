@@ -17,7 +17,6 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import appwriteService from "../../appwrite/config-appwrite";
 
 export default function Post() {
-   const [error, setError] = useState("");
    const queryClient = useQueryClient();
    const { id } = useParams();
    const navigate = useNavigate();
@@ -51,19 +50,20 @@ export default function Post() {
    } = useQuery({
       queryKey: ["saved", userData?.$id, post?.$id],
       queryFn: async () => {
-         const userSavedPosts = await appwriteService.getSavedPosts(
-            [Query.equal("userId", userData?.$id)],
+         const savedPosts = await appwriteService.getSavedPosts(
+            [
+               Query.and([
+                  Query.equal("articlesId", post?.$id),
+                  Query.equal("userId", userData?.$id),
+               ]),
+            ],
             0,
             5000
          );
-         for (const savedPost of userSavedPosts.documents) {
-            if (savedPost.articles.$id === post?.$id) {
-               return savedPost;
-            }
-         }
-         return null;
+
+         return savedPosts?.documents.length === 0 ? null : savedPosts?.documents[0];
       },
-      enabled: !!userData?.$id && !!post?.$id,
+      enabled: !!post?.$id && !!userData?.$id,
    });
 
    const deleteMutation = useMutation({
@@ -71,10 +71,9 @@ export default function Post() {
          await appwriteService.deletePost(post.$id);
          await appwriteService.deleteFile(post.featuredImage);
       },
-      onError: () => {
-         setError("Error deleting post. Please try again later.");
-      },
       onSuccess: () => {
+         queryClient.invalidateQueries("posts");
+         queryClient.invalidateQueries(["myPosts", userData.$id]);
          navigate("/");
       },
    });
@@ -88,13 +87,13 @@ export default function Post() {
          // Cancel any outgoing refetches
          await queryClient.cancelQueries(["saved", userData.$id, post.$id]);
 
-         const previousSaved = queryClient.getQueryData([
+         const previousSaved = await queryClient.getQueryData([
             "saved",
             userData.$id,
             post.$id,
          ]);
 
-         queryClient.setQueryData(["saved", userData.$id, post.$id], (old) => !old);
+         await queryClient.setQueryData(["saved", userData.$id, post.$id], (old) => !old);
 
          return { previousSaved };
       },
@@ -103,28 +102,20 @@ export default function Post() {
             ["saved", userData.$id, post.$id],
             context.previousSaved
          );
-         setError("Error saving/unsaving post. Please try again.");
       },
       onSettled: () => {
          queryClient.invalidateQueries(["saved", userData.$id, post.$id]);
       },
-      onSuccess: () => {
-         setError("");
-      },
    });
 
-   useEffect(() => {
-      if (postError || imageError || savedPostError) {
-         setError("Error fetching post. Please try again later.");
-         const timer = setTimeout(() => navigate("/"), 2000);
-         return () => clearTimeout(timer);
-      }
-   }, [postError, imageError, savedPostError, navigate]);
-
    if (postLoading || imageLoading) return <Loader />;
-   if (error) return <ErrorMessage error={error} />;
 
-   const isAuthor = post.user.$id === userData?.$id;
+   if (postError || imageError) {
+      setTimeout(() => navigate("/"), 2000);
+      return <ErrorMessage error={"Error fetching post."} />;
+   }
+
+   const isAuthor = post?.user?.$id === userData?.$id;
 
    return (
       <Container className="max-w-2xl lg:max-w-5xl flex lg:flex-row flex-col lg:space-x-4 space-y-4 p-2 bg-background-lightWhite dark:bg-background-darkBlack">
@@ -150,7 +141,8 @@ export default function Post() {
                </div>
                <div className="flex justify-between items-center">
                   {authStatus &&
-                     (toggleSaveMutation.isPending || isSavedPostLoading ? (
+                     !savedPostError &&
+                     (toggleSaveMutation?.isPending || isSavedPostLoading ? (
                         <LoaderMini />
                      ) : (
                         <Button
@@ -158,7 +150,7 @@ export default function Post() {
                            type="button"
                            bgNumber={isSaved ? 1 : 0}
                            onClick={() => toggleSaveMutation.mutate()}
-                           disabled={toggleSaveMutation.isPending || isSavedPostLoading}
+                           disabled={toggleSaveMutation?.isPending || isSavedPostLoading}
                         />
                      ))}
                   {isAuthor && (
@@ -170,22 +162,24 @@ export default function Post() {
                            text="Delete"
                            type="button"
                            bgNumber={2}
-                           onClick={() => deleteMutation.mutate()}
-                           disabled={deleteMutation.isLoading}
+                           onClick={() => deleteMutation?.mutate()}
+                           disabled={deleteMutation?.isPending}
                         />
                      </div>
                   )}
                </div>
-               {toggleSaveMutation.isError && (
+               {toggleSaveMutation?.isError && (
                   <ErrorMessage error={"Error saving/unsaving post."} />
                )}
-               {deleteMutation.isError && (
+               {deleteMutation?.isError && (
                   <ErrorMessage error={"Error deleting post. Try again later."} />
                )}
             </div>
+            {savedPostError && (
+               <ErrorMessage error="Error loading saved state of the post." />
+            )}
             <CommentSection post={post} isAuthor={isAuthor} userData={userData} />
          </div>
-         <ErrorMessage error={error} />
       </Container>
    );
 }

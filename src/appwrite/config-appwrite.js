@@ -126,6 +126,7 @@ export class Service {
             {
                userId,
                articles: articleId,
+               articlesId: articleId,
             }
          );
       } catch (error) {

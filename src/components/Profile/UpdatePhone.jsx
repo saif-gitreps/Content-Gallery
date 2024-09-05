@@ -81,7 +81,7 @@ function UpdatePhone() {
             <div className="flex items-center justify-between">
                <h2 className="text-lg font-medium">
                   Phone :{" "}
-                  {!userData?.phoneVerification && (
+                  {!userData?.phoneVerification && userData?.phone && (
                      <Link
                         className="text-green-600 hover:underline ml-1"
                         onClick={() => {

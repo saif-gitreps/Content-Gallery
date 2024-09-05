@@ -101,6 +101,7 @@ function UpdateProfilePic() {
                />
             )}
          </div>
+
          {editProfilePic && (
             <div className="flex flex-col items-center space-y-3">
                <Input
@@ -111,10 +112,8 @@ function UpdateProfilePic() {
                   onChange={handleProfilePicPreview}
                   className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                />
-               {errors.profilePicture && (
-                  <ErrorMessage error={errors.profilePicture.message} />
-               )}
-               {updateProfilePictureMutation?.isLoading ? (
+
+               {updateProfilePictureMutation?.isPending ? (
                   <div className="flex justify-center items-center mt-2">
                      <LoaderMini />
                   </div>
@@ -122,13 +121,13 @@ function UpdateProfilePic() {
                   <SaveAndCancelDiv
                      type="submit"
                      saveText="Upload"
-                     cancelText="Close"
                      cancel={onCancel}
                      className="flex justify-end space-x-4"
                   />
                )}
             </div>
          )}
+
          {updateProfilePictureMutation?.isError && (
             <ErrorMessage error="Error updating profile picture, please try again." />
          )}
