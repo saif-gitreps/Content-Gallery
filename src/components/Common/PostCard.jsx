@@ -19,15 +19,14 @@ function PostCard({ $id, title, featuredImage, className = "" }) {
             className={`w-full bg-white dark:bg-background-darkBlack dark:text-text-dark duration-300 hover:shadow-md dark:hover:shadow-gray-700 ${className} rounded-2xl overflow-hidden`}
          >
             <div className="w-full flex justify-center items-centers">
-               {imageSrc && (
-                  <LazyLoadImage
-                     src={imageSrc}
-                     alt={title}
-                     className="rounded-t-2xl"
-                     effect="blur"
-                     onError={(e) => (e.target.src = "/fallback-mountain.jpg")}
-                  />
-               )}
+               <LazyLoadImage
+                  src={imageSrc || "/fallback-mountain.jpg"}
+                  alt={title}
+                  className="rounded-t-2xl"
+                  onError={(e) => (e.target.src = "/fallback-mountain.jpg")}
+                  placeholderSrc="/fallback-mountain.jpg"
+                  effect="blur"
+               />
             </div>
             {error && (
                <p className="text-red-500 text-xs text-center">Error loading image</p>

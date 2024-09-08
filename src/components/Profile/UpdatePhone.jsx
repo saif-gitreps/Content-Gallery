@@ -101,9 +101,6 @@ function UpdatePhone() {
                )}
             </div>
             <Input
-               className={`text-base font-normal w-full ${
-                  editPhone ? "bg-white dark:bg-gray-700" : "bg-transparent"
-               } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
                readOnly={!editPhone}
                {...registerPhone("phone", { required: "Phone number is required." })}
             />
@@ -111,7 +108,6 @@ function UpdatePhone() {
                <div>
                   <h2 className="text-lg font-medium">Password:</h2>
                   <Input
-                     className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                      type="password"
                      {...registerPhone("password", { required: "Password is required." })}
                   />
@@ -123,16 +119,14 @@ function UpdatePhone() {
                         <LoaderMini />
                      </div>
                   ) : (
-                     <div className="flex justify-end space-x-4">
-                        <SaveAndCancelDiv
-                           cancel={() => {
-                              setEditPhone(false);
-                              setError("phone", { message: "" });
-                              setError("verificationCode", { message: "" });
-                              reset();
-                           }}
-                        />
-                     </div>
+                     <SaveAndCancelDiv
+                        cancel={() => {
+                           setEditPhone(false);
+                           setError("phone", { message: "" });
+                           setError("verificationCode", { message: "" });
+                           reset();
+                        }}
+                     />
                   )}
                </div>
             )}
@@ -151,7 +145,6 @@ function UpdatePhone() {
                   Check the verification SMS on your Phone.
                </h2>
                <Input
-                  className="text-base font-normal bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                   type="number"
                   {...registerConfirmVerification("verificationCode", {
                      required: "Verification code is required.",
@@ -162,13 +155,11 @@ function UpdatePhone() {
                      <LoaderMini />
                   </div>
                ) : (
-                  <div className="flex justify-end space-x-4">
-                     <SaveAndCancelDiv
-                        cancel={() => {
-                           setEnableVerificationField(false);
-                        }}
-                     />
-                  </div>
+                  <SaveAndCancelDiv
+                     cancel={() => {
+                        setEnableVerificationField(false);
+                     }}
+                  />
                )}
                {verificationErrors?.verificationCode && (
                   <ErrorMessage error={verificationErrors.verificationCode.message} />

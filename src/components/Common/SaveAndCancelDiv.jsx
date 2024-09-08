@@ -8,7 +8,7 @@ function SaveAndCancelDiv({
    cancelText = "Close",
 }) {
    return (
-      <div className="flex justify-center items-center m-2">
+      <div className="flex justify-start items-center my-2 space-x-1">
          <Button
             text={saveText}
             type={type}

@@ -70,9 +70,6 @@ function UpdateBio() {
 
          <Input
             type="textarea"
-            className={`text-base font-normal w-full ${
-               editBio ? "bg-white dark:bg-gray-700" : "bg-transparent"
-            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             readOnly={!editBio}
             {...registerBio("bio", {
                required: "Bio is required.",
@@ -91,13 +88,11 @@ function UpdateBio() {
                   <LoaderMini />
                </div>
             ) : (
-               <div className="flex justify-end space-x-4">
-                  <SaveAndCancelDiv
-                     type="submit"
-                     cancel={() => setEditBio(false)}
-                     className="flex space-x-2"
-                  />
-               </div>
+               <SaveAndCancelDiv
+                  type="submit"
+                  cancel={() => setEditBio(false)}
+                  className="flex space-x-2"
+               />
             ))}
 
          {updateBioMutation?.isError && (

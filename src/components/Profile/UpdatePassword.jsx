@@ -61,9 +61,6 @@ function UpdatePassword() {
          </div>
 
          <Input
-            className={`text-base font-normal w-full ${
-               editPassword ? "bg-white dark:bg-gray-700" : "bg-transparent"
-            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             type="password"
             readOnly={!editPassword}
             {...register("oldPassword", { required: "Old password is required." })}
@@ -74,7 +71,6 @@ function UpdatePassword() {
             <div className="">
                <h2 className="text-lg font-medium">New Password:</h2>
                <Input
-                  className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                   type="password"
                   {...register("newPassword", { required: "New password is required." })}
                />
@@ -85,14 +81,12 @@ function UpdatePassword() {
                      <LoaderMini />
                   </div>
                ) : (
-                  <div className="flex justify-end space-x-4">
-                     <SaveAndCancelDiv
-                        cancel={() => {
-                           setEditPassword(false);
-                           reset({ oldPassword: "", newPassword: "" });
-                        }}
-                     />
-                  </div>
+                  <SaveAndCancelDiv
+                     cancel={() => {
+                        setEditPassword(false);
+                        reset({ oldPassword: "", newPassword: "" });
+                     }}
+                  />
                )}
             </div>
          )}

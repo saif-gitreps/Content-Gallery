@@ -1,14 +1,24 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Input, Select, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "../index";
+import {
+   Input,
+   Select,
+   SaveAndCancelDiv,
+   LoaderMini,
+   ErrorMessage,
+   Button,
+} from "../index";
 import appwriteService from "../../appwrite/config-appwrite";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import ImageCropModal from "../Common/ImageCropModal";
+import { v4 as uuidv4 } from "uuid";
 
 function PostForm({ post, pageTitle = "Create" }) {
    const [imageSrc, setImageSrc] = useState(null);
    const [charCount, setCharCount] = useState(post?.content.length || 0);
+   const [toggleModal, setToggleModal] = useState(false);
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
    const queryClient = useQueryClient();
@@ -17,6 +27,7 @@ function PostForm({ post, pageTitle = "Create" }) {
       register,
       handleSubmit,
       formState: { errors },
+      setValue,
    } = useForm({
       defaultValues: {
          title: post?.title || "",
@@ -28,13 +39,12 @@ function PostForm({ post, pageTitle = "Create" }) {
 
    const updatePostMutation = useMutation({
       mutationFn: async (data) => {
-         if (data.image[0] && data.image[0].size > 1024 * 1024) {
-            throw new Error("Image size should be less than 1MB.");
-         }
-
          let file;
-         if (data.image && data.image[0]) {
-            file = await appwriteService.uploadFile(data.image[0]);
+         if (data.featuredImage && typeof data.featuredImage !== "string") {
+            if (data.featuredImage.size > 1024 * 1024) {
+               throw new Error("Image size should be less than 1MB.");
+            }
+            file = await appwriteService.uploadFile(data.featuredImage);
             if (post && post.featuredImage) {
                await appwriteService.deleteFile(post.featuredImage);
             }
@@ -67,14 +77,9 @@ function PostForm({ post, pageTitle = "Create" }) {
       updatePostMutation.mutate(data);
    };
 
-   const {
-      data: imageSrcFromDbs,
-      isLoading: isImageLoading,
-      error: imageError,
-   } = useQuery({
+   const { isLoading: isImageLoading, error: imageError } = useQuery({
       queryKey: ["imageUrl", post?.featuredImage],
       queryFn: async ({ queryKey }) => {
-         // Just retrieving the featured image $id from the queryKey
          const [_, featuredImage] = queryKey;
          if (!featuredImage) {
             throw new Error("No featured image available");
@@ -84,48 +89,49 @@ function PostForm({ post, pageTitle = "Create" }) {
          if (!imagePreview) {
             throw new Error("Error fetching image preview");
          }
-
+         setImageSrc(imagePreview);
          return imagePreview;
       },
       enabled: !!post && !!post?.featuredImage,
       refetchOnWindowFocus: false,
    });
 
-   useEffect(() => {
-      if (imageSrcFromDbs) {
-         setImageSrc(imageSrcFromDbs);
-      }
-   }, [imageSrcFromDbs]);
+   const handleImageCrop = (croppedImage) => {
+      setImageSrc(croppedImage);
 
-   const imagePreview = (event) => {
-      const file = event.target.files[0];
+      // Extract the image type from the base64 string
+      const imageType = croppedImage.split(";")[0].split("/")[1];
 
-      if (file) {
-         const reader = new FileReader();
-         reader.onload = () => {
-            setImageSrc(reader.result);
-         };
-         reader.readAsDataURL(file);
-      }
+      // Convert base64 to file
+      fetch(croppedImage)
+         .then((res) => res.blob())
+         .then((blob) => {
+            // Generate a unique filename with the correct extension
+            const uniqueFilename = `image-${crypto.randomUUID()}.${imageType}`;
+            const file = new File([blob], uniqueFilename, { type: `image/${imageType}` });
+            setValue("featuredImage", file);
+         });
    };
 
    return (
-      <div className="flex flex-col items-center bg-background-lightWhite dark:bg-background-darkBlack dark:text-text-dark max-w-lg p-5 m-auto rounded-xl shadow-md">
+      <div className="flex flex-col items-center bg-background-lightWhite dark:bg-background-darkBlack dark:text-text-dark max-w-xl p-5 m-auto rounded-xl shadow-md">
          <h2 className="text-center text-2xl font-bold leading-tight">
             {pageTitle} Post
          </h2>
          <form
             onSubmit={handleSubmit(submit)}
-            className="mt-6 space-y-4 flex flex-col justify-center"
+            className="mt-6 space-y-4 flex flex-col justify-center w-full"
          >
             <Input
                label="Title:"
                className="text-lg font-normal"
                {...register("title", { required: true, maxLength: 50 })}
             />
+
             {errors.title && (
                <ErrorMessage error="Title is required and should be less than 50 characters." />
             )}
+
             <Input
                label={`Content: (${charCount}/250)`}
                className="text-lg font-normal"
@@ -133,35 +139,52 @@ function PostForm({ post, pageTitle = "Create" }) {
                {...register("content", { required: true, maxLength: 250 })}
                onChange={(e) => setCharCount(e.target.value.length)}
             />
+
             {errors.content && (
                <ErrorMessage error="Content is required and should be less than 250 characters." />
             )}
-            <Input
-               label="Featured Image:"
-               type="file"
-               className=""
-               {...register("image")}
-               onChange={imagePreview}
-            />
-            {(errors.image || imageError) && (
-               <ErrorMessage error="Error loading image, try again." />
-            )}
-            {isImageLoading && (
-               <div className="flex items-center justify-center">
-                  <LoaderMini />
-               </div>
-            )}
-            {imageSrc && (
-               <div className="w-full mb-4">
-                  <img src={imageSrc} alt={post?.title || ""} className="rounded-lg" />
-               </div>
-            )}
+
             <Select
                label="Status:"
                options={["Active", "Inactive"]}
                className="font-normal"
                {...register("status", { required: true })}
             />
+
+            <div className="flex space-x-2 items-center">
+               <p className="inline-block mb-1 pl -1">Featured Image:</p>
+               <Button
+                  text={imageSrc ? "Change image" : "Upload image"}
+                  onClick={(e) => {
+                     e.preventDefault();
+                     setToggleModal(true);
+                  }}
+               />
+            </div>
+
+            {toggleModal && (
+               <ImageCropModal
+                  setToggleModal={setToggleModal}
+                  imageSrc={imageSrc}
+                  setImageSrc={handleImageCrop}
+               />
+            )}
+
+            {imageSrc && (
+               <div className="w-full mb-4">
+                  <img src={imageSrc} alt={post?.title || ""} className="rounded-lg" />
+               </div>
+            )}
+
+            {(errors.image || imageError) && (
+               <ErrorMessage error="Error loading image, try again." />
+            )}
+
+            {isImageLoading && (
+               <div className="flex items-center justify-center">
+                  <LoaderMini />
+               </div>
+            )}
 
             {updatePostMutation?.isPending ? (
                <div className="flex items-center justify-center">

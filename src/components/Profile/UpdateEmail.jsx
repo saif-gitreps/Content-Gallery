@@ -77,9 +77,6 @@ function UpdateEmail() {
          </div>
 
          <Input
-            className={`text-base font-normal w-full ${
-               editEmail ? "bg-white dark:bg-gray-700" : "bg-transparent"
-            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             readOnly={!editEmail}
             {...register("email", {
                required: "Email is required.",
@@ -97,7 +94,6 @@ function UpdateEmail() {
                <div>
                   <h2 className="text-lg font-medium">Password:</h2>
                   <Input
-                     className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                      type="password"
                      {...register("password", { required: "Password is required." })}
                   />
@@ -108,15 +104,13 @@ function UpdateEmail() {
                      <LoaderMini />
                   </div>
                ) : (
-                  <div className="flex justify-end space-x-4">
-                     <SaveAndCancelDiv
-                        cancel={() => {
-                           setEditEmail(false);
-                           reset({ password: "" });
-                        }}
-                        className="flex justify-end space-x-2"
-                     />
-                  </div>
+                  <SaveAndCancelDiv
+                     cancel={() => {
+                        setEditEmail(false);
+                        reset({ password: "" });
+                     }}
+                     className="flex justify-end space-x-2"
+                  />
                )}
             </div>
          )}

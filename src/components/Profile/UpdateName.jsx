@@ -65,9 +65,6 @@ function UpdateName() {
             )}
          </div>
          <Input
-            className={`text-base font-normal w-full ${
-               editName ? "bg-white dark:bg-gray-700" : "bg-transparent"
-            } border rounded-md p-2 focus:ring-2 focus:ring-blue-500`}
             readOnly={!editName}
             {...registerName("name", {
                required: "Name is required.",
@@ -81,13 +78,11 @@ function UpdateName() {
                   <LoaderMini />
                </div>
             ) : (
-               <div className="flex justify-end space-x-4">
-                  <SaveAndCancelDiv
-                     type="submit"
-                     cancel={() => setEditName(false)}
-                     className="flex space-x-2"
-                  />
-               </div>
+               <SaveAndCancelDiv
+                  type="submit"
+                  cancel={() => setEditName(false)}
+                  className="flex space-x-2"
+               />
             ))}
 
          {updateNameMutation?.isError && (
