@@ -51,18 +51,28 @@ function PostForm({ post, pageTitle = "Create" }) {
          }
 
          if (post) {
+            if (!file)
+               return await appwriteService.updatePost(post.$id, {
+                  ...data,
+               });
+
+            const featuredImageSrc = await appwriteService.getFilePrev(file.$id);
+
             return await appwriteService.updatePost(post.$id, {
                ...data,
-               featuredImage: file ? file.$id : post.featuredImage,
+               featuredImage: file.$id,
+               featuredImageSrc: featuredImageSrc.href,
             });
          } else {
-            if (!file) {
-               throw new Error("No image uploaded.");
-            }
+            if (!file) throw new Error("No image uploaded.");
+
+            const featuredImageSrc = await appwriteService.getFilePrev(file.$id);
+
             return await appwriteService.createPost({
                ...data,
                featuredImage: file.$id,
                userId: userData.$id,
+               featuredImageSrc: featuredImageSrc.href,
             });
          }
       },
@@ -89,6 +99,7 @@ function PostForm({ post, pageTitle = "Create" }) {
          if (!imagePreview) {
             throw new Error("Error fetching image preview");
          }
+
          setImageSrc(imagePreview);
          return imagePreview;
       },

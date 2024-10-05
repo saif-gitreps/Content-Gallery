@@ -6,6 +6,11 @@ export default {
    darkMode: "class",
    theme: {
       extend: {
+         zIndex: {
+            60: "60",
+            70: "70",
+            80: "80",
+         },
          colors: {
             background: {
                lightWhite: colors.white,

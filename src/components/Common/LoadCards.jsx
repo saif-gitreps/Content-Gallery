@@ -15,7 +15,7 @@ function LoadCards({ posts, isFetching, error, isFetchingNextPage, hasNextPage }
                            <PostCard
                               $id={post?.$id}
                               title={post?.title}
-                              featuredImage={post?.featuredImage}
+                              featuredImageSrc={post?.featuredImageSrc}
                            />
                         </div>
                      );

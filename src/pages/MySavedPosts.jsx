@@ -29,11 +29,11 @@ function MySavedPosts() {
                </h1>
                <div className="masonry-grid">
                   {allPosts?.map((saved) => (
-                     <div key={saved.articles.$id} className="masonry-item">
+                     <div key={saved?.articles?.$id} className="masonry-item">
                         <PostCard
-                           $id={saved.articles.$id}
-                           title={saved.articles.title}
-                           featuredImage={saved.articles.featuredImage}
+                           $id={saved?.articles?.$id}
+                           title={saved?.articles?.title}
+                           featuredImageSrc={saved?.articles?.featuredImageSrc}
                         />
                      </div>
                   ))}

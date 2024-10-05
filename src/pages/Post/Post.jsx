@@ -34,16 +34,6 @@ export default function Post() {
    });
 
    const {
-      data: image,
-      error: imageError,
-      isLoading: imageLoading,
-   } = useQuery({
-      queryKey: ["image", post?.featuredImage],
-      queryFn: async () => await appwriteService.getFilePrev(post.featuredImage),
-      enabled: !!post,
-   });
-
-   const {
       data: isSaved,
       error: savedPostError,
       isLoading: isSavedPostLoading,
@@ -108,9 +98,9 @@ export default function Post() {
       },
    });
 
-   if (postLoading || imageLoading) return <Loader />;
+   if (postLoading) return <Loader />;
 
-   if (postError || imageError) {
+   if (postError) {
       setTimeout(() => navigate("/"), 2000);
       return <ErrorMessage error={"Error fetching post."} />;
    }
@@ -121,7 +111,7 @@ export default function Post() {
       <Container className="max-w-2xl lg:max-w-5xl flex lg:flex-row flex-col lg:space-x-4 space-y-4 p-2 bg-background-lightWhite dark:bg-background-darkBlack">
          <div className="flex items-start justify-center">
             <LazyLoadImage
-               src={image}
+               src={post?.featuredImageSrc || "/fallback-mountain.jpg"}
                alt={post?.title}
                className="rounded-2xl object-contain sm:max-h-[40rem] sm:max-w-[35rem] lg:mr-auto"
                effect="blur"
@@ -140,19 +130,32 @@ export default function Post() {
                   {parse(post?.content)}
                </div>
                <div className="flex justify-between items-center">
-                  {authStatus &&
-                     !savedPostError &&
-                     (toggleSaveMutation?.isPending || isSavedPostLoading ? (
-                        <LoaderMini />
-                     ) : (
-                        <Button
-                           text={isSaved ? "Saved" : "Save"}
-                           type="button"
-                           bgNumber={isSaved ? 1 : 0}
-                           onClick={() => toggleSaveMutation.mutate()}
-                           disabled={toggleSaveMutation?.isPending || isSavedPostLoading}
-                        />
-                     ))}
+                  <div className="flex space-x-1">
+                     {authStatus &&
+                        !savedPostError &&
+                        (toggleSaveMutation?.isPending || isSavedPostLoading ? (
+                           <LoaderMini />
+                        ) : (
+                           <Button
+                              text={isSaved ? "Saved" : "Save"}
+                              type="button"
+                              bgNumber={isSaved ? 1 : 0}
+                              onClick={() => toggleSaveMutation.mutate()}
+                              disabled={
+                                 toggleSaveMutation?.isPending || isSavedPostLoading
+                              }
+                           />
+                        ))}
+                     <Button
+                        text="Copy Link"
+                        type="button"
+                        onClick={() => {
+                           navigator.clipboard.writeText(window.location.href);
+                           alert("Link copied to clipboard.");
+                        }}
+                        bgNumber={1}
+                     />
+                  </div>
                   {isAuthor && (
                      <div className="flex">
                         <Link to={`/edit-post/${post?.$id}`}>

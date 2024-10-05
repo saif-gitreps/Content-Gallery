@@ -38,6 +38,8 @@ const router = createBrowserRouter([
          {
             path: "/login",
             element: (
+               // adding false here because we don't want to show the login page to the authenticated user
+               // this route is only for the unauthenticated user
                <AuthLayout authentication={false}>
                   <Login />
                </AuthLayout>
@@ -53,11 +55,19 @@ const router = createBrowserRouter([
          },
          {
             path: "/password-recovery-step-one",
-            element: <PasswordRecoveryStepOne />,
+            element: (
+               <AuthLayout authentication={false}>
+                  <PasswordRecoveryStepOne />
+               </AuthLayout>
+            ),
          },
          {
             path: "/password-recovery-step-two",
-            element: <PasswordRecoveryStepTwo />,
+            element: (
+               <AuthLayout authentication={false}>
+                  <PasswordRecoveryStepTwo />,
+               </AuthLayout>
+            ),
          },
          {
             path: "/saved-posts",

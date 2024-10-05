@@ -9,7 +9,7 @@ const ImageCropModal = ({ setToggleModal, imageSrc, setImageSrc }) => {
    const [rotation, setRotation] = useState(0);
    const [zoom, setZoom] = useState(1);
    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-   const [aspectRatio, setAspectRatio] = useState();
+   const [aspectRatio, setAspectRatio] = useState(16 / 9);
 
    const onCropComplete = (croppedArea, croppedAreaPixels) => {
       setCroppedAreaPixels(croppedAreaPixels);
@@ -37,7 +37,7 @@ const ImageCropModal = ({ setToggleModal, imageSrc, setImageSrc }) => {
    };
 
    return (
-      <div className="fixed inset-0 z-50 mt-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-white dark:bg-opacity-20">
+      <div className="fixed inset-0 -inset-y-10 z-50 flex items-center justify-center bg-black bg-opacity-50 dark:bg-white dark:bg-opacity-20">
          <div className="relative w-11/12 max-w-lg p-6 bg-white rounded-lg shadow-xl dark:bg-gray-800">
             <button
                onClick={() => setToggleModal(false)}
@@ -50,10 +50,10 @@ const ImageCropModal = ({ setToggleModal, imageSrc, setImageSrc }) => {
                label="Choose an image:"
                type="file"
                onChange={handleFileChange}
-               className="mb-4"
+               className="mb-2"
             />
 
-            <div className="relative h-64 mb-4">
+            <div className="relative h-32 sm:h-36 lg:h-64 mb-2">
                <Cropper
                   image={imageSrc}
                   crop={crop}
@@ -66,25 +66,26 @@ const ImageCropModal = ({ setToggleModal, imageSrc, setImageSrc }) => {
                   onZoomChange={setZoom}
                />
             </div>
-            <Input
-               type="range"
-               label="Set zoom:"
-               value={zoom}
-               min={1}
-               max={3}
-               step={0.1}
-               onChange={(e) => setZoom(parseFloat(e.target.value))}
-               className="mb-4"
-            />
-            <Input
-               type="range"
-               label="Set rotation:"
-               value={rotation}
-               min={0}
-               max={360}
-               onChange={(e) => setRotation(parseInt(e.target.value))}
-               className="mb-4"
-            />
+
+            <div className="flex">
+               <Input
+                  type="range"
+                  label="Set zoom:"
+                  value={zoom}
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  onChange={(e) => setZoom(parseFloat(e.target.value))}
+               />
+               <Input
+                  type="range"
+                  label="Set rotation:"
+                  value={rotation}
+                  min={0}
+                  max={360}
+                  onChange={(e) => setRotation(parseInt(e.target.value))}
+               />
+            </div>
             <Select
                label="Aspect Ratio:"
                options={[18 / 9, 16 / 9, 4 / 3, 4 / 4, 9 / 10, 9 / 16, 9 / 18]}
