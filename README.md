@@ -28,12 +28,13 @@ A full-featured, modern social media platform where users can share their favori
 - Passwords are hashed with **Argon2**, a resilient and secure password hashing algorithm.
 
 💻 **Tech Stack and Features**
-- 🖥 Fully written in **React**, following best coding practices for maintainability and scalability.
+- 🖥  Fully written in **React**, following best coding practices for maintainability and scalability.
 - 📜 Utilizes **React Hook Form** for strict form input validation and error handling.
 - 🛢  Smooth integration of **Appwrite** database queries and authentication services.
 - 🪝 Custom **hooks** for refactoring and reusing common functionality.
 - 🌄 Infinite scrolling and paginated queries implemented with **Tanstack React Query**.
 - 🦥 Lazy loading of images for fast and responsive rendering of bulk images using **React Lazy Load**.
+- 🤞 **Optimistic** updates while adding/removing comments on a post, providing an uninterrupted UX using **Tanstack React Query**.
 - 🖼️ Image cropping and rotating capabilities with **React Easy Crop**.
 - 🚀 Efficient cache management and cache invalidation using **Tanstack React Query**.
 - 📁 Simple authentication state management using **Redux**.
