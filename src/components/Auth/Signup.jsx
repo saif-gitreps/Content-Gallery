@@ -6,6 +6,7 @@ import authService from "../../appwrite/auth";
 import appwriteUserService from "../../appwrite/config-user";
 import { login } from "../../store/authSlice";
 import { Button, Input, LoaderMini, Container, ErrorMessage } from "..";
+import { toast } from "react-toastify";
 
 function Signup() {
    const navigate = useNavigate();
@@ -50,6 +51,7 @@ function Signup() {
       },
       onSuccess: (userData) => {
          dispatch(login(userData));
+         toast.success("Welcome to Content Gallery, hopefully you enjoy the app");
          navigate("/");
       },
    });

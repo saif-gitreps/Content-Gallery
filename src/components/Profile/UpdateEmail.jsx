@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Input, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "..";
 import authService from "../../appwrite/auth";
 import Pencil from "./Pencil";
+import { toast } from "react-toastify";
 
 function UpdateEmail() {
    const [editEmail, setEditEmail] = useState(false);
@@ -15,7 +16,6 @@ function UpdateEmail() {
       register,
       handleSubmit,
       reset,
-      setError,
       formState: { errors },
    } = useForm({
       defaultValues: {
@@ -27,13 +27,9 @@ function UpdateEmail() {
    const updateEmailMutation = useMutation({
       mutationFn: async (data) =>
          await authService.updateEmail(data.email, data.password),
-      onError: (error) => {
-         setError("email", {
-            type: "manual",
-            message: error.message || "Failed to update email. Try again later.",
-         });
-      },
+      onError: (error) => toast.error("Something went wrong while updating email"),
       onSuccess: () => {
+         toast.success("Email updated successfully");
          setEditEmail(false);
          reset({ password: "" });
       },
@@ -45,6 +41,9 @@ function UpdateEmail() {
 
    const verifyEmailMutation = useMutation({
       mutationFn: async () => await authService.createEmailVerification(),
+      onError: () => toast.error("Something went wrong while sending email verification"),
+      onSuccess: () =>
+         toast.success("Email verfication link sent to your email successfully"),
    });
 
    const verifyEmail = async () => {
@@ -113,22 +112,6 @@ function UpdateEmail() {
                   />
                )}
             </div>
-         )}
-
-         {verifyEmailMutation?.isSuccess && (
-            <h2 className="text-base text-center text-red-600 font-medium">
-               Check your email for verification.
-            </h2>
-         )}
-
-         {verifyEmailMutation?.isError && (
-            <h2 className="text-base text-center text-red-600 font-medium">
-               Error sending verification email. Please try again.
-            </h2>
-         )}
-
-         {updateEmailMutation?.isError && (
-            <ErrorMessage error="Error updating email, please try again." />
          )}
       </form>
    );

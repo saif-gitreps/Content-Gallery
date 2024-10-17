@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux";
 import authService from "../../appwrite/auth";
 import { logout } from "../../store/authSlice";
 import { ListItem } from "../index";
+import { toast } from "react-toastify";
 
 function LogoutButton() {
    const dispatch = useDispatch();
@@ -9,14 +10,21 @@ function LogoutButton() {
       authService
          .logout()
          .then(() => {
+            toast.success("You have been signed out successfully");
             dispatch(logout());
          })
-         .catch((error) => {
-            console.log("Logout error:", error);
+         .catch(() => {
+            toast.error("Something went wrong while signing out, please try again later");
          });
    };
 
-   return <ListItem onClick={logoutHandler} children="Logout" />;
+   return (
+      <ListItem
+         onClick={logoutHandler}
+         children="Logout"
+         className="text-red-500 dark:text-red-700"
+      />
+   );
 }
 
 export default LogoutButton;

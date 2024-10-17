@@ -5,6 +5,7 @@ import SaveAndCancelDiv from "./Common/SaveAndCancelDiv";
 import ParentContainer from "./Common/ParentContainer";
 import LogoutButton from "./Header/LogoutButton";
 import ErrorMessage from "./Common/ErrorMessage";
+import PostActions from "./Post/PostActions";
 import SearchBar from "./Header/SearchBar";
 import Hamburger from "./Header/Hamburger";
 import ListItem from "./Header/ListItem";
@@ -33,6 +34,7 @@ export {
    DarkModeToggle,
    ErrorMessage,
    LogoutButton,
+   PostActions,
    UserHeader,
    SearchBar,
    ListItem,

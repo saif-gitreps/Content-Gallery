@@ -3,12 +3,15 @@ import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 function PasswordRecoveryStepOne() {
    const { register, handleSubmit } = useForm();
 
    const createRecoveryMutation = useMutation({
       mutationFn: async (email) => await authService.createPasswordRecovery(email),
+      onError: (error) =>
+         toast.error("Something went wrong while sending password recovery link"),
    });
 
    const createRecovery = (data) => {
@@ -41,12 +44,9 @@ function PasswordRecoveryStepOne() {
             Back
          </Link>
          {createRecoveryMutation?.isSuccess && (
-            <h2 className="text-base text-red-700 font-medium mt-2">
+            <h2 className="text-base text-green-600 font-medium mt-2">
                Please check your email and click the link.
             </h2>
-         )}
-         {createRecoveryMutation?.isError && (
-            <ErrorMessage error="Something went wrong. Please try again." />
          )}
       </Container>
    );

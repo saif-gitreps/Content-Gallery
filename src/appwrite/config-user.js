@@ -26,7 +26,7 @@ export class Service {
          );
       } catch (error) {
          console.log("Appwrite serive :: uploadProfilePicture :: error", error);
-         return false;
+         throw error;
       }
    }
 
@@ -45,7 +45,7 @@ export class Service {
          );
       } catch (error) {
          console.log("Appwrite serive :: updateProfilePicture :: error", error);
-         return false;
+         throw error;
       }
    }
 
@@ -58,7 +58,7 @@ export class Service {
          );
       } catch (error) {
          console.log("Appwrite serive :: getProfilePicture :: error", error);
-         return false;
+         throw error;
       }
    }
 }

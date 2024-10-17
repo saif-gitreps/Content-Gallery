@@ -1,11 +1,10 @@
 import authService from "../appwrite/auth";
-import { Container, ErrorMessage } from "../components";
+import { Container } from "../components";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 function EmailConfirmation() {
-   const [error, setError] = useState("");
    const url = new URL(window.location.href);
    const userId = url.searchParams.get("userId");
    const secret = url.searchParams.get("secret");
@@ -15,14 +14,17 @@ function EmailConfirmation() {
       mutationFn: async ({ userId, secret }) =>
          await authService.confirmEmailVerification(userId, secret),
       onSuccess: () => {
-         alert("Email confirmed successfully, you will be redirected to the home page.");
+         toast.success(
+            "Email confirmed successfully, you will be redirected to the home page"
+         );
          setTimeout(() => {
             navigate("/");
          }, 2000);
       },
-      onError: () => {
-         setError("Error confirming email. Please try again.");
-      },
+      onError: () =>
+         toast.error("Something went wrong while confirming email, Please try again", {
+            autoClose: 5000,
+         }),
    });
 
    const handleConfirm = () => {
@@ -38,8 +40,6 @@ function EmailConfirmation() {
             >
                Please Click here to confirm your email.
             </h1>
-
-            <ErrorMessage error={error} />
          </div>
       </Container>
    );

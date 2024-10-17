@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Input, SaveAndCancelDiv, LoaderMini, Button, ErrorMessage } from "..";
 import authService from "../../appwrite/auth";
 import Pencil from "./Pencil";
+import { toast } from "react-toastify";
 
 function UpdatePhone() {
    const [editPhone, setEditPhone] = useState(false);
@@ -26,7 +27,6 @@ function UpdatePhone() {
    const {
       register: registerConfirmVerification,
       handleSubmit: handleSubmitConfirmVerification,
-      setError,
       formState: { errors: verificationErrors },
    } = useForm({
       defaultValues: {
@@ -40,12 +40,9 @@ function UpdatePhone() {
       onSuccess: () => {
          setEditPhone(false);
          reset({ password: "" });
+         toast.success("Phone updated successfully");
       },
-      onError: (error) => {
-         setError("phone", {
-            message: error.message || "Failed to update phone number.",
-         });
-      },
+      onError: (error) => toast.error("Something went wrong while updating phone"),
    });
 
    const updatePhone = (data) => {
@@ -54,9 +51,12 @@ function UpdatePhone() {
 
    const verifyPhoneMutation = useMutation({
       mutationFn: async () => await authService.createPhoneVerification(),
-      onError: (error) => {
-         setError("verificationCode", { message: error.message });
-      },
+      onError: (error) =>
+         toast.error("Something went wrong while sending SMS verification"),
+      onSuccess: () =>
+         toast.success(
+            "SMS Verification code sent to your phone, please check your phone"
+         ),
    });
 
    const verifyPhone = () => {
@@ -66,9 +66,8 @@ function UpdatePhone() {
    const confirmPhoneVerificationMutation = useMutation({
       mutationFn: async (code) =>
          await authService.confirmPhoneVerification(userData?.$id, code),
-      onError: (error) => {
-         setError("verificationCode", { message: error.message });
-      },
+      onError: (error) => toast.error("Something went wrong while verifying phone"),
+      onSuccess: () => toast.success("Phone verified successfully"),
    });
 
    const confirmPhoneVerification = (data) => {
@@ -122,8 +121,6 @@ function UpdatePhone() {
                      <SaveAndCancelDiv
                         cancel={() => {
                            setEditPhone(false);
-                           setError("phone", { message: "" });
-                           setError("verificationCode", { message: "" });
                            reset();
                         }}
                      />
@@ -131,9 +128,6 @@ function UpdatePhone() {
                </div>
             )}
             {phoneErrors.phone && <ErrorMessage error={phoneErrors.phone.message} />}
-            {updatePhoneMutation.isError && (
-               <ErrorMessage error="Error updating phone number, please try again." />
-            )}
          </form>
 
          {enableVerificationField && (
@@ -163,9 +157,6 @@ function UpdatePhone() {
                )}
                {verificationErrors?.verificationCode && (
                   <ErrorMessage error={verificationErrors.verificationCode.message} />
-               )}
-               {confirmPhoneVerificationMutation?.isError && (
-                  <ErrorMessage error="Error verifying phone number, please try again." />
                )}
             </form>
          )}

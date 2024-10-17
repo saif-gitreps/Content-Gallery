@@ -4,6 +4,7 @@ import { Input, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "..";
 import authService from "../../appwrite/auth";
 import { useMutation } from "@tanstack/react-query";
 import Pencil from "./Pencil";
+import { toast } from "react-toastify";
 
 function UpdatePassword() {
    const [editPassword, setEditPassword] = useState(false);
@@ -12,7 +13,6 @@ function UpdatePassword() {
       register,
       handleSubmit,
       reset,
-      setError,
       formState: { errors },
    } = useForm({
       defaultValues: {
@@ -22,22 +22,29 @@ function UpdatePassword() {
    });
 
    const updatePasswordMutation = useMutation({
-      mutationFn: async (data) =>
-         await authService.updatePassword(data.oldPassword, data.newPassword),
-      onSuccess: () => {
-         setEditPassword(false);
-         reset({ oldPassword: "", newPassword: "" });
+      mutationFn: async (data) => {
+         console.log(data);
+         return await authService.updatePassword(data.newPassword, data.oldPassword);
       },
       onError: (error) => {
-         setError("oldPassword", {
-            type: "manual",
-            message: error.message || "Incorrect old password. Please try again.",
-         });
+         // Log the full error to see its structure
+         console.error("Error in mutation:", error);
+
+         // Check for a meaningful message or provide a fallback
+         const errorMessage =
+            error.response?.data?.message || error.message || "An error occurred";
+
+         // Show the error message
+         toast.error(errorMessage);
+      },
+      onSuccess: () => {
+         toast.success("password updated successfully");
+         setEditPassword(false);
+         reset({ oldPassword: "", newPassword: "" });
       },
    });
 
    const updatePassword = (data) => {
-      setError("");
       updatePasswordMutation.mutate(data);
    };
 
@@ -91,9 +98,7 @@ function UpdatePassword() {
             </div>
          )}
 
-         {updatePasswordMutation?.isError && (
-            <ErrorMessage error="Error updating password, please try again." />
-         )}
+         {updatePasswordMutation.isError && <h1>error</h1>}
       </form>
    );
 }

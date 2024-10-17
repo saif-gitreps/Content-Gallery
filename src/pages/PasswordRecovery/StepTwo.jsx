@@ -4,6 +4,7 @@ import authService from "../../appwrite/auth";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 function PasswordRecoveryStepTwo() {
    const [searchParams] = useSearchParams();
@@ -18,6 +19,10 @@ function PasswordRecoveryStepTwo() {
             secret,
             data.password,
             data.confirmPassword
+         ),
+      onError: () =>
+         toast.error(
+            "Something went wrong while confirming password recovery, please try again"
          ),
    });
 
@@ -69,10 +74,6 @@ function PasswordRecoveryStepTwo() {
                   />
                </Link>
             </div>
-         )}
-
-         {confirmPasswordRecoveryMutation?.isError && (
-            <ErrorMessage error="Something went wrong. Please try again." />
          )}
       </Container>
    );

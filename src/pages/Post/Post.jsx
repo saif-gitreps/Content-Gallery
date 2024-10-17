@@ -12,9 +12,12 @@ import {
    ErrorMessage,
    UserHeader,
    CommentSection,
+   PostActions,
 } from "../../components";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import appwriteService from "../../appwrite/config-appwrite";
+import { Bookmark, BookmarkCheck } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function Post() {
    const queryClient = useQueryClient();
@@ -22,6 +25,12 @@ export default function Post() {
    const navigate = useNavigate();
    const userData = useSelector((state) => state.auth.userData);
    const authStatus = useSelector((state) => state.auth.status);
+
+   if (!id || id === "undefined" || id === undefined) {
+      setTimeout(() => navigate("/"), 1000);
+      toast.error("Something went wrong while loading post");
+      return <></>;
+   }
 
    const {
       data: post,
@@ -56,18 +65,6 @@ export default function Post() {
       enabled: !!post?.$id && !!userData?.$id,
    });
 
-   const deleteMutation = useMutation({
-      mutationFn: async () => {
-         await appwriteService.deletePost(post.$id);
-         await appwriteService.deleteFile(post.featuredImage);
-      },
-      onSuccess: () => {
-         queryClient.invalidateQueries("posts");
-         queryClient.invalidateQueries(["myPosts", userData.$id]);
-         navigate("/");
-      },
-   });
-
    const toggleSaveMutation = useMutation({
       mutationFn: async () =>
          isSaved
@@ -87,7 +84,12 @@ export default function Post() {
 
          return { previousSaved };
       },
+      onSuccess: () => {
+         if (!isSaved) toast.success("Post unsaved successfully");
+         else toast.success("Post saved successfully");
+      },
       onError: (context) => {
+         toast.error("Something went wrong while saving/unsaving post");
          queryClient.setQueryData(
             ["saved", userData.$id, post.$id],
             context.previousSaved
@@ -101,82 +103,70 @@ export default function Post() {
    if (postLoading) return <Loader />;
 
    if (postError) {
-      setTimeout(() => navigate("/"), 2000);
-      return <ErrorMessage error={"Error fetching post."} />;
+      setTimeout(() => navigate("/"), 1000);
+      toast.error("Something went wrong while loading post");
+      return <></>;
    }
 
    const isAuthor = post?.user?.$id === userData?.$id;
 
    return (
-      <Container className="max-w-2xl lg:max-w-5xl flex lg:flex-row flex-col lg:space-x-4 space-y-4 p-2 bg-background-lightWhite dark:bg-background-darkBlack">
+      <Container className="max-w-2xl lg:max-w-5xl flex lg:flex-row flex-col lg:space-x-4 space-y-2 p-2 bg-background-lightWhite dark:bg-background-darkBlack">
          <div className="flex items-start justify-center">
             <LazyLoadImage
                src={post?.featuredImageSrc || "/fallback-mountain.jpg"}
                alt={post?.title}
-               className="rounded-2xl object-contain sm:max-h-[40rem] sm:max-w-[35rem] lg:mr-auto"
+               className="rounded-xl object-contain sm:max-h-[40rem] sm:max-w-[35rem] lg:mr-auto"
                effect="blur"
             />
          </div>
+
          <div className="lg:w-2/3 space-y-1 flex flex-col justify-between">
             <div className="space-y-2">
-               <UserHeader
-                  src={post?.user.profilePicture}
-                  name={post?.user.name}
-                  $id={post?.user.$id}
-                  date={post?.$createdAt}
-               />
-               <h1 className="text-base font-bold">{post?.title}</h1>
-               <div className="text-sm text-gray-700 dark:text-gray-400 font-semibold">
-                  {parse(post?.content)}
-               </div>
-               <div className="flex justify-between items-center">
-                  <div className="flex space-x-1">
+               <div className="flex justify-between">
+                  <UserHeader
+                     src={post?.user.profilePicture}
+                     name={post?.user.name}
+                     $id={post?.user.$id}
+                     date={post?.$createdAt}
+                  />
+                  <div className="flex">
                      {authStatus &&
                         !savedPostError &&
-                        (toggleSaveMutation?.isPending || isSavedPostLoading ? (
-                           <LoaderMini />
+                        (!isSaved ? (
+                           <Bookmark
+                              size={32}
+                              className={`dark:text-white hover:cursor-pointer hover:opacity-50 duration-200 ${
+                                 (toggleSaveMutation?.isPending || isSavedPostLoading) &&
+                                 "opacity-40"
+                              }`}
+                              onClick={() => toggleSaveMutation.mutate()}
+                              disabled={
+                                 toggleSaveMutation?.isPending || isSavedPostLoading
+                              }
+                           />
                         ) : (
-                           <Button
-                              text={isSaved ? "Saved" : "Save"}
-                              type="button"
-                              bgNumber={isSaved ? 1 : 0}
+                           <BookmarkCheck
+                              size={32}
+                              className={`text-green-600 dark:text-green-400 hover:cursor-pointer hover:opacity-50 duration-200 ${
+                                 (toggleSaveMutation?.isPending || isSavedPostLoading) &&
+                                 "opacity-40"
+                              }`}
                               onClick={() => toggleSaveMutation.mutate()}
                               disabled={
                                  toggleSaveMutation?.isPending || isSavedPostLoading
                               }
                            />
                         ))}
-                     <Button
-                        text="Copy Link"
-                        type="button"
-                        onClick={() => {
-                           navigator.clipboard.writeText(window.location.href);
-                           alert("Link copied to clipboard.");
-                        }}
-                        bgNumber={1}
-                     />
+
+                     <PostActions isAuthor={isAuthor} post={post} userData={userData} />
                   </div>
-                  {isAuthor && (
-                     <div className="flex">
-                        <Link to={`/edit-post/${post?.$id}`}>
-                           <Button text="Edit" type="button" bgNumber={0} />
-                        </Link>
-                        <Button
-                           text="Delete"
-                           type="button"
-                           bgNumber={2}
-                           onClick={() => deleteMutation?.mutate()}
-                           disabled={deleteMutation?.isPending}
-                        />
-                     </div>
-                  )}
                </div>
-               {toggleSaveMutation?.isError && (
-                  <ErrorMessage error={"Error saving/unsaving post."} />
-               )}
-               {deleteMutation?.isError && (
-                  <ErrorMessage error={"Error deleting post. Try again later."} />
-               )}
+
+               <h1 className="text-base font-semibold">{post?.title}</h1>
+               <div className="text-sm text-gray-700 dark:text-gray-400 font-semibold">
+                  {parse(post?.content)}
+               </div>
             </div>
             {savedPostError && (
                <ErrorMessage error="Error loading saved state of the post." />

@@ -63,7 +63,7 @@ export class Service {
          );
          return true;
       } catch (error) {
-         return false;
+         throw error;
       }
    }
 

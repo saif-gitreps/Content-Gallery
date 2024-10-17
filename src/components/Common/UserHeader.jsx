@@ -8,7 +8,9 @@ function UserHeader({ src, name, $id, date }) {
          <img src={src || "blank-dp.png"} alt={name} className="w-10 h-10 rounded-full" />
          <div className="flex flex-col space-y-0">
             <Link to={`/profile/${$id}`}>
-               <p className="text-base font-bold hover:text-blue-600">@{name}</p>
+               <p className="text-base font-bold hover:text-blue-600 duration-200">
+                  @{name}
+               </p>
             </Link>
             <p className="text-xs font-medium text-gray-500">{formatDate(date)}</p>
          </div>

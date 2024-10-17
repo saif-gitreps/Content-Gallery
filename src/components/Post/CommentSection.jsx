@@ -3,14 +3,14 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Button, ErrorMessage, LoaderMini } from "..";
+import { Button, LoaderMini } from "..";
 import appwriteCommentsService from "../../appwrite/config-comments";
 import Comment from "./Comment";
+import { toast } from "react-toastify";
 
 function CommentSection({ post, userData, isAuthor }) {
    const [miniLoading, setMiniLoading] = useState(false);
    const authStatus = useSelector((state) => state.auth.status);
-   const [error, setError] = useState("");
    const queryClient = useQueryClient();
    const { register, handleSubmit, reset } = useForm({
       defaultValues: { content: "" },
@@ -51,14 +51,13 @@ function CommentSection({ post, userData, isAuthor }) {
          return { optimisticComment };
       },
       onError: () => {
-         setError("Error adding comment. Please try again.");
+         toast.error("Error adding comment. Please try again.");
          setMiniLoading(false);
          reset({ content: "" });
       },
       onSuccess: () => {
          setMiniLoading(false);
          reset({ content: "" });
-         setError("");
       },
       onSettled: () => queryClient.invalidateQueries(["comments", post.$id]),
    });
@@ -71,40 +70,36 @@ function CommentSection({ post, userData, isAuthor }) {
          );
       },
       onError: () => {
-         setError("Error deleting comment. Please try again.");
+         toast.error("Error deleting comment. Please try again.");
          setMiniLoading(false);
       },
       onSuccess: () => {
          setMiniLoading(false);
-         setError("");
       },
       onSettled: () => queryClient.invalidateQueries(["comments", post.$id]),
    });
 
    const addComment = async (data) => {
-      setError("");
       setMiniLoading(true);
       try {
          await addCommentMutation.mutateAsync(data);
       } catch (error) {
-         setError("Error adding comment. Please try again.");
+         toast.error("Something went wrong while adding comment");
       }
    };
 
    const deleteComment = async (commentId) => {
-      setError("");
       setMiniLoading(true);
       try {
          await deleteCommentMutation.mutateAsync(commentId);
       } catch (error) {
-         setError("Error deleting comment. Please try again.");
+         toast.error("Something went wrong while deleting comment");
       }
    };
 
    return (
-      <div className="py-2 px-1 relative rounded-2xl bg-background-lightWhite dark:bg-background-darkBlack shadow-lg">
+      <div className="py-1 px-1 relative rounded-xl rounded-b-md bg-background-lightWhite dark:bg-background-darkBlack shadow-lg">
          <h1 className="text-xl font-bold text-center">Comments</h1>
-         <ErrorMessage error={error || isError} />
 
          <ul
             className={`space-y-1 mb-1 ${

@@ -7,6 +7,7 @@ import { update } from "../../store/authSlice";
 import { Input, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "..";
 import authService from "../../appwrite/auth";
 import Pencil from "./Pencil";
+import { toast } from "react-toastify";
 
 function UpdateName() {
    const [editName, setEditName] = useState(false);
@@ -17,7 +18,6 @@ function UpdateName() {
       register: registerName,
       handleSubmit: handleSubmitName,
       formState: { errors },
-      setError,
    } = useForm({
       defaultValues: {
          name: userData?.name || "",
@@ -34,13 +34,9 @@ function UpdateName() {
          );
          return await authService.updateName(name);
       },
-      onError: (error) => {
-         setError("name", {
-            type: "manual",
-            message: error.message || "Failed to update name. Try again later.",
-         });
-      },
+      onError: (error) => toast.error("Something went wrong while updating name"),
       onSuccess: (data) => {
+         toast.success("Name updated successfully");
          setEditName(false);
          dispatch(update({ ...userData, name: data.name }));
       },
@@ -84,10 +80,6 @@ function UpdateName() {
                   className="flex space-x-2"
                />
             ))}
-
-         {updateNameMutation?.isError && (
-            <ErrorMessage error="Error updating name, please try again." />
-         )}
       </form>
    );
 }

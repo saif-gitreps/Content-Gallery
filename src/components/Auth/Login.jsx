@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../../store/authSlice";
 import { Button, Input, LoaderMini, Container, ErrorMessage } from "..";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 function Login() {
    const navigate = useNavigate();
@@ -34,9 +35,10 @@ function Login() {
          };
       },
       onError: (error) => {
-         console.error("Login error:", error);
+         toast.error(error);
       },
       onSuccess: (userData) => {
+         toast.success("Welcome back!");
          dispatch(authLogin(userData));
          navigate("/");
       },

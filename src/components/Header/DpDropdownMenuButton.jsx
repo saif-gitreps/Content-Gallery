@@ -26,15 +26,18 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
                effect="blur"
                onError={(e) => (e.target.src = "/blank-dp.png.jpg")}
             />
-            {open ? (
-               <p className="ml-1 flex items-center dark:invert">▲</p>
-            ) : (
-               <p className="ml-1 flex items-center dark:invert">▼</p>
-            )}
+
+            <p
+               className={`ml-1 flex items-center text-xs dark:text-white ${
+                  !open && "rotate-180"
+               }`}
+            >
+               ▲
+            </p>
          </div>
 
          {open && (
-            <ul className="dropdown-menu top-14 lg:top-16" ref={dropdownRef}>
+            <ul className="dropdown-menu border top-14 lg:top-14" ref={dropdownRef}>
                {navItems.map(
                   (item) =>
                      item.active &&

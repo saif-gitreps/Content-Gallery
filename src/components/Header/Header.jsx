@@ -18,7 +18,7 @@ function Header() {
    const navItems = getNavItems(authStatus, userData);
 
    return (
-      <header className="py-2 shadow bg-background-lightWhite dark:bg-background-darkBlack font-medium">
+      <header className="py-1 shadow bg-background-lightWhite dark:bg-background-darkBlack font-medium">
          <Container className="max-w-7xl">
             <nav className="flex">
                {authStatus && (
@@ -33,7 +33,7 @@ function Header() {
 
                <SearchBar />
 
-               <ul className="ml-auto hidden sm:flex space-x-2">
+               <ul className="ml-auto hidden md:flex space-x-1">
                   {navItems.map(
                      (item) =>
                         item.active &&
@@ -48,12 +48,11 @@ function Header() {
                         )
                   )}
                </ul>
-               <div className="mx-2 flex justify-center items-center">
+
+               <div className="ml-auto md:mx-2 flex justify-center items-center">
                   <Link to="/">
-                     <Logo className="p-1 rounded-full duration-300 hover:shadow-md lg:w-16 dark:invert" />
+                     <Logo className="duration-300 hover:opacity-70 w-24 dark:invert" />
                   </Link>
-               </div>
-               <div className="sm:hidden ml-auto">
                   <Hamburger navItems={navItems} logutButton={authStatus} />
                </div>
             </nav>

@@ -13,7 +13,7 @@ import {
 import appwriteService from "../../appwrite/config-appwrite";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ImageCropModal from "../Common/ImageCropModal";
-import { v4 as uuidv4 } from "uuid";
+import { toast } from "react-toastify";
 
 function PostForm({ post, pageTitle = "Create" }) {
    const [imageSrc, setImageSrc] = useState(null);
@@ -42,7 +42,8 @@ function PostForm({ post, pageTitle = "Create" }) {
          let file;
          if (data.featuredImage && typeof data.featuredImage !== "string") {
             if (data.featuredImage.size > 1024 * 1024) {
-               throw new Error("Image size should be less than 1MB.");
+               toast.error("Image size should be less than 1MB");
+               throw new Error();
             }
             file = await appwriteService.uploadFile(data.featuredImage);
             if (post && post.featuredImage) {
@@ -64,7 +65,10 @@ function PostForm({ post, pageTitle = "Create" }) {
                featuredImageSrc: featuredImageSrc.href,
             });
          } else {
-            if (!file) throw new Error("No image uploaded.");
+            if (!file) {
+               toast.error("Please upload an image");
+               throw new Error();
+            }
 
             const featuredImageSrc = await appwriteService.getFilePrev(file.$id);
 
@@ -77,10 +81,21 @@ function PostForm({ post, pageTitle = "Create" }) {
          }
       },
       onSuccess: (dbPost) => {
-         if (dbPost) navigate(`/post/${dbPost.$id}`);
-         queryClient.invalidateQueries("posts");
-         queryClient.invalidateQueries(["myPosts", userData.$id]);
+         if (dbPost) {
+            queryClient.invalidateQueries("posts");
+            queryClient.invalidateQueries(["myPosts", userData.$id]);
+            toast.success(
+               `Post ${pageTitle === "Create" ? "added" : "updated"} successfully`
+            );
+            navigate(`/post/${dbPost.$id}`);
+         }
       },
+      onError: () =>
+         toast.error(
+            `Something went wrong while ${
+               pageTitle === "Create" ? "adding" : "updating"
+            } post, please try again`
+         ),
    });
 
    const submit = (data) => {
@@ -213,10 +228,6 @@ function PostForm({ post, pageTitle = "Create" }) {
                      }
                   }}
                />
-            )}
-
-            {updatePostMutation?.isError && (
-               <ErrorMessage error={updatePostMutation?.error?.message} />
             )}
          </form>
       </div>

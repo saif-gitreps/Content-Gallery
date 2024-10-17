@@ -6,6 +6,7 @@ import { Input, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "..";
 import appwriteUserService from "../../appwrite/config-user";
 import { update } from "../../store/authSlice";
 import Pencil from "./Pencil";
+import { toast } from "react-toastify";
 
 function UpdateBio() {
    const [editBio, setEditBio] = useState(false);
@@ -17,7 +18,6 @@ function UpdateBio() {
       register: registerBio,
       handleSubmit: handleSubmitBio,
       formState: { errors: bioErrors },
-      setError,
    } = useForm({
       defaultValues: {
          bio: userData?.bio || "",
@@ -33,14 +33,12 @@ function UpdateBio() {
             bio
          ),
       onError: (error) => {
-         setError("bio", {
-            type: "manual",
-            message: error.message || "Failed to update bio. Try again later.",
-         });
+         toast.error("Something went wrong while updating Bio");
       },
       onSuccess: (data) => {
          setEditBio(false);
          dispatch(update({ ...userData, bio: data.bio }));
+         toast.success("Bio updated successfully");
       },
    });
 
@@ -94,10 +92,6 @@ function UpdateBio() {
                   className="flex space-x-2"
                />
             ))}
-
-         {updateBioMutation?.isError && (
-            <ErrorMessage error="Error updating bio, please try again." />
-         )}
       </form>
    );
 }

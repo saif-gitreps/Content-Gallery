@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PostForm } from "../../components";
 import appwriteService from "../../appwrite/config-appwrite";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function EditPost() {
    const [post, setPost] = useState(null);
@@ -16,6 +17,7 @@ function EditPost() {
             }
          });
       } else {
+         toast.error("No such post exists");
          navigate("/");
       }
    }, [id, navigate]);

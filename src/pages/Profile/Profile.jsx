@@ -73,7 +73,12 @@ function Profile() {
       return (
          <>
             <h1 className="text-2xl font-bold text-center">
-               {isAuthor ? "My" : user === null ? "User's" : `${user?.name}'s`} posts
+               {isAuthor
+                  ? "My"
+                  : user === null || user === undefined
+                  ? "User's"
+                  : `${user?.name}'s`}{" "}
+               posts
             </h1>
             <LoadCards
                posts={allPosts}

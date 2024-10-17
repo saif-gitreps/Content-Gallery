@@ -8,6 +8,7 @@ import { update } from "../../store/authSlice";
 import { Input, SaveAndCancelDiv, LoaderMini, ErrorMessage } from "..";
 import Pencil from "./Pencil";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { toast } from "react-toastify";
 
 function UpdateProfilePic() {
    const [editProfilePic, setEditProfilePic] = useState(false);
@@ -21,7 +22,6 @@ function UpdateProfilePic() {
    const {
       register,
       handleSubmit,
-      setError,
       formState: { errors },
    } = useForm();
 
@@ -51,14 +51,10 @@ function UpdateProfilePic() {
          dispatch(update({ ...userData, profilePicture: filePreview.href }));
          setEditProfilePic(false);
          setProfilePicture(filePreview.href);
+         toast.success("Profile picture uploaded successfully");
       },
-      onError: (error) => {
-         setError("profilePicture", {
-            type: "manual",
-            message:
-               error.message || "Failed to update profile picture. Please try again.",
-         });
-      },
+      onError: (error) =>
+         toast.error("Something went wrong while uploading profile picture"),
    });
 
    const updateProfilePicture = (data) => {
@@ -84,7 +80,7 @@ function UpdateProfilePic() {
    return (
       <form
          onSubmit={handleSubmit(updateProfilePicture)}
-         className="flex justify-center items-center flex-col space-y-4 p-2 dark:bg-gray-800 rounded-lg"
+         className="flex justify-center items-center flex-col space-y-4 p-2 rounded-lg"
       >
          <div className="relative">
             <LazyLoadImage
@@ -112,6 +108,9 @@ function UpdateProfilePic() {
                   onChange={handleProfilePicPreview}
                   className="text-base font-normal w-full bg-white dark:bg-gray-700 border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                />
+               {errors?.profilePicture && (
+                  <ErrorMessage error={errors?.profilePicture?.message} />
+               )}
 
                {updateProfilePictureMutation?.isPending ? (
                   <div className="flex justify-center items-center mt-2">
@@ -126,10 +125,6 @@ function UpdateProfilePic() {
                   />
                )}
             </div>
-         )}
-
-         {updateProfilePictureMutation?.isError && (
-            <ErrorMessage error="Error updating profile picture, please try again." />
          )}
       </form>
    );
