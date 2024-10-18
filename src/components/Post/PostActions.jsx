@@ -60,7 +60,7 @@ function PostActions({ isAuthor, post, userData }) {
                {isAuthor && (
                   <ListItem
                      children="Delete"
-                     className="text-red-500 dark:text-red-700"
+                     className="text-red-500 dark:text-red-400"
                      onClick={() => deleteMutation.mutate()}
                   />
                )}

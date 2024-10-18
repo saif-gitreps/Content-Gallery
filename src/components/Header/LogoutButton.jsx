@@ -22,7 +22,7 @@ function LogoutButton() {
       <ListItem
          onClick={logoutHandler}
          children="Logout"
-         className="text-red-500 dark:text-red-700"
+         className="text-red-500 dark:text-red-400"
       />
    );
 }

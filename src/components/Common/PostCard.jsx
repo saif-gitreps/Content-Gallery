@@ -9,7 +9,7 @@ function PostCard({ $id, title, featuredImageSrc, className = "" }) {
    return (
       <Link to={`/post/${$id}`}>
          <div
-            className={`w-full bg-white dark:bg-background-darkBlack dark:text-text-dark duration-300 hover:shadow-md dark:hover:shadow-gray-700 ${className} rounded-2xl overflow-hidden`}
+            className={`w-full bg-white dark:bg-background-darkBlack dark:text-text-dark duration-300 hover:shadow-md dark:hover:shadow-gray-700 ${className} rounded-xl overflow-hidden`}
          >
             <div
                className={`w-full flex justify-center items-center ${
@@ -19,7 +19,7 @@ function PostCard({ $id, title, featuredImageSrc, className = "" }) {
                <LazyLoadImage
                   src={featuredImageSrc || "/fallback-mountain.jpg"}
                   alt={title}
-                  className="rounded-t-2xl"
+                  className="rounded-t-xl"
                   onError={(e) => (e.target.src = "/fallback-mountain.jpg")}
                   onLoad={() => setIsLoading(false)}
                   beforeLoad={() => setIsLoading(true)}

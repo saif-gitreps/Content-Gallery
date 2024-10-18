@@ -18,7 +18,7 @@ function Header() {
    const navItems = getNavItems(authStatus, userData);
 
    return (
-      <header className="py-1 shadow bg-background-lightWhite dark:bg-background-darkBlack font-medium">
+      <header className="py-2 shadow bg-background-lightWhite dark:bg-background-darkBlack font-medium">
          <Container className="max-w-7xl">
             <nav className="flex">
                {authStatus && (
