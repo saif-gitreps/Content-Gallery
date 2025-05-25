@@ -20,11 +20,10 @@ function DpDropdownMenuButton({ src, authStatus, navItems }) {
             ref={dpRef}
          >
             <LazyLoadImage
-               src={src}
+               src={src || "/blank-dp.png"}
                alt="Dp"
                className="w-11 h-11 lg:w-12 lg:h-12 rounded-full"
                effect="blur"
-               onError={(e) => (e.target.src = "/blank-dp.png.jpg")}
             />
 
             <p

@@ -42,6 +42,8 @@ export default function Post() {
       enabled: !!id,
    });
 
+   console.log(post?.featuredImageSrc);
+
    const {
       data: isSaved,
       error: savedPostError,
