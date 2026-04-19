@@ -25,7 +25,9 @@ function LoadCards({ posts, isFetching, error, isFetchingNextPage, hasNextPage }
          ) : (
             isFetching && <Loader />
          )}
-         {error && <ErrorMessage error={error} />}
+         {error && (
+            <ErrorMessage error={error?.message || "Something went wrong while."} />
+         )}
          {isFetchingNextPage && <Loader />}
          {!hasNextPage && !isFetching && (
             <p className="text-center mt-10">No more posts.</p>

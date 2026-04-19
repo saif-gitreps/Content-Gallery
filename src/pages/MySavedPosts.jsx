@@ -11,7 +11,7 @@ function MySavedPosts() {
       await appwriteService.getSavedPosts(
          [Query.equal("userId", userData?.$id)],
          pageParam,
-         5
+         5,
       );
 
    const { allPosts, error, isFetching, isFetchingNextPage, hasNextPage } =
@@ -42,7 +42,7 @@ function MySavedPosts() {
          ) : (
             isFetching && <Loader />
          )}
-         {error && <ErrorMessage error={error.messages} />}
+         {error && <ErrorMessage error={error.messages || "Something went wrong"} />}
          {isFetchingNextPage && <Loader />}
          {!hasNextPage && !isFetching && (
             <p className="text-center mt-10">No more posts.</p>

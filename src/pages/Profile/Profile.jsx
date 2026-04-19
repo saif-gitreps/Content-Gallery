@@ -37,7 +37,9 @@ function Profile() {
       return (
          <div className="bg-white dark:bg-black p-10 rounded-2xl">
             <h1 className="text-2xl font-bold text-center mb-4">Profile</h1>
-            {userDataError && <ErrorMessage error={userDataError} />}
+            {userDataError && (
+               <ErrorMessage error={userDataError.message || "Error loading user data"} />
+            )}
             {userDataLoading && !userDataError ? (
                <Loader />
             ) : (
@@ -76,8 +78,8 @@ function Profile() {
                {isAuthor
                   ? "My"
                   : user === null || user === undefined
-                  ? "User's"
-                  : `${user?.name}'s`}{" "}
+                    ? "User's"
+                    : `${user?.name}'s`}{" "}
                posts
             </h1>
             <LoadCards

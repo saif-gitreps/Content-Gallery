@@ -59,7 +59,7 @@ export default function Post() {
                ]),
             ],
             0,
-            5000
+            5000,
          );
 
          return savedPosts?.documents.length === 0 ? null : savedPosts?.documents[0];
@@ -94,7 +94,7 @@ export default function Post() {
          toast.error("Something went wrong while saving/unsaving post");
          queryClient.setQueryData(
             ["saved", userData.$id, post.$id],
-            context.previousSaved
+            context.previousSaved,
          );
       },
       onSettled: () => {

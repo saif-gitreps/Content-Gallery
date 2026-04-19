@@ -6,7 +6,7 @@ import { login, logout } from "./store/authSlice";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import authService from "./appwrite/auth";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import "./App.css";

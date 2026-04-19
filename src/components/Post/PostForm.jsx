@@ -72,6 +72,8 @@ function PostForm({ post, pageTitle = "Create" }) {
 
             const featuredImageSrc = await appwriteService.getFilePrev(file.$id);
 
+            console.log(featuredImageSrc);
+
             return await appwriteService.createPost({
                ...data,
                featuredImage: file.$id,
@@ -85,7 +87,7 @@ function PostForm({ post, pageTitle = "Create" }) {
             queryClient.invalidateQueries("posts");
             queryClient.invalidateQueries(["myPosts", userData.$id]);
             toast.success(
-               `Post ${pageTitle === "Create" ? "added" : "updated"} successfully`
+               `Post ${pageTitle === "Create" ? "added" : "updated"} successfully`,
             );
             navigate(`/post/${dbPost.$id}`);
          }
@@ -94,7 +96,7 @@ function PostForm({ post, pageTitle = "Create" }) {
          toast.error(
             `Something went wrong while ${
                pageTitle === "Create" ? "adding" : "updating"
-            } post, please try again`
+            } post, please try again`,
          ),
    });
 
